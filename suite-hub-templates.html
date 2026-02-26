@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub — Template Bank | KP Charter Kollective</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0f2d5a;
+  --navy-dark: #091e3e;
+  --orange: #ff6015;
+  --orange-lt: #ff7633;
+  --teal: #089494;
+  --teal-lt: #0ab3b3;
+  --white: #ffffff;
+  --offwhite: #f7f8fa;
+  --border: #e0e4eb;
+  --muted: #5c6f85;
+  --text: #0f2d5a;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --shadow-sm: 0 2px 8px rgba(15,45,90,0.07);
+  --shadow-md: 0 8px 28px rgba(15,45,90,0.11);
+  --radius: 10px;
+  --ig: #E1306C;
+  --fb: #1877F2;
+  --email: #089494;
+  --sms: #ff6015;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body { font-family: var(--font-sans); color: var(--text); background: var(--offwhite); display: flex; min-height: 100vh; }
+
+/* ── SIDEBAR (same as suite-hub.html) ── */
+.sidebar {
+  width: 240px; background: var(--navy-dark);
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0; bottom: 0;
+  z-index: 100; padding: 0 0 24px;
+}
+.sidebar-logo { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,.07); margin-bottom: 8px; }
+.sidebar-logo-mark { display: flex; align-items: center; gap: 10px; }
+.logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--orange), var(--orange-lt)); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 18px; font-weight: 900; color: #fff; flex-shrink: 0; }
+.logo-name { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: -.01em; }
+.logo-sub { font-size: 10px; color: rgba(255,255,255,.35); font-family: var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.school-selector { margin: 0 12px 16px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); border-radius: 8px; padding: 10px 12px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+.school-selector-name { font-size: 13px; font-weight: 600; color: #fff; }
+.school-selector-type { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 2px; }
+.nav-section { padding: 0 12px; margin-bottom: 4px; }
+.nav-label { font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.25); padding: 8px 8px 6px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 7px; font-size: 13.5px; font-weight: 500; color: rgba(255,255,255,.55); cursor: pointer; transition: all .15s; margin-bottom: 1px; text-decoration: none; }
+.nav-item:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.85); }
+.nav-item.active { background: rgba(255,96,21,.15); color: var(--orange-lt); }
+.nav-item svg { flex-shrink: 0; width: 16px; height: 16px; }
+.nav-badge { margin-left: auto; background: var(--orange); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px; }
+.sidebar-footer { margin-top: auto; padding: 16px 12px 0; border-top: 1px solid rgba(255,255,255,.06); }
+.sidebar-user { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; cursor: pointer; }
+.sidebar-user:hover { background: rgba(255,255,255,.05); }
+.user-avatar { width: 32px; height: 32px; background: linear-gradient(135deg, var(--teal), var(--teal-lt)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.user-name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,.75); }
+.user-role { font-size: 11px; color: rgba(255,255,255,.3); }
+
+/* ── MAIN ── */
+.main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+.topbar-title { font-family: var(--font-serif); font-size: 22px; font-weight: 900; color: var(--navy); }
+.topbar-subtitle { font-size: 13px; color: var(--muted); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; border: none; transition: all .15s; font-family: var(--font-sans); }
+.btn-primary { background: var(--orange); color: #fff; }
+.btn-primary:hover { background: var(--orange-lt); }
+.btn-secondary { background: var(--offwhite); color: var(--navy); border: 1.5px solid var(--border); }
+.btn-secondary:hover { border-color: var(--navy); }
+.btn-ghost { background: transparent; color: var(--muted); }
+.btn-ghost:hover { background: var(--offwhite); color: var(--navy); }
+.btn-sm { padding: 6px 13px; font-size: 12.5px; }
+.content { padding: 28px 32px; flex: 1; }
+
+/* ── SEARCH + FILTERS ── */
+.bank-controls {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.search-wrap {
+  position: relative; flex: 1; min-width: 220px; max-width: 360px;
+}
+.search-icon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--muted); width: 16px; height: 16px; pointer-events: none;
+}
+.search-input {
+  width: 100%; padding: 9px 14px 9px 38px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  font-family: var(--font-sans); font-size: 14px; color: var(--text);
+  background: var(--white); outline: none; transition: border-color .15s;
+}
+.search-input:focus { border-color: var(--orange); }
+.filter-tabs {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.filter-tab {
+  padding: 7px 14px; border-radius: 20px;
+  font-size: 12.5px; font-weight: 600;
+  border: 1.5px solid var(--border);
+  background: var(--white); color: var(--muted);
+  cursor: pointer; transition: all .15s;
+}
+.filter-tab:hover { border-color: var(--navy); color: var(--navy); }
+.filter-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.filter-tab.ig.active { background: var(--ig); border-color: var(--ig); color: #fff; }
+.filter-tab.fb.active { background: var(--fb); border-color: var(--fb); color: #fff; }
+.filter-tab.email.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+.filter-tab.sms.active { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+/* ── CATEGORY SECTIONS ── */
+.category-section { margin-bottom: 40px; }
+.category-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.category-title {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-serif); font-size: 18px; font-weight: 900; color: var(--navy);
+}
+.category-emoji { font-size: 20px; }
+.category-count { font-family: var(--font-mono); font-size: 11px; color: var(--muted); font-weight: 500; }
+
+/* ── TEMPLATE GRID ── */
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.template-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: var(--shadow-sm);
+}
+.template-card:hover {
+  border-color: var(--orange);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.template-preview {
+  height: 140px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.template-preview-inner {
+  text-align: center; padding: 20px;
+  width: 100%;
+}
+.template-preview-emoji { font-size: 40px; margin-bottom: 8px; }
+.template-preview-title {
+  font-family: var(--font-serif); font-size: 14px; font-weight: 900;
+  line-height: 1.3;
+}
+.template-preview-sub { font-size: 11px; margin-top: 4px; opacity: .7; }
+.template-card-body { padding: 14px 16px; }
+.template-card-name { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.template-card-desc { font-size: 12.5px; color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
+.template-card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.template-platforms { display: flex; gap: 4px; }
+.platform-pill {
+  font-size: 10px; font-weight: 700;
+  padding: 2px 7px; border-radius: 4px;
+  letter-spacing: .04em;
+}
+.platform-pill.ig { background: #fce4ed; color: #b5234f; }
+.platform-pill.fb { background: #deeafc; color: #1555c4; }
+.platform-pill.email { background: #d6f0f0; color: #056565; }
+.platform-pill.sms { background: #fff3ee; color: #cc4400; }
+.template-card-use {
+  font-size: 12px; font-weight: 700; color: var(--orange);
+  display: flex; align-items: center; gap: 4px;
+  opacity: 0; transition: opacity .15s;
+}
+.template-card:hover .template-card-use { opacity: 1; }
+.template-card-canva {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; color: #7d2ae8;
+  margin-top: 6px;
+  padding: 5px 10px;
+  background: #f8f0ff;
+  border-radius: 6px;
+  border: 1px dashed #c9a0f0;
+  cursor: pointer;
+  transition: background .12s;
+}
+.template-card-canva:hover { background: #f0e0ff; }
+
+/* ── MODAL ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(9,30,62,.45); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: var(--white); border-radius: 14px; width: 100%; max-width: 620px; box-shadow: 0 24px 80px rgba(9,30,62,.25); transform: translateY(12px); transition: transform .2s; max-height: 90vh; overflow-y: auto; }
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-header { padding: 24px 28px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-family: var(--font-serif); font-size: 20px; font-weight: 900; color: var(--navy); }
+.modal-close { width: 32px; height: 32px; border-radius: 8px; background: var(--offwhite); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 18px; transition: all .12s; }
+.modal-close:hover { background: var(--border); color: var(--navy); }
+.modal-body { padding: 24px 28px; }
+.modal-footer { padding: 16px 28px 24px; display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid var(--border); }
+.form-group { margin-bottom: 18px; }
+.form-label { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; display: block; }
+.form-input, .form-select, .form-textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: var(--font-sans); font-size: 14px; color: var(--text); background: var(--white); transition: border-color .15s; outline: none; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--orange); }
+.form-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+/* ── COPY PREVIEW ── */
+.copy-preview {
+  background: var(--offwhite);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 14px; line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+}
+.copy-btn {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12.5px; font-weight: 600; color: var(--teal);
+  background: none; border: none; cursor: pointer; padding: 0;
+  font-family: var(--font-sans);
+}
+.copy-btn:hover { color: var(--teal-lt); }
+.canva-open-btn {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 12px 16px;
+  background: linear-gradient(135deg, #f8f0ff, #efe0ff);
+  border: 1.5px dashed #c9a0f0;
+  border-radius: 8px;
+  font-size: 13.5px; font-weight: 700; color: #7d2ae8;
+  cursor: pointer; font-family: var(--font-sans);
+  transition: all .15s;
+}
+.canva-open-btn:hover { background: linear-gradient(135deg, #f0e0ff, #e5d0ff); }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+/* ── PRODUCT SWITCHER ── */
+.product-switcher { position: relative; }
+.switcher-btn {
+  display: flex; align-items: center; gap: 9px;
+  cursor: pointer; padding: 4px 8px 4px 4px;
+  border-radius: 10px;
+  transition: background .15s;
+}
+.switcher-btn:hover { background: rgba(255,255,255,.07); }
+.switcher-arrow { color: rgba(255,255,255,.35); transition: transform .2s; }
+.product-switcher.open .switcher-arrow { transform: rotate(180deg); }
+.switcher-dropdown {
+  position: absolute; top: calc(100% + 8px); left: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(9,30,62,.18);
+  width: 240px;
+  padding: 8px;
+  z-index: 300;
+  display: none;
+}
+.product-switcher.open .switcher-dropdown { display: block; }
+.switcher-header {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); padding: 6px 10px 8px;
+}
+.switcher-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 8px;
+  cursor: pointer; transition: background .12s;
+  text-decoration: none;
+}
+.switcher-item:hover { background: var(--offwhite); }
+.switcher-item.active { background: #fff8f5; }
+.switcher-item.locked { opacity: .6; cursor: pointer; }
+.switcher-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 17px; font-weight: 900;
+  color: #fff; flex-shrink: 0;
+}
+.switcher-icon.hub { background: linear-gradient(135deg, #ff6015, #ff7633); }
+.switcher-icon.enroll { background: linear-gradient(135deg, #089494, #0ab3b3); }
+.switcher-item-text { flex: 1; }
+.switcher-item-name { font-size: 13.5px; font-weight: 700; color: var(--navy); }
+.switcher-item-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.switcher-lock {
+  width: 20px; height: 20px; border-radius: 6px;
+  background: var(--offwhite); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+}
+.switcher-check { color: var(--orange); font-size: 14px; font-weight: 700; }
+.switcher-divider { height: 1px; background: var(--border); margin: 6px 0; }
+
+/* ── UPGRADE MODAL ── */
+.upgrade-overlay {
+  position: fixed; inset: 0;
+  background: rgba(9,30,62,.55);
+  z-index: 400;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s;
+}
+.upgrade-overlay.open { opacity: 1; pointer-events: all; }
+.upgrade-modal {
+  background: var(--white);
+  border-radius: 16px;
+  width: 100%; max-width: 540px;
+  box-shadow: 0 32px 80px rgba(9,30,62,.28);
+  transform: translateY(14px);
+  transition: transform .2s;
+  overflow: hidden;
+}
+.upgrade-overlay.open .upgrade-modal { transform: translateY(0); }
+.upgrade-modal-hero {
+  background: linear-gradient(135deg, var(--navy-dark), #1a3a6e);
+  padding: 32px 32px 28px;
+  position: relative;
+  overflow: hidden;
+}
+.upgrade-modal-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.upgrade-lock-icon {
+  width: 52px; height: 52px;
+  background: rgba(255,96,21,.15);
+  border: 1px solid rgba(255,96,21,.3);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  margin-bottom: 16px;
+  position: relative; z-index: 1;
+}
+.upgrade-modal-title {
+  font-family: var(--font-serif); font-size: 24px; font-weight: 900;
+  color: #fff; line-height: 1.2;
+  position: relative; z-index: 1;
+  margin-bottom: 8px;
+}
+.upgrade-modal-sub {
+  font-size: 14px; color: rgba(255,255,255,.55);
+  position: relative; z-index: 1;
+  line-height: 1.6;
+}
+.upgrade-modal-body { padding: 28px 32px; }
+.upgrade-plans { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.upgrade-plan {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 16px;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+}
+.upgrade-plan:hover { border-color: var(--orange); }
+.upgrade-plan.featured {
+  border-color: var(--orange);
+  background: #fff8f5;
+}
+.upgrade-plan-badge {
+  position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+  background: var(--orange); color: #fff;
+  font-size: 10px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+  white-space: nowrap;
+  font-family: var(--font-mono); letter-spacing: .06em;
+}
+.upgrade-plan-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 15px; font-weight: 900;
+  color: #fff; margin-bottom: 10px;
+}
+.upgrade-plan-icon.hub { background: linear-gradient(135deg, #ff6015, #ff7633); }
+.upgrade-plan-icon.enroll { background: linear-gradient(135deg, #089494, #0ab3b3); }
+.upgrade-plan-icon.suite { background: linear-gradient(135deg, var(--navy), #2255a0); font-size:12px; }
+.upgrade-plan-name { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+.upgrade-plan-price {
+  font-family: var(--font-serif); font-size: 24px; font-weight: 900;
+  color: var(--navy); line-height: 1;
+}
+.upgrade-plan-price span { font-size: 13px; font-weight: 500; color: var(--muted); font-family: var(--font-sans); }
+.upgrade-plan-desc { font-size: 11.5px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+.upgrade-founding {
+  background: linear-gradient(135deg, #f0fafa, #e6f7f7);
+  border: 1.5px solid var(--teal);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+}
+.upgrade-founding-icon { font-size: 22px; flex-shrink: 0; }
+.upgrade-founding-text {}
+.upgrade-founding-title { font-size: 13px; font-weight: 700; color: var(--navy); }
+.upgrade-founding-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.upgrade-founding-badge {
+  background: var(--teal); color: #fff;
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+  white-space: nowrap; margin-left: auto; flex-shrink: 0;
+}
+.upgrade-cta { width: 100%; padding: 14px; border-radius: 10px; background: var(--orange); color: #fff; font-size: 15px; font-weight: 700; border: none; cursor: pointer; font-family: var(--font-sans); transition: background .15s; }
+.upgrade-cta:hover { background: var(--orange-lt); }
+.upgrade-dismiss { display: block; text-align: center; margin-top: 12px; font-size: 13px; color: var(--muted); cursor: pointer; }
+.upgrade-dismiss:hover { color: var(--navy); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-mark">
+      <div class="logo-icon">H</div>
+      <div>
+        <div class="logo-name">Hub</div>
+        <div class="logo-sub">by KP Charter Kollective</div>
+      </div>
+    </div>
+  </div>
+  <div class="school-selector">
+    <div>
+      <div class="school-selector-name">The Meliora School</div>
+      <div class="school-selector-type">Opening Fall 2026 · Atlanta, GA</div>
+    </div>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Marketing</div>
+    <a class="nav-item" href="suite-hub.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Content Calendar
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Email Campaigns
+      <span class="nav-badge">3</span>
+    </a>
+    <a class="nav-item active" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Template Bank
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Analytics
+    </a>
+  </div>
+  <div class="nav-section" style="margin-top:8px;">
+    <div class="nav-label">Enrollment</div>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Family Pipeline
+      <span class="nav-badge" style="background:var(--teal);">47</span>
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Lottery
+    </a>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="user-avatar">K</div>
+      <div>
+        <div class="user-name">Kristina</div>
+        <div class="user-role">KP Charter Kollective</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Template Bank</div>
+      <div class="topbar-subtitle">Ready-to-use content for every stage of your enrollment campaign</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-secondary btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Submit a Template
+      </button>
+      <button class="btn btn-primary btn-sm" onclick="document.getElementById('search-input').focus()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search Templates
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- SEARCH + FILTERS -->
+    <div class="bank-controls">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="search-input" type="text" class="search-input" placeholder="Search templates..." oninput="filterTemplates(this.value)">
+      </div>
+      <div class="filter-tabs">
+        <div class="filter-tab active" onclick="setFilter('all', this)">All Templates</div>
+        <div class="filter-tab ig" onclick="setFilter('ig', this)">Instagram</div>
+        <div class="filter-tab fb" onclick="setFilter('fb', this)">Facebook</div>
+        <div class="filter-tab email" onclick="setFilter('email', this)">Email</div>
+        <div class="filter-tab sms" onclick="setFilter('sms', this)">SMS</div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div id="categories-wrap">
+
+      <!-- PRE-OPENING BUZZ -->
+      <div class="category-section" data-category="pre-opening">
+        <div class="category-header">
+          <div class="category-title">
+            <span class="category-emoji">🚀</span>
+            Pre-Opening Buzz
+          </div>
+          <span class="category-count">5 templates</span>
+        </div>
+        <div class="template-grid">
+
+          <div class="template-card" onclick="openTemplate('founder-story')" data-platforms="ig fb" data-category="pre-opening">
+            <div class="template-preview" style="background:linear-gradient(135deg,#0f2d5a,#1a3a6e);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">✨</div>
+                <div class="template-preview-title" style="color:#fff;">Why I'm Building This School</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.6);">Founder Story</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Founder Story Post</div>
+              <div class="template-card-desc">Share your why. The most powerful pre-opening post you can make. Families don't just enroll in schools — they enroll in founders.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill ig">IG</span>
+                  <span class="platform-pill fb">FB</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+              <div class="template-card-canva" onclick="event.stopPropagation(); openCanva(this.closest('.template-card').getAttribute('onclick').match(/openTemplate\('(\w[-\w]*)'\)/)[1])">🎨 Open graphic in Canva</div>
+            </div>
+          </div>
+
+          <div class="template-card" onclick="openTemplate('interest-list')" data-platforms="ig fb email sms" data-category="pre-opening">
+            <div class="template-preview" style="background:linear-gradient(135deg,#ff6015,#ff8c00);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">📋</div>
+                <div class="template-preview-title" style="color:#fff;">Join Our Interest List</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.7);">First to know · First in line</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Interest List Drive</div>
+              <div class="template-card-desc">The first step in your enrollment funnel. Drive families to your interest form before your application window opens.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill ig">IG</span>
+                  <span class="platform-pill fb">FB</span>
+                  <span class="platform-pill email">Email</span>
+                  <span class="platform-pill sms">SMS</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+              <div class="template-card-canva" onclick="event.stopPropagation(); openCanva(this.closest('.template-card').getAttribute('onclick').match(/openTemplate\('(\w[-\w]*)'\)/)[1])">🎨 Open graphic in Canva</div>
+            </div>
+          </div>
+
+          <div class="template-card" onclick="openTemplate('school-vision')" data-platforms="ig fb" data-category="pre-opening">
+            <div class="template-preview" style="background:linear-gradient(135deg,#089494,#0ab3b3);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">🏫</div>
+                <div class="template-preview-title" style="color:#fff;">What Makes Us Different</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.7);">Academic model spotlight</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">School Vision Post</div>
+              <div class="template-card-desc">Explain your academic model in plain language. Families need to understand what you offer before they'll commit to learning more.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill ig">IG</span>
+                  <span class="platform-pill fb">FB</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+              <div class="template-card-canva" onclick="event.stopPropagation(); openCanva(this.closest('.template-card').getAttribute('onclick').match(/openTemplate\('(\w[-\w]*)'\)/)[1])">🎨 Open graphic in Canva</div>
+            </div>
+          </div>
+
+          <div class="template-card" onclick="openTemplate('yard-sign')" data-platforms="ig fb sms" data-category="pre-opening">
+            <div class="template-preview" style="background:linear-gradient(135deg,#2d1b69,#4a2d8a);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">🪧</div>
+                <div class="template-preview-title" style="color:#fff;">Yard Sign Drop — Are You In?</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.65);">Founder family momentum</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Yard Sign Campaign</div>
+              <div class="template-card-desc">Turn your founding families into visible advocates in the neighborhood. Yard signs create social proof that moves other families off the fence.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill ig">IG</span>
+                  <span class="platform-pill fb">FB</span>
+                  <span class="platform-pill sms">SMS</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+              <div class="template-card-canva" onclick="event.stopPropagation(); openCanva(this.closest('.template-card').getAttribute('onclick').match(/openTemplate\('(\w[-\w]*)'\)/)[1])">🎨 Open graphic in Canva</div>
+            </div>
+          </div>
+
+          <div class="template-card" onclick="openTemplate('countdown')" data-platforms="ig fb email" data-category="pre-opening">
+            <div class="template-preview" style="background:linear-gradient(135deg,#1a1a2e,#16213e);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">⏳</div>
+                <div class="template-preview-title" style="color:#fff;">Opening Day Countdown</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.55);">Build anticipation</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Opening Day Countdown</div>
+              <div class="template-card-desc">Create momentum and urgency as you approach opening day. Works as a recurring series — 6 months out, 3 months, 30 days, 1 week.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill ig">IG</span>
+                  <span class="platform-pill fb">FB</span>
+                  <span class="platform-pill email">Email</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+              <div class="template-card-canva" onclick="event.stopPropagation(); openCanva(this.closest('.template-card').getAttribute('onclick').match(/openTemplate\('(\w[-\w]*)'\)/)[1])">🎨 Open graphic in Canva</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- OPEN HOUSE -->
+      <div class="category-section" data-category="open-house">
+        <div class="category-header">
+          <div class="category-title"><span class="category-emoji">🏠</span> Open House</div>
+          <span class="category-count">4 templates</span>
+        </div>
+        <div class="template-grid">
+
+          <div class="template-card" onclick="openTemplate('open-house-announce')" data-platforms="ig fb email sms" data-category="open-house">
+            <div class="template-preview" style="background:linear-gradient(135deg,#ff6015,#ff9a3c);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">📣</div>
+                <div class="template-preview-title" style="color:#fff;">Open House Announcement</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.75);">Date · Time · RSVP</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Open House Announcement</div>
+              <div class="template-card-desc">The full campaign kit — social post, email, and SMS. Announce your open house across all channels with one consistent message.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill ig">IG</span>
+                  <span class="platform-pill fb">FB</span>
+                  <span class="platform-pill email">Email</span>
+                  <span class="platform-pill sms">SMS</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+              <div class="template-card-canva" onclick="event.stopPropagation(); openCanva(this.closest('.template-card').getAttribute('onclick').match(/openTemplate\('(\w[-\w]*)'\)/)[1])">🎨 Open graphic in Canva</div>
+            </div>
+          </div>
+
+          <div class="template-card" onclick="openTemplate('open-house-reminder')" data-platforms="email sms" data-category="open-house">
+            <div class="template-preview" style="background:linear-gradient(135deg,#0f2d5a,#2255a0);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">⏰</div>
+                <div class="template-preview-title" style="color:#fff;">Open House Reminder</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.6);">3 days · 1 day · Morning of</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Open House Reminder Sequence</div>
+              <div class="template-card-desc">Three reminder messages timed at 3 days, 1 day, and morning-of. Families who RSVP but don't show up need 2-3 nudges. This sequence handles it.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill email">Email</span>
+                  <span class="platform-pill sms">SMS</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="template-card" onclick="openTemplate('open-house-followup')" data-platforms="email sms" data-category="open-house">
+            <div class="template-preview" style="background:linear-gradient(135deg,#089494,#05b8b8);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">💌</div>
+                <div class="template-preview-title" style="color:#fff;">Post-Open House Follow-Up</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.7);">Convert attendees to enrolled</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Post-Open House Follow-Up</div>
+              <div class="template-card-desc">The follow-up is where open houses win or lose enrollment. This email/SMS goes out within 24 hours and moves families toward the application.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill email">Email</span>
+                  <span class="platform-pill sms">SMS</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="template-card" onclick="openTemplate('open-house-recap')" data-platforms="ig fb" data-category="open-house">
+            <div class="template-preview" style="background:linear-gradient(135deg,#ff6015,#cc3d00);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">📸</div>
+                <div class="template-preview-title" style="color:#fff;">Open House Recap Post</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.7);">Social proof in action</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Open House Recap</div>
+              <div class="template-card-desc">Show the families who couldn't make it what they missed. A post-event recap with photos builds FOMO and drives applications from families still on the fence.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill ig">IG</span>
+                  <span class="platform-pill fb">FB</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+              <div class="template-card-canva" onclick="event.stopPropagation(); openCanva(this.closest('.template-card').getAttribute('onclick').match(/openTemplate\('(\w[-\w]*)'\)/)[1])">🎨 Open graphic in Canva</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- LOTTERY -->
+      <div class="category-section" data-category="lottery">
+        <div class="category-header">
+          <div class="category-title"><span class="category-emoji">🎰</span> Lottery & Applications</div>
+          <span class="category-count">4 templates</span>
+        </div>
+        <div class="template-grid">
+
+          <div class="template-card" onclick="openTemplate('lottery-opens')" data-platforms="ig fb email sms" data-category="lottery">
+            <div class="template-preview" style="background:linear-gradient(135deg,#1a1a2e,#e94560);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">🎉</div>
+                <div class="template-preview-title" style="color:#fff;">Lottery Is Now Open!</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.7);">Apply by [date]</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Lottery Opens Announcement</div>
+              <div class="template-card-desc">Your biggest enrollment moment. Full campaign — social, email, and SMS — to announce lottery opening and drive applications in the first 48 hours.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill ig">IG</span>
+                  <span class="platform-pill fb">FB</span>
+                  <span class="platform-pill email">Email</span>
+                  <span class="platform-pill sms">SMS</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+              <div class="template-card-canva" onclick="event.stopPropagation(); openCanva(this.closest('.template-card').getAttribute('onclick').match(/openTemplate\('(\w[-\w]*)'\)/)[1])">🎨 Open graphic in Canva</div>
+            </div>
+          </div>
+
+          <div class="template-card" onclick="openTemplate('deadline-reminder')" data-platforms="email sms ig" data-category="lottery">
+            <div class="template-preview" style="background:linear-gradient(135deg,#cc3d00,#ff6015);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">🚨</div>
+                <div class="template-preview-title" style="color:#fff;">Application Deadline: 3 Days Left</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.7);">Urgency drives action</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Application Deadline Reminder</div>
+              <div class="template-card-desc">Urgency sequence for the final stretch. Goes to families who showed interest but haven't applied yet. Timed at 7 days, 3 days, and last day.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill email">Email</span>
+                  <span class="platform-pill sms">SMS</span>
+                  <span class="platform-pill ig">IG</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="template-card" onclick="openTemplate('intent-to-enroll')" data-platforms="email sms" data-category="lottery">
+            <div class="template-preview" style="background:linear-gradient(135deg,#0f2d5a,#089494);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">✍️</div>
+                <div class="template-preview-title" style="color:#fff;">Submit Your Intent to Enroll</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.65);">Low commitment · High signal</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Intent-to-Enroll Drive</div>
+              <div class="template-card-desc">Move families from "interested" to "committed" before the application window. ITEs give you real data and warm your pipeline before lottery day.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill email">Email</span>
+                  <span class="platform-pill sms">SMS</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="template-card" onclick="openTemplate('lottery-results')" data-platforms="email sms" data-category="lottery">
+            <div class="template-preview" style="background:linear-gradient(135deg,#089494,#056565);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">📬</div>
+                <div class="template-preview-title" style="color:#fff;">Your Lottery Results Are In</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.65);">Enrolled · Waitlisted</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Lottery Results Notification</div>
+              <div class="template-card-desc">Two versions — one for families who were selected, one for families placed on the waitlist. Warm, clear, and drives next steps immediately.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill email">Email</span>
+                  <span class="platform-pill sms">SMS</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RECURRING -->
+      <div class="category-section" data-category="recurring">
+        <div class="category-header">
+          <div class="category-title"><span class="category-emoji">🔁</span> Recurring Series</div>
+          <span class="category-count">3 templates</span>
+        </div>
+        <div class="template-grid">
+
+          <div class="template-card" onclick="openTemplate('meliora-monday')" data-platforms="ig fb" data-category="recurring">
+            <div class="template-preview" style="background:linear-gradient(135deg,#0f2d5a,#ff6015);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">🌅</div>
+                <div class="template-preview-title" style="color:#fff;">Meliora Monday</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.65);">Weekly recurring series</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Meliora Monday Series</div>
+              <div class="template-card-desc">Weekly touchpoint that keeps your school top of mind. Each post shares a piece of your school's philosophy — what "meliora" (always better) means in practice.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill ig">IG</span>
+                  <span class="platform-pill fb">FB</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+              <div class="template-card-canva" onclick="event.stopPropagation(); openCanva(this.closest('.template-card').getAttribute('onclick').match(/openTemplate\('(\w[-\w]*)'\)/)[1])">🎨 Open graphic in Canva</div>
+            </div>
+          </div>
+
+          <div class="template-card" onclick="openTemplate('family-spotlight')" data-platforms="ig fb" data-category="recurring">
+            <div class="template-preview" style="background:linear-gradient(135deg,#2d1b69,#7d2ae8);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">👨‍👩‍👧</div>
+                <div class="template-preview-title" style="color:#fff;">Founding Family Spotlight</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.65);">Real families · Real trust</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Founding Family Spotlight</div>
+              <div class="template-card-desc">Feature real founding families and why they chose your school. Social proof in the most human form — other parents making the same decision yours are considering.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill ig">IG</span>
+                  <span class="platform-pill fb">FB</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+              <div class="template-card-canva" onclick="event.stopPropagation(); openCanva(this.closest('.template-card').getAttribute('onclick').match(/openTemplate\('(\w[-\w]*)'\)/)[1])">🎨 Open graphic in Canva</div>
+            </div>
+          </div>
+
+          <div class="template-card" onclick="openTemplate('milestone')" data-platforms="ig fb email" data-category="recurring">
+            <div class="template-preview" style="background:linear-gradient(135deg,#cc7000,#ff9900);">
+              <div class="template-preview-inner">
+                <div class="template-preview-emoji">🏆</div>
+                <div class="template-preview-title" style="color:#fff;">Enrollment Milestone</div>
+                <div class="template-preview-sub" style="color:rgba(255,255,255,.75);">50 families · 100 families · Full!</div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-name">Enrollment Milestone Celebration</div>
+              <div class="template-card-desc">Celebrate publicly when you hit enrollment milestones. 50 families. 100 families. Waitlist forming. These posts create urgency and reward your community for spreading the word.</div>
+              <div class="template-card-footer">
+                <div class="template-platforms">
+                  <span class="platform-pill ig">IG</span>
+                  <span class="platform-pill fb">FB</span>
+                  <span class="platform-pill email">Email</span>
+                </div>
+                <div class="template-card-use">Use this →</div>
+              </div>
+              <div class="template-card-canva" onclick="event.stopPropagation(); openCanva(this.closest('.template-card').getAttribute('onclick').match(/openTemplate\('(\w[-\w]*)'\)/)[1])">🎨 Open graphic in Canva</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- TEMPLATE MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Template</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Customize for your school</label>
+        <div class="form-group" style="margin-bottom:10px;">
+          <input type="text" class="form-input" id="school-name-input" placeholder="School name" value="The Meliora School">
+        </div>
+        <input type="text" class="form-input" id="custom-detail" placeholder="Add a detail (date, location, link...)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Generated Copy</label>
+        <div class="copy-preview" id="copy-preview">Select a template to see generated copy.</div>
+        <button class="copy-btn" onclick="copyCopy()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy to clipboard
+        </button>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Canva Graphic Template</label>
+        <div id="canva-link-display"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+      <button class="btn btn-primary" onclick="scheduleFromTemplate()">Add to Calendar →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const templateCopy = {
+  'founder-story': `✨ Why I'm building [School Name].
+
+Three years ago, I was sitting in a parent meeting wondering why no one was talking about what my child actually needed. 
+
+I knew there had to be a better way. So I decided to build it.
+
+[School Name] is opening this fall in [City]. We're building a school where every child is known by name — not just their test score.
+
+We're now accepting interest list signups. If you believe what I believe about what school should look like, I'd love for your family to be part of what we're building.
+
+Link in bio to join our interest list. 💛
+
+#[SchoolName] #CharterSchool #NewSchool #[City]`,
+
+  'interest-list': `📋 Something big is coming to [City].
+
+[School Name] opens this fall — and we're building our founding family community right now.
+
+Founding families get:
+→ First access to our open house
+→ First priority in our enrollment lottery
+→ A say in shaping school culture from day one
+
+Space is limited. If you want your family to be part of this from the beginning, join our interest list today.
+
+🔗 Link in bio.
+
+#[SchoolName] #CharterSchool #FoundingFamily #[City]`,
+
+  'open-house-announce': `📣 Our Open House is happening!
+
+Come see [School Name] in person.
+
+📅 [Date]
+⏰ [Time]
+📍 [Location]
+
+Meet our founding team. See our academic model in action. Ask every question you have.
+
+This is your chance to experience what we're building before enrollment opens.
+
+RSVP at the link in bio — space is limited and we want to save you a seat.
+
+See you there. 🏫
+
+#[SchoolName] #OpenHouse #CharterSchool #[City]`,
+
+  'meliora-monday': `🌅 Meliora Monday.
+
+"Meliora" means always better. Always pursuing excellence. Never settling for good enough.
+
+This week we're thinking about: [theme — e.g., what it means to truly know a student].
+
+At [School Name], we believe [core belief]. That belief shapes everything we build — from how we structure the school day to how we talk to families.
+
+What does "always better" mean to you as a parent?
+
+Drop it in the comments. 👇
+
+#MelioraMonday #[SchoolName] #CharterSchool #AlwaysBetter`,
+
+  'lottery-opens': `🎉 IT'S HERE. The [School Name] lottery is now open.
+
+This is the moment you've been waiting for. If you've been following our journey, now is the time to make it official.
+
+📝 Apply by [deadline]
+🏫 [Grades served]
+📍 [City/Neighborhood]
+
+Every application submitted by the deadline will be entered into our founding enrollment lottery. Selected families become part of [School Name]'s founding class.
+
+Apply now → [link in bio]
+
+Questions? Reply to this post or DM us directly.
+
+#[SchoolName] #LotteryOpen #CharterSchool #[City] #ApplyNow`,
+
+  'family-spotlight': `👨‍👩‍👧 Meet [Family Name] — one of our founding families.
+
+"[Quote from family about why they chose the school]"
+
+[Family description — neighborhood, why they were looking for something different, what excited them about the school's vision]
+
+Families like the [Family Name]s are why we're building [School Name]. Real people in our community who believe something better is possible.
+
+Applications open [date]. Link in bio.
+
+#FoundingFamily #[SchoolName] #CharterSchool #[City]`,
+
+  'intent-to-enroll': `✍️ Ready to make it official?
+
+If your family is planning to apply to [School Name], submit your Intent to Enroll today.
+
+It's not a full application — it's a quick form that tells us your family is seriously interested. It takes 2 minutes and it puts you on our priority contact list when the lottery opens.
+
+🔗 Link in bio → Intent to Enroll
+
+Applications open [date]. Don't wait.
+
+#[SchoolName] #IntentToEnroll #CharterSchool`,
+
+  'milestone': `🏆 WE HIT [NUMBER] FAMILIES.
+
+[Number] families have officially joined the [School Name] community — and we're just getting started.
+
+To every family who has signed up, shared our posts, put a yard sign in front of your home, and told your neighbors about what we're building: thank you.
+
+You're making this school real.
+
+If you haven't joined yet — link in bio. Come be part of something.
+
+#[SchoolName] #[Number]Families #CharterSchool #[City]`,
+};
+
+let currentTemplate = '';
+
+function openTemplate(key) {
+  currentTemplate = key;
+  const names = {
+    'founder-story': 'Founder Story Post',
+    'interest-list': 'Interest List Drive',
+    'school-vision': 'School Vision Post',
+    'yard-sign': 'Yard Sign Campaign',
+    'countdown': 'Opening Day Countdown',
+    'open-house-announce': 'Open House Announcement',
+    'open-house-reminder': 'Open House Reminder Sequence',
+    'open-house-followup': 'Post-Open House Follow-Up',
+    'open-house-recap': 'Open House Recap',
+    'lottery-opens': 'Lottery Opens Announcement',
+    'deadline-reminder': 'Application Deadline Reminder',
+    'intent-to-enroll': 'Intent-to-Enroll Drive',
+    'lottery-results': 'Lottery Results Notification',
+    'meliora-monday': 'Meliora Monday Series',
+    'family-spotlight': 'Founding Family Spotlight',
+    'milestone': 'Enrollment Milestone Celebration',
+  };
+  document.getElementById('modal-title').textContent = names[key] || 'Template';
+  updateCopy();
+  renderCanvaField();
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function updateCopy() {
+  const school = document.getElementById('school-name-input').value || '[School Name]';
+  const copy = (templateCopy[currentTemplate] || 'Template copy coming soon.')
+    .replace(/\[School Name\]/g, school)
+    .replace(/\[SchoolName\]/g, school.replace(/\s+/g,''));
+  document.getElementById('copy-preview').textContent = copy;
+}
+
+document.getElementById('school-name-input').addEventListener('input', updateCopy);
+document.getElementById('custom-detail').addEventListener('input', updateCopy);
+
+function copyCopy() {
+  const text = document.getElementById('copy-preview').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✓ Copied!';
+    setTimeout(() => btn.innerHTML = orig, 1800);
+  });
+}
+
+// Canva template URLs — paste your published Canva template links here
+const MASTER_CANVA = 'https://www.canva.com/design/DAG5uCZx4vU/3ntala8OPhfszRHc-wDYMw/view?utm_content=DAG5uCZx4vU&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview';
+const canvaLinks = {
+  'founder-story':        MASTER_CANVA,
+  'interest-list':        MASTER_CANVA,
+  'school-vision':        MASTER_CANVA,
+  'yard-sign':            MASTER_CANVA,
+  'countdown':            MASTER_CANVA,
+  'open-house-announce':  MASTER_CANVA,
+  'open-house-recap':     MASTER_CANVA,
+  'meliora-monday':       MASTER_CANVA,
+  'family-spotlight':     MASTER_CANVA,
+  'milestone':            MASTER_CANVA,
+  'lottery-opens':        MASTER_CANVA,
+  'deadline-reminder':    MASTER_CANVA,
+};
+
+function openCanva(key) {
+  const url = canvaLinks[key || currentTemplate];
+  if (url) { window.open(url, '_blank'); }
+  else { alert('No Canva template linked yet for this post type. Add your template URL in the canvaLinks object.'); }
+}
+
+function renderCanvaField() {
+  const url = canvaLinks[currentTemplate];
+  const el = document.getElementById('canva-link-display');
+  if (url) {
+    el.innerHTML = `<button class="canva-open-btn" onclick="openCanva()">
+      🎨 Open your Canva template → customize with school info → download
+    </button>`;
+  } else {
+    el.innerHTML = `<div style="background:#fff8f5;border:1.5px dashed #ffc4a0;border-radius:8px;padding:12px 14px;font-size:13px;color:var(--muted);">
+      <strong style="color:var(--navy);">No Canva template linked yet.</strong><br>
+      Paste your published Canva template URL in the <code style="background:var(--offwhite);padding:1px 5px;border-radius:4px;">canvaLinks</code> object for <code style="background:var(--offwhite);padding:1px 5px;border-radius:4px;">'${currentTemplate}'</code>.
+    </div>`;
+  }
+}
+
+function scheduleFromTemplate() {
+  closeModal();
+  alert('Template added to your content calendar!');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+// ── FILTER ──
+let activeFilter = 'all';
+function setFilter(filter, el) {
+  activeFilter = filter;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  filterTemplates(document.getElementById('search-input').value);
+}
+
+function filterTemplates(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('.template-card').forEach(card => {
+    const platforms = card.dataset.platforms || '';
+    const name = card.querySelector('.template-card-name')?.textContent.toLowerCase() || '';
+    const desc = card.querySelector('.template-card-desc')?.textContent.toLowerCase() || '';
+    const matchFilter = activeFilter === 'all' || platforms.includes(activeFilter);
+    const matchSearch = !q || name.includes(q) || desc.includes(q);
+    card.style.display = (matchFilter && matchSearch) ? '' : 'none';
+  });
+}
+
+// ── PRODUCT SWITCHER ──
+function toggleSwitcher() {
+  document.getElementById('product-switcher').classList.toggle('open');
+}
+function closeSwitcher() {
+  document.getElementById('product-switcher').classList.remove('open');
+}
+document.addEventListener('click', function(e) {
+  const sw = document.getElementById('product-switcher');
+  if (sw && !sw.contains(e.target)) sw.classList.remove('open');
+});
+
+// ── UPGRADE MODAL ──
+let upgradeTarget = 'enroll';
+function showUpgradeModal(target) {
+  upgradeTarget = target;
+  closeSwitcher();
+  const titles = {
+    enroll: 'Unlock Enroll',
+    hub: 'Unlock Hub',
+    suite: 'Upgrade to the Full Suite',
+  };
+  const subs = {
+    enroll: 'Your Hub subscription doesn\'t include Enroll. Upgrade to connect your marketing directly to your enrollment pipeline.',
+    hub: 'Your Enroll subscription doesn\'t include Hub. Upgrade to add a full marketing platform to your enrollment system.',
+    suite: 'Get Hub + Enroll together and save $27/month. One login. One system. Full enrollment and marketing in one place.',
+  };
+  document.getElementById('upgrade-title').textContent = titles[target] || 'Upgrade Your Plan';
+  document.getElementById('upgrade-sub').textContent = subs[target] || '';
+  document.getElementById('upgrade-overlay').classList.add('open');
+}
+function closeUpgradeModal() {
+  document.getElementById('upgrade-overlay').classList.remove('open');
+}
+function closeUpgradeOutside(e) {
+  if (e.target === document.getElementById('upgrade-overlay')) closeUpgradeModal();
+}
+function selectPlan(el) {
+  el.closest('.upgrade-plans').querySelectorAll('.upgrade-plan').forEach(p => p.classList.remove('featured'));
+  el.classList.add('featured');
+}
+function goToUpgrade() {
+  window.open('https://kpcharterkollective.com/apply.html', '_blank');
+  closeUpgradeModal();
+}
+
+</script>
+
+<!-- UPGRADE MODAL -->
+<div class="upgrade-overlay" id="upgrade-overlay" onclick="closeUpgradeOutside(event)">
+  <div class="upgrade-modal">
+    <div class="upgrade-modal-hero">
+      <div class="upgrade-lock-icon">🔒</div>
+      <div class="upgrade-modal-title" id="upgrade-title">Unlock Enroll</div>
+      <div class="upgrade-modal-sub" id="upgrade-sub">Your Hub subscription doesn't include Enroll. Upgrade to connect your marketing directly to your enrollment pipeline.</div>
+    </div>
+    <div class="upgrade-modal-body">
+      <div class="upgrade-plans" id="upgrade-plans">
+        <div class="upgrade-plan" onclick="selectPlan(this)">
+          <div class="upgrade-plan-icon enroll">E</div>
+          <div class="upgrade-plan-name">Enroll Only</div>
+          <div class="upgrade-plan-price">$97<span>/mo</span></div>
+          <div class="upgrade-plan-desc">Enrollment management, pipeline tracking, lottery, SMS</div>
+        </div>
+        <div class="upgrade-plan featured" onclick="selectPlan(this)">
+          <div class="upgrade-plan-badge">BEST VALUE</div>
+          <div class="upgrade-plan-icon suite">H+E</div>
+          <div class="upgrade-plan-name">Full Suite</div>
+          <div class="upgrade-plan-price">$197<span>/mo</span></div>
+          <div class="upgrade-plan-desc">Hub + Enroll together. Save $27/month vs buying separately.</div>
+        </div>
+      </div>
+      <div class="upgrade-founding">
+        <div class="upgrade-founding-icon">🏫</div>
+        <div class="upgrade-founding-text">
+          <div class="upgrade-founding-title">Founding School Rate</div>
+          <div class="upgrade-founding-sub">Pre-opening schools get 50% off for your first year</div>
+        </div>
+        <div class="upgrade-founding-badge">50% OFF</div>
+      </div>
+      <button class="upgrade-cta" onclick="goToUpgrade()">Start Your Free 14-Day Trial →</button>
+      <div class="upgrade-dismiss" onclick="closeUpgradeModal()">Not right now</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

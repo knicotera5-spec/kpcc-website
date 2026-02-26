@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enroll — Powered by KP Charter Kollective</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--navy:#0f2d5a;--navy-mid:#1a3d6e;--orange:#ff6015;--orange-light:#ff7a36;
+--teal:#089494;--teal-light:#0aafaf;--white:#fff;--offwhite:#f7f8fc;
+--border:#e4e8f0;--muted:#6b7a99;--text:#1a2540;
+--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;
+--font-serif:'Playfair Display',serif;--font-sans:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;
+--shadow-md:0 4px 16px rgba(15,45,90,.12);--shadow-lg:0 8px 32px rgba(15,45,90,.18);
+--radius:10px;--radius-sm:6px}
+body{font-family:var(--font-sans);background:var(--offwhite);color:var(--text);min-height:100vh;display:flex}
+
+/* LOGIN */
+.login-screen{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:1000;transition:opacity .3s}
+.login-screen.hidden{opacity:0;pointer-events:none}
+.login-box{background:#fff;border-radius:16px;padding:44px;width:420px;max-width:95vw;box-shadow:var(--shadow-lg)}
+.login-logo{font-family:var(--font-serif);font-size:26px;font-weight:900;color:var(--navy)}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:28px;margin-top:4px}
+.login-lbl{font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px}
+.login-inp{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:var(--font-sans);outline:none;margin-bottom:14px;transition:border-color .15s}
+.login-inp:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(8,148,148,.1)}
+.login-btn{width:100%;background:var(--orange);color:#fff;border:none;padding:13px;border-radius:var(--radius-sm);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font-sans)}
+.login-btn:hover{background:var(--orange-light)}
+.login-btn:disabled{opacity:.6;cursor:not-allowed}
+.login-err{color:var(--danger);font-size:12px;margin-top:8px;display:none}
+
+/* SIDEBAR */
+.sidebar{width:248px;background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
+.sb-brand{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-brand-name{font-family:var(--font-serif);font-size:15px;font-weight:700;color:#fff}
+.sb-brand-tag{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase;margin-top:3px}
+.sb-school{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-school-lbl{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.sb-school-name{font-size:13px;font-weight:600;color:#fff}
+.sb-school-yr{font-size:11px;color:rgba(255,255,255,.4)}
+.sb-nav{padding:10px 0;flex:1}
+.nav-grp{font-size:10px;color:rgba(255,255,255,.28);letter-spacing:.12em;text-transform:uppercase;padding:10px 20px 4px}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;color:rgba(255,255,255,.5);font-size:13px;font-weight:500;border:none;background:none;width:100%;text-align:left;transition:all .15s;position:relative}
+.nav-btn:hover{color:#fff;background:rgba(255,255,255,.05)}
+.nav-btn.active{color:#fff;background:rgba(255,96,21,.15)}
+.nav-btn.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--orange);border-radius:0 2px 2px 0}
+.nav-btn svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:99px;font-family:var(--font-mono)}
+.sb-foot{padding:14px 20px;border-top:1px solid rgba(255,255,255,.08)}
+.sb-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--orange-light));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.sb-uname{font-size:12px;font-weight:600;color:#fff}
+.sb-urole{font-size:11px;color:rgba(255,255,255,.35)}
+.logout-btn{background:none;border:none;color:rgba(255,255,255,.35);font-size:11px;cursor:pointer;font-family:var(--font-sans);padding:0;margin-top:4px}
+.logout-btn:hover{color:#fff}
+
+/* MAIN */
+.main{margin-left:248px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-family:var(--font-serif);font-size:19px;font-weight:700;color:var(--navy)}
+.topbar-sub{font-size:12px;color:var(--muted)}
+.content{padding:28px 32px;flex:1}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:var(--font-sans)}
+.btn svg{width:14px;height:14px}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-light);transform:translateY(-1px)}
+.btn-secondary{background:var(--offwhite);color:var(--navy);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--border)}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:var(--teal-light)}
+.btn-danger{background:#fef2f2;color:var(--danger);border:1px solid #fecaca}
+.btn-sm{padding:5px 11px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+/* CARDS */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.card-title{font-family:var(--font-serif);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.card-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.stat-inquiry::after{background:#94a3b8}.stat-interested::after{background:var(--teal)}.stat-intent::after{background:var(--warning)}.stat-applied::after{background:var(--orange)}.stat-enrolled::after{background:var(--success)}
+.stat-lbl{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+.stat-num{font-family:var(--font-serif);font-size:32px;font-weight:900;color:var(--navy);line-height:1}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fgrp{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.flbl{font-size:12px;font-weight:600;color:var(--navy)}
+.flbl span{color:var(--danger)}
+.finp,.fsel,.ftxt{padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font-sans);color:var(--text);outline:none;transition:border-color .15s;background:#fff}
+.finp:focus,.fsel:focus,.ftxt:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(8,148,148,.1)}
+.ftxt{resize:vertical;min-height:80px}
+
+/* TABLE */
+.table-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.table-toolbar{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;min-width:200px}
+.search-box input{background:none;border:none;outline:none;font-size:13px;font-family:var(--font-sans);color:var(--text);flex:1}
+.search-box svg{color:var(--muted);flex-shrink:0;width:14px;height:14px}
+table{width:100%;border-collapse:collapse}
+thead th{padding:10px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;background:var(--offwhite);border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#f8f9ff}
+tbody td{padding:11px 16px;font-size:13px}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.pill-inquiry{background:#f1f5f9;color:#64748b}.pill-interested{background:#e0f4f4;color:var(--teal)}.pill-intent{background:#fef9c3;color:#ca8a04}.pill-applied{background:#fff0e8;color:var(--orange)}.pill-enrolled{background:#dcfce7;color:#16a34a}.pill-waitlisted{background:#f3e8ff;color:#7c3aed}.pill-withdrawn{background:#fef2f2;color:var(--danger)}.pill-complete{background:#dcfce7;color:#16a34a}.pill-partial{background:#fef9c3;color:#ca8a04}.pill-missing{background:#fef2f2;color:var(--danger)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,45,90,.55);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:14px;padding:32px;width:560px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);transform:translateY(16px);transition:transform .2s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-lg{width:720px}
+.modal-title{font-family:var(--font-serif);font-size:22px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.modal-foot{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+
+/* DETAIL PANEL */
+.detail-panel{position:fixed;right:0;top:0;bottom:0;width:420px;background:#fff;border-left:1px solid var(--border);z-index:200;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column}
+.detail-panel.open{transform:translateX(0)}
+.d-hdr{padding:22px 24px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between}
+.d-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.d-name{font-family:var(--font-serif);font-size:18px;font-weight:700;color:var(--navy)}
+.d-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.d-body{flex:1;overflow-y:auto;padding:20px 24px}
+.d-sec{margin-bottom:22px}
+.d-sec-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.d-row{display:flex;gap:8px;margin-bottom:8px}
+.d-row-lbl{font-size:12px;color:var(--muted);width:110px;flex-shrink:0}
+.d-row-val{font-size:13px;font-weight:500;color:var(--navy);flex:1}
+.d-foot{padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:8px}
+.icon-btn{background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;color:var(--muted);transition:all .15s}
+.icon-btn:hover{background:var(--offwhite);color:var(--navy)}
+.stage-btns{display:flex;gap:6px;flex-wrap:wrap}
+.stage-btn{padding:5px 12px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s}
+
+/* CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:8px}
+.check-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border)}
+.check-item.done{background:#f0fdf4;border-color:#bbf7d0}
+.check-box{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.check-box.checked{background:var(--success);border-color:var(--success)}
+.check-name{font-size:13px;font-weight:500;color:var(--navy);flex:1}
+.check-req{font-size:10px;color:var(--danger);font-weight:600}
+.check-opt{font-size:10px;color:var(--muted)}
+
+/* EMAIL */
+.email-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px}
+.email-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.email-type{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:99px}
+.et-accepted{background:#dcfce7;color:#16a34a}.et-waitlisted{background:#f3e8ff;color:#7c3aed}.et-reminder{background:#fff0e8;color:var(--orange)}.et-welcome{background:#e0f4f4;color:var(--teal)}.et-missing{background:#fef2f2;color:var(--danger)}
+.email-subject{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:6px}
+.email-preview{font-size:13px;color:var(--muted);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* LOTTERY */
+.lottery-run-btn{background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:#fff;border:none;padding:14px 28px;border-radius:var(--radius-sm);font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font-sans);width:100%;margin-bottom:16px;transition:all .2s}
+.lottery-run-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.lottery-run-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.lottery-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px}
+.lottery-rank{font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--navy);width:48px}
+.lottery-rank.top{color:var(--success)}.lottery-rank.wl{color:#7c3aed}
+
+/* PROGRESS */
+.progress-track{height:10px;background:var(--offwhite);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--teal),var(--success));transition:width .8s ease}
+
+/* WELCOME OVERLAY */
+.welcome-overlay{position:fixed;inset:0;background:rgba(15,45,90,.7);backdrop-filter:blur(6px);z-index:800;display:flex;align-items:center;justify-content:center}
+.welcome-overlay.hidden{display:none}
+.welcome-box{background:#fff;border-radius:20px;width:640px;max-width:96vw;max-height:92vh;overflow:hidden;box-shadow:var(--shadow-lg);display:flex;flex-direction:column}
+.welcome-hdr{background:var(--navy);padding:32px 36px}
+.welcome-tag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);margin-bottom:8px}
+.welcome-title{font-family:var(--font-serif);font-size:26px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:6px}
+.welcome-sub{font-size:13px;color:rgba(255,255,255,.6)}
+.welcome-steps{padding:24px 36px;overflow-y:auto;flex:1}
+.welcome-step{display:flex;gap:16px;margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--border)}
+.welcome-step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.welcome-step-num{width:34px;height:34px;border-radius:50%;background:var(--orange);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.welcome-step-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.welcome-step-desc{font-size:13px;color:var(--muted);line-height:1.6}
+.welcome-foot{padding:18px 36px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.welcome-skip{font-size:12px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:var(--font-sans)}
+.welcome-skip:hover{color:var(--navy)}
+
+/* GETTING STARTED */
+.gs-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.gs-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:22px;cursor:pointer;transition:all .2s}
+.gs-card:hover{border-color:var(--teal);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.gs-step{font-size:10px;font-weight:700;color:var(--orange);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.gs-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.gs-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.gs-desc{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* WIZARD */
+.wizard-overlay{position:fixed;inset:0;background:rgba(15,45,90,.75);backdrop-filter:blur(6px);z-index:810;display:flex;align-items:center;justify-content:center}
+.wizard-overlay.hidden{display:none}
+.wizard-box{background:#fff;border-radius:20px;width:660px;max-width:96vw;max-height:94vh;overflow:hidden;box-shadow:0 8px 48px rgba(15,45,90,.25);display:flex;flex-direction:column}
+.wizard-progress{height:4px;background:var(--border);position:relative}
+.wizard-progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--success));border-radius:99px;transition:width .4s ease}
+.wizard-hdr{padding:28px 36px 0}
+.wizard-step-tag{font-size:11px;font-weight:700;color:var(--orange);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.wizard-title{font-family:var(--font-serif);font-size:24px;font-weight:900;color:var(--navy);margin-bottom:6px}
+.wizard-sub{font-size:13px;color:var(--muted);line-height:1.6}
+.wizard-body{padding:24px 36px;flex:1;overflow-y:auto}
+.wizard-foot{padding:18px 36px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.wizard-back{background:none;border:none;font-size:13px;color:var(--muted);cursor:pointer;font-family:var(--font-sans);padding:0}
+.wizard-back:hover{color:var(--navy)}
+.wizard-skip{background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;font-family:var(--font-sans);padding:0}
+.wizard-skip:hover{color:var(--navy)}
+/* READY SCREEN */
+.ready-overlay{position:fixed;inset:0;background:rgba(15,45,90,.75);backdrop-filter:blur(6px);z-index:820;display:flex;align-items:center;justify-content:center}
+.ready-overlay.hidden{display:none}
+.ready-box{background:#fff;border-radius:20px;width:560px;max-width:96vw;padding:0;overflow:hidden;box-shadow:0 8px 48px rgba(15,45,90,.25);}
+.ready-hdr{background:linear-gradient(135deg,var(--navy),var(--teal));padding:36px;text-align:center}
+.ready-body{padding:32px 36px}
+.ready-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.ready-item:last-child{border-bottom:none}
+.ready-item-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.ready-item-title{font-size:13px;font-weight:700;color:var(--navy)}
+.ready-item-sub{font-size:12px;color:var(--muted)}
+/* VIEWS */
+.view{display:none}.view.active{display:block}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* LOADING */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+.pg-load{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;gap:12px;color:var(--muted);font-size:14px}
+.pg-spin{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--navy);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:10px;transform:translateY(80px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-dot{width:8px;height:8px;border-radius:50%;background:var(--success);flex-shrink:0}
+
+/* FAQ */
+.faq-item{padding:14px;background:var(--offwhite);border-radius:var(--radius-sm);margin-bottom:10px}
+.faq-q{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.faq-a{font-size:13px;color:var(--muted);line-height:1.6}
+
+@media(max-width:900px){
+.sidebar{width:60px}.sb-brand-name,.sb-brand-tag,.sb-school,.nav-grp,.nav-btn span,.nav-badge,.sb-uname,.sb-urole,.logout-btn{display:none}
+.main{margin-left:60px}.nav-btn{justify-content:center;padding:12px}
+.stats-grid{grid-template-columns:repeat(2,1fr)}.content{padding:16px}.topbar{padding:0 16px}.two-col,.gs-grid{grid-template-columns:1fr}}
+
+/* ── PRODUCT SWITCHER ── */
+.product-switcher { position: relative; }
+.switcher-btn {
+  display: flex; align-items: center; gap: 9px;
+  cursor: pointer; padding: 8px 16px;
+  transition: background .15s; width: 100%;
+}
+.switcher-btn:hover { background: rgba(255,255,255,.06); }
+.switcher-arrow { color: rgba(255,255,255,.35); transition: transform .2s; margin-left: auto; }
+.product-switcher.open .switcher-arrow { transform: rotate(180deg); }
+.switcher-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 8px; right: 8px;
+  background: #fff;
+  border: 1px solid #e0e4eb;
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(9,30,62,.18);
+  padding: 8px;
+  z-index: 300;
+  display: none;
+}
+.product-switcher.open .switcher-dropdown { display: block; }
+.switcher-header {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: #5c6f85; padding: 6px 10px 8px;
+  font-family: 'DM Mono', monospace;
+}
+.switcher-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 8px;
+  cursor: pointer; transition: background .12s;
+  text-decoration: none;
+}
+.switcher-item:hover { background: #f7f8fa; }
+.switcher-item.active { background: #f0fafa; }
+.switcher-item.locked { cursor: pointer; }
+.switcher-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', Georgia, serif; font-size: 17px; font-weight: 900;
+  color: #fff; flex-shrink: 0;
+}
+.switcher-icon.hub { background: linear-gradient(135deg, #ff6015, #ff7633); }
+.switcher-icon.enroll { background: linear-gradient(135deg, #089494, #0ab3b3); }
+.switcher-icon.suite { background: linear-gradient(135deg, #0f2d5a, #2255a0); font-size:10px; font-family: 'DM Mono', monospace; }
+.switcher-item-name { font-size: 13.5px; font-weight: 700; color: #0f2d5a; }
+.switcher-item-sub { font-size: 11px; color: #5c6f85; margin-top: 1px; }
+.switcher-lock {
+  width: 20px; height: 20px; border-radius: 6px;
+  background: #f7f8fa; border: 1px solid #e0e4eb;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; margin-left: auto;
+}
+.switcher-check { color: #089494; font-size: 14px; font-weight: 700; margin-left: auto; }
+.switcher-divider { height: 1px; background: #e0e4eb; margin: 6px 0; }
+.sw-enroll-logo { display: flex; align-items: center; gap: 10px; }
+.sw-logo-text-name { font-size: 20px; font-weight: 700; color: #fff; font-family: Georgia, serif; letter-spacing: -.5px; }
+.sw-logo-text-sub { font-size: 10px; color: rgba(255,255,255,.4); letter-spacing: .04em; }
+
+/* ── UPGRADE MODAL ── */
+.upgrade-overlay {
+  position: fixed; inset: 0;
+  background: rgba(9,30,62,.55);
+  z-index: 400;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s;
+}
+.upgrade-overlay.open { opacity: 1; pointer-events: all; }
+.upgrade-modal {
+  background: #fff; border-radius: 16px;
+  width: 100%; max-width: 540px;
+  box-shadow: 0 32px 80px rgba(9,30,62,.28);
+  transform: translateY(14px); transition: transform .2s;
+  overflow: hidden;
+}
+.upgrade-overlay.open .upgrade-modal { transform: translateY(0); }
+.upgrade-modal-hero {
+  background: linear-gradient(135deg, #091e3e, #1a3a6e);
+  padding: 32px 32px 28px; position: relative; overflow: hidden;
+}
+.upgrade-modal-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.upgrade-lock-icon {
+  width: 52px; height: 52px;
+  background: rgba(255,96,21,.15); border: 1px solid rgba(255,96,21,.3);
+  border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  font-size: 24px; margin-bottom: 16px; position: relative; z-index: 1;
+}
+.upgrade-modal-title {
+  font-family: 'Playfair Display', Georgia, serif; font-size: 24px; font-weight: 900;
+  color: #fff; line-height: 1.2; position: relative; z-index: 1; margin-bottom: 8px;
+}
+.upgrade-modal-sub { font-size: 14px; color: rgba(255,255,255,.55); position: relative; z-index: 1; line-height: 1.6; }
+.upgrade-modal-body { padding: 28px 32px; }
+.upgrade-plans { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.upgrade-plan {
+  border: 1.5px solid #e0e4eb; border-radius: 12px;
+  padding: 18px 16px; cursor: pointer; transition: all .15s; position: relative;
+}
+.upgrade-plan:hover { border-color: #ff6015; }
+.upgrade-plan.featured { border-color: #ff6015; background: #fff8f5; }
+.upgrade-plan-badge {
+  position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+  background: #ff6015; color: #fff; font-size: 10px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+  font-family: 'DM Mono', monospace; letter-spacing: .06em;
+}
+.upgrade-plan-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', Georgia, serif; font-size: 15px; font-weight: 900;
+  color: #fff; margin-bottom: 10px;
+}
+.upgrade-plan-icon.hub { background: linear-gradient(135deg, #ff6015, #ff7633); }
+.upgrade-plan-icon.enroll { background: linear-gradient(135deg, #089494, #0ab3b3); }
+.upgrade-plan-icon.suite { background: linear-gradient(135deg, #0f2d5a, #2255a0); font-size:11px; font-family: 'DM Mono', monospace; }
+.upgrade-plan-name { font-size: 13px; font-weight: 700; color: #0f2d5a; margin-bottom: 2px; }
+.upgrade-plan-price { font-family: 'Playfair Display', Georgia, serif; font-size: 24px; font-weight: 900; color: #0f2d5a; line-height: 1; }
+.upgrade-plan-price span { font-size: 13px; font-weight: 500; color: #5c6f85; font-family: 'DM Sans', sans-serif; }
+.upgrade-plan-desc { font-size: 11.5px; color: #5c6f85; margin-top: 6px; line-height: 1.5; }
+.upgrade-founding {
+  background: linear-gradient(135deg, #f0fafa, #e6f7f7);
+  border: 1.5px solid #089494; border-radius: 10px;
+  padding: 14px 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+}
+.upgrade-founding-icon { font-size: 22px; flex-shrink: 0; }
+.upgrade-founding-title { font-size: 13px; font-weight: 700; color: #0f2d5a; }
+.upgrade-founding-sub { font-size: 12px; color: #5c6f85; margin-top: 2px; }
+.upgrade-founding-badge {
+  background: #089494; color: #fff; font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px; white-space: nowrap; margin-left: auto; flex-shrink: 0;
+}
+.upgrade-cta {
+  width: 100%; padding: 14px; border-radius: 10px; background: #ff6015; color: #fff;
+  font-size: 15px; font-weight: 700; border: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: background .15s;
+}
+.upgrade-cta:hover { background: #ff7633; }
+.upgrade-dismiss { display: block; text-align: center; margin-top: 12px; font-size: 13px; color: #5c6f85; cursor: pointer; }
+.upgrade-dismiss:hover { color: #0f2d5a; }
+</style>
+</head>
+<body>
+
+<!-- WELCOME OVERLAY -->
+<div class="welcome-overlay hidden" id="welcome-overlay">
+  <div class="welcome-box">
+    <div class="welcome-hdr">
+      <div class="welcome-tag">Welcome to Enroll</div>
+      <div class="welcome-title">Your enrollment command center is ready.</div>
+      <div class="welcome-sub">Here's a quick overview — takes about 2 minutes to read.</div>
+    </div>
+    <div class="welcome-steps">
+      <div class="welcome-step"><div class="welcome-step-num">1</div><div><div class="welcome-step-title">Add your families</div><div class="welcome-step-desc">Click "Add Family" in the top right to start building your pipeline. Add every family you've spoken with — even early conversations count as Inquiries.</div></div></div>
+      <div class="welcome-step"><div class="welcome-step-num">2</div><div><div class="welcome-step-title">Move families through stages</div><div class="welcome-step-desc">Click any family to open their profile. Move them from Inquiry → Interested → Intent to Enroll → Applied → Enrolled as the relationship develops.</div></div></div>
+      <div class="welcome-step"><div class="welcome-step-num">3</div><div><div class="welcome-step-title">Track required documents</div><div class="welcome-step-desc">Every family has a document checklist. Check items off as families submit birth certificates, immunization records, and other paperwork. Filter to see who's still missing docs.</div></div></div>
+      <div class="welcome-step"><div class="welcome-step-num">4</div><div><div class="welcome-step-title">Run your lottery when ready</div><div class="welcome-step-desc">Go to the Lottery tab when applications close. Set your seat count, configure priority rules, and run the draw. Siblings get automatic priority. Everything is logged.</div></div></div>
+      <div class="welcome-step"><div class="welcome-step-num">5</div><div><div class="welcome-step-title">Use email templates to communicate</div><div class="welcome-step-desc">Pre-written templates are ready for accepted families, waitlisted families, document reminders, and welcome messages. Customize them with your school's voice.</div></div></div>
+    </div>
+    <div class="welcome-foot">
+      <button class="welcome-skip" onclick="dismissWelcome()">Don't show this again</button>
+      <button class="btn btn-primary" onclick="dismissWelcome()">Let's go →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETUP WIZARD -->
+<div class="wizard-overlay hidden" id="wizard-overlay">
+  <div class="wizard-box">
+    <div class="wizard-progress"><div class="wizard-progress-fill" id="wizard-progress-fill" style="width:20%"></div></div>
+    <div class="wizard-hdr">
+      <div class="wizard-step-tag" id="wizard-step-tag">Step 1 of 5</div>
+      <div class="wizard-title" id="wizard-title">Confirm your school info</div>
+      <div class="wizard-sub" id="wizard-sub">Let's make sure everything is set up correctly before you start adding families.</div>
+    </div>
+    <div class="wizard-body" id="wizard-body"></div>
+    <div class="wizard-foot">
+      <button class="wizard-back" id="wizard-back-btn" onclick="wizardBack()" style="visibility:hidden;">← Back</button>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <button class="wizard-skip" onclick="skipWizard()">Skip setup</button>
+        <button class="btn btn-primary" id="wizard-next-btn" onclick="wizardNext()">Continue →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- READY SCREEN -->
+<div class="ready-overlay hidden" id="ready-overlay">
+  <div class="ready-box">
+    <div class="ready-hdr">
+      <div style="font-size:48px;margin-bottom:12px;">🎉</div>
+      <div style="font-family:var(--font-serif);font-size:26px;font-weight:900;color:#fff;margin-bottom:6px;">You're ready to enroll.</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.65);">Here's what's been configured for your school.</div>
+    </div>
+    <div class="ready-body">
+      <div id="ready-summary"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:20px;padding:14px;font-size:15px;" onclick="finishWizard()">Go to My Dashboard →</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <div style="margin-bottom:24px;"><svg width="200" height="52" viewBox="0 0 200 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="4" width="44" height="44" rx="10" fill="#1a3d6e"/>
+  <rect x="10" y="15" width="24" height="4.5" rx="2.25" fill="rgba(255,255,255,0.85)"/>
+  <rect x="10" y="24" width="18" height="4.5" rx="2.25" fill="#ff6015"/>
+  <rect x="10" y="33" width="24" height="4.5" rx="2.25" fill="rgba(255,255,255,0.85)"/>
+  <text x="56" y="34" font-family="Georgia, serif" font-size="28" font-weight="700" fill="#0f2d5a" letter-spacing="-0.5">Enroll</text>
+  <text x="57" y="50" font-family="DM Sans, sans-serif" font-size="11" font-weight="400" fill="#6b7a99" letter-spacing="0.02em">by KP Charter Kollective</text>
+</svg></div>
+    <div class="login-sub">School Admin Login</div>
+    <label class="login-lbl">School Access Code</label>
+    <input class="login-inp" type="password" id="login-code" placeholder="Enter your school code" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="login-err" id="login-err">Incorrect access code. Please try again.</div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-brand" style="padding:0;">
+    <div class="product-switcher" id="product-switcher">
+      <div class="switcher-btn" onclick="toggleSwitcher()">
+        <svg width="36" height="36" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+          <rect width="44" height="44" rx="10" fill="#1a3d6e"/>
+          <rect x="10" y="11" width="24" height="4.5" rx="2.25" fill="rgba(255,255,255,0.85)"/>
+          <rect x="10" y="20" width="18" height="4.5" rx="2.25" fill="#ff6015"/>
+          <rect x="10" y="29" width="24" height="4.5" rx="2.25" fill="rgba(255,255,255,0.85)"/>
+        </svg>
+        <div>
+          <div class="sw-logo-text-name">Enroll</div>
+          <div class="sw-logo-text-sub">by KP Charter Kollective</div>
+        </div>
+        <svg class="switcher-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="switcher-dropdown">
+        <div class="switcher-header">KPCC Suite</div>
+        <div class="switcher-item active">
+          <div class="switcher-icon enroll">E</div>
+          <div>
+            <div class="switcher-item-name">Enroll</div>
+            <div class="switcher-item-sub">Enrollment Management</div>
+          </div>
+          <div class="switcher-check">✓</div>
+        </div>
+        <div class="switcher-item locked" onclick="showUpgradeModal('hub')">
+          <div class="switcher-icon hub">H</div>
+          <div>
+            <div class="switcher-item-name">Hub</div>
+            <div class="switcher-item-sub">Marketing Platform</div>
+          </div>
+          <div class="switcher-lock">🔒</div>
+        </div>
+        <div class="switcher-divider"></div>
+        <div class="switcher-item" onclick="showUpgradeModal('suite')">
+          <div class="switcher-icon suite">H+E</div>
+          <div>
+            <div class="switcher-item-name">Get the Full Suite</div>
+            <div class="switcher-item-sub">Hub + Enroll · Save $27/mo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sb-school"><div class="sb-school-lbl">Active School</div><div class="sb-school-name" id="sb-school-name">—</div><div class="sb-school-yr">2025–2026 Enrollment</div></div>
+  <nav class="sb-nav">
+    <div class="nav-grp">Enrollment</div>
+    <button class="nav-btn active" onclick="switchView('dashboard',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></button>
+    <button class="nav-btn" onclick="switchView('applications',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Applications</span><span class="nav-badge" id="nb-apps">0</span></button>
+    <button class="nav-btn" onclick="switchView('documents',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><span>Documents</span><span class="nav-badge" id="nb-docs">0</span></button>
+    <div class="nav-grp">Tools</div>
+    <button class="nav-btn" onclick="switchView('lottery',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg><span>Lottery</span></button>
+    <button class="nav-btn" onclick="switchView('emails',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Email Templates</span></button>
+    <div class="nav-grp">Communication</div>
+    <button class="nav-btn" onclick="switchView('messaging',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Mass Texting</span></button>
+    <button class="nav-btn" onclick="switchView('settings',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></button>
+    <div class="nav-grp">Help</div>
+    <button class="nav-btn" onclick="switchView('integrations',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span>Integrations</span></button>
+    <button class="nav-btn" onclick="switchView('gettingstarted',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Getting Started</span></button>
+  </nav>
+  <div class="sb-foot"><div style="display:flex;align-items:center;gap:10px;"><div class="sb-av" id="sb-av">?</div><div><div class="sb-uname" id="sb-user">—</div><div class="sb-urole">Administrator</div><button class="logout-btn" onclick="doLogout()">Sign out</button></div></div></div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div><div class="topbar-title" id="topbar-title">Dashboard</div><div class="topbar-sub" id="topbar-sub">2025–2026 Enrollment Cycle</div></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-secondary" onclick="exportCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
+      <button class="btn btn-primary" onclick="openAddModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Family</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="view active" id="view-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card stat-inquiry"><div class="stat-lbl">Inquiries</div><div class="stat-num" id="s-inquiry">—</div></div>
+        <div class="stat-card stat-interested"><div class="stat-lbl">Interested</div><div class="stat-num" id="s-interested">—</div></div>
+        <div class="stat-card stat-intent"><div class="stat-lbl">Intent to Enroll</div><div class="stat-num" id="s-intent">—</div></div>
+        <div class="stat-card stat-applied"><div class="stat-lbl">Applied</div><div class="stat-num" id="s-applied">—</div></div>
+        <div class="stat-card stat-enrolled"><div class="stat-lbl">Enrolled</div><div class="stat-num" id="s-enrolled">—</div></div>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div><div class="card-title" style="margin-bottom:0;">Enrollment Goal</div><div style="font-size:12px;color:var(--muted);" id="goal-label">Loading...</div></div>
+          <div style="font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--teal);" id="goal-pct">—</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="goal-bar" style="width:0%"></div></div>
+      </div>
+      <div class="two-col">
+        <div class="card"><div class="card-title">Pipeline by Grade</div><div class="card-sub">All families</div><div id="grade-breakdown"><div class="pg-load"><div class="pg-spin"></div></div></div></div>
+        <div class="card"><div class="card-title">Recent Activity</div><div class="card-sub">Latest updates</div><div id="recent-activity"><div class="pg-load"><div class="pg-spin"></div></div></div></div>
+      </div>
+    </div>
+
+    <!-- APPLICATIONS -->
+    <div class="view" id="view-applications">
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search families..." oninput="filterApps(this.value)" id="app-search"></div>
+            <select class="fsel" style="font-size:12px;padding:7px 10px;" onchange="filterAppsByStage(this.value)">
+              <option value="">All Stages</option><option value="inquiry">Inquiry</option><option value="interested">Interested</option><option value="intent">Intent to Enroll</option><option value="applied">Applied</option><option value="enrolled">Enrolled</option><option value="waitlisted">Waitlisted</option><option value="withdrawn">Withdrawn</option>
+            </select>
+          </div>
+          <div style="font-size:12px;color:var(--muted);" id="app-count-label">—</div>
+        </div>
+        <table><thead><tr><th>Family / Student</th><th>Grade</th><th>Contact</th><th>Stage</th><th>Lottery #</th><th>Docs</th><th>Added</th></tr></thead>
+        <tbody id="apps-tbody"><tr><td colspan="7"><div class="pg-load"><div class="pg-spin"></div><span>Loading...</span></div></td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- DOCUMENTS -->
+    <div class="view" id="view-documents">
+      <div class="two-col" style="margin-bottom:20px;">
+        <div class="card"><div class="card-title">Document Types</div><div class="card-sub">What every family must submit</div><div id="doc-config"></div><button class="btn btn-teal" style="margin-top:14px;" onclick="openAddDocModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Document Type</button></div>
+        <div class="card"><div class="card-title">Completion Overview</div><div class="card-sub">Who has their paperwork in</div><div id="doc-overview"></div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search..." oninput="filterDocs(this.value)"></div>
+          <div style="display:flex;gap:8px;"><button class="btn btn-secondary btn-sm" onclick="renderDocsTable(families.filter(f=>docsStatus(f)!=='complete'))">Missing Docs</button><button class="btn btn-secondary btn-sm" onclick="renderDocsTable(families)">All</button></div>
+        </div>
+        <table><thead><tr><th>Family</th><th>Student</th><th>Grade</th><th>Stage</th><th>Documents</th><th>Action</th></tr></thead><tbody id="docs-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- LOTTERY -->
+    <div class="view" id="view-lottery">
+      <div class="two-col">
+        <div>
+          <div class="card" style="margin-bottom:20px;"><div class="card-title">Lottery Settings</div><div class="card-sub">Configure before running</div>
+            <div class="fgrp"><label class="flbl">Total Seats Available</label><input class="finp" type="number" id="lottery-seats" value="120"></div>
+            <div class="fgrp"><label class="flbl">Include Families From</label><select class="fsel" id="lottery-pool"><option value="applied">Applied stage only</option><option value="intent">Intent to Enroll and above</option><option value="all">All families</option></select></div>
+            <div class="fgrp" style="margin-bottom:0;">
+              <label class="flbl">Priority Groups <span style="font-weight:400;color:var(--muted);">(drawn first, in this order)</span></label>
+              <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;padding:14px;background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);">
+                <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;user-select:none;"><input type="checkbox" id="pri-sibling" checked style="accent-color:var(--teal);width:15px;height:15px;flex-shrink:0;"><div><div style="font-weight:600;color:var(--navy);">Siblings</div><div style="font-size:11px;color:var(--muted);">Families with a sibling already enrolled</div></div></label>
+                <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;user-select:none;"><input type="checkbox" id="pri-staff" style="accent-color:var(--teal);width:15px;height:15px;flex-shrink:0;"><div><div style="font-weight:600;color:var(--navy);">Staff Children</div><div style="font-size:11px;color:var(--muted);">Children of current staff members</div></div></label>
+                <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;user-select:none;"><input type="checkbox" id="pri-returning" style="accent-color:var(--teal);width:15px;height:15px;flex-shrink:0;"><div><div style="font-weight:600;color:var(--navy);">Returning Students</div><div style="font-size:11px;color:var(--muted);">Previously enrolled at this school</div></div></label>
+                <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;user-select:none;"><input type="checkbox" id="pri-zone" style="accent-color:var(--teal);width:15px;height:15px;flex-shrink:0;"><div><div style="font-weight:600;color:var(--navy);">Geographic Zone</div><div style="font-size:11px;color:var(--muted);">Residents within school attendance zone</div></div></label>
+                <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;user-select:none;"><input type="checkbox" id="pri-date" style="accent-color:var(--teal);width:15px;height:15px;flex-shrink:0;"><div><div style="font-weight:600;color:var(--navy);">Date of Application</div><div style="font-size:11px;color:var(--muted);">First come, first served within each group</div></div></label>
+              </div>
+            </div>
+          </div>
+          <div class="card"><div class="card-title">Run Lottery</div><div class="card-sub" id="lottery-status">Lottery has not been run yet.</div>
+            <button class="lottery-run-btn" id="lottery-run-btn" onclick="runLottery()">🎲 Run Lottery Now</button>
+            <button class="btn btn-secondary" style="width:100%;" onclick="resetLottery()">Reset Lottery</button>
+          </div>
+        </div>
+        <div class="card"><div class="card-title">Results</div><div class="card-sub" id="lottery-results-sub">Run the lottery to see results.</div><div id="lottery-results"></div></div>
+      </div>
+    </div>
+
+    <!-- EMAILS -->
+    <div class="view" id="view-emails">
+      <div style="margin-bottom:20px;"><h2 style="font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--navy);">Email Templates</h2><p style="font-size:13px;color:var(--muted);margin-top:2px;">Click any template to customize it for your school.</p></div>
+      <div id="email-templates-list"></div>
+    </div>
+
+    <!-- MESSAGING -->
+    <div class="view" id="view-messaging">
+      <div style="max-width:860px;">
+        <div style="margin-bottom:24px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div><h2 style="font-family:var(--font-serif);font-size:26px;font-weight:700;color:var(--navy);margin-bottom:6px;">Mass Texting</h2><p style="font-size:14px;color:var(--muted);">Send SMS messages to families directly from your dashboard.</p></div>
+          <div id="twilio-status-badge" style="font-size:11px;font-weight:700;padding:6px 14px;border-radius:99px;background:#fef2f2;color:var(--danger);">⚠ Twilio not configured</div>
+        </div>
+
+        <!-- NOT CONFIGURED STATE -->
+        <div id="twilio-not-configured" class="card" style="margin-bottom:20px;text-align:center;padding:40px;">
+          <div style="font-size:32px;margin-bottom:12px;">📱</div>
+          <div style="font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--navy);margin-bottom:8px;">Connect your Twilio account to start texting</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:20px;max-width:440px;margin-left:auto;margin-right:auto;">Your school owns the Twilio account and phone number. Texts are sent on your behalf at Twilio's standard rates (~$0.01/text).</div>
+          <button class="btn btn-primary" onclick="switchView('settings',document.querySelector('[onclick*=settings]'))">Go to Settings → Add Twilio Credentials</button>
+        </div>
+
+        <!-- CONFIGURED STATE -->
+        <div id="twilio-configured" style="display:none;">
+          <!-- COMPOSE -->
+          <div class="card" style="margin-bottom:20px;">
+            <div class="card-title">Compose Message</div>
+            <div class="card-sub">Write your message below. Keep it under 160 characters for a single SMS.</div>
+
+            <!-- AUDIENCE -->
+            <div class="fgrp">
+              <label class="flbl">Send To</label>
+              <select class="fsel" id="sms-audience" onchange="updateSMSPreview()">
+                <option value="all">All families with a phone number</option>
+                <option value="inquiry">Inquiry stage only</option>
+                <option value="interested">Interested stage only</option>
+                <option value="intent">Intent to Enroll only</option>
+                <option value="applied">Applied stage only</option>
+                <option value="enrolled">Enrolled families only</option>
+                <option value="waitlisted">Waitlisted families only</option>
+              </select>
+            </div>
+
+            <!-- TEMPLATE QUICK-SELECT -->
+            <div class="fgrp">
+              <label class="flbl">Quick Templates</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-secondary btn-sm" onclick="setSMSTemplate('lottery')">🎲 Lottery Results</button>
+                <button class="btn btn-secondary btn-sm" onclick="setSMSTemplate('openhouse')">🏫 Open House</button>
+                <button class="btn btn-secondary btn-sm" onclick="setSMSTemplate('docs')">📄 Missing Docs</button>
+                <button class="btn btn-secondary btn-sm" onclick="setSMSTemplate('deadline')">⏰ Deadline Reminder</button>
+                <button class="btn btn-secondary btn-sm" onclick="setSMSTemplate('welcome')">🎉 Welcome</button>
+              </div>
+            </div>
+
+            <!-- MESSAGE BODY -->
+            <div class="fgrp" style="margin-bottom:6px;">
+              <label class="flbl">Message <span>*</span></label>
+              <textarea class="ftxt" id="sms-body" maxlength="320" oninput="updateSMSCharCount()" placeholder="Type your message here..." style="min-height:100px;"></textarea>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <div style="font-size:11px;color:var(--muted);">Use {parent_name}, {school_name} as placeholders</div>
+              <div style="font-size:12px;font-weight:600;" id="sms-char-count">0 / 160</div>
+            </div>
+
+            <!-- PREVIEW + SEND -->
+            <div style="background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);padding:14px;margin-bottom:16px;">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">Send Preview</div>
+              <div style="display:flex;gap:12px;align-items:center;">
+                <div style="font-size:13px;color:var(--navy);"><span id="sms-recipient-count" style="font-weight:700;">0</span> families will receive this text</div>
+                <div style="font-size:12px;color:var(--muted);">·</div>
+                <div style="font-size:13px;color:var(--muted);">Est. cost: <span id="sms-cost">$0.00</span></div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn btn-primary" id="sms-send-btn" onclick="sendMassText()">Send Texts →</button>
+              <button class="btn btn-secondary" onclick="document.getElementById('sms-body').value='';updateSMSCharCount();updateSMSPreview();">Clear</button>
+            </div>
+          </div>
+
+          <!-- SENT LOG -->
+          <div class="card">
+            <div class="card-title">Sent Log</div>
+            <div class="card-sub">History of all text campaigns sent from this account</div>
+            <div id="sms-log"><div style="font-size:13px;color:var(--muted);">No texts sent yet.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="view" id="view-settings">
+      <div style="max-width:640px;">
+        <div style="margin-bottom:28px;"><h2 style="font-family:var(--font-serif);font-size:26px;font-weight:700;color:var(--navy);margin-bottom:6px;">School Settings</h2><p style="font-size:14px;color:var(--muted);">Configure your school's enrollment settings and integrations.</p></div>
+
+        <!-- SCHOOL INFO -->
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-title">School Information</div><div class="card-sub">Basic details about your school</div>
+          <div class="fgrp"><label class="flbl">School Name</label><input class="finp" id="set-school-name" placeholder="School name"></div>
+          <div class="fgrp"><label class="flbl">Enrollment Goal</label><input class="finp" id="set-enrollment-goal" type="number" placeholder="120"></div>
+          <div class="fgrp" style="margin-bottom:0;"><label class="flbl">Enrollment Year</label><input class="finp" id="set-year" placeholder="2025-2026"></div>
+          <div style="margin-top:16px;"><button class="btn btn-primary" onclick="saveSchoolSettings()">Save Settings</button></div>
+        </div>
+
+        <!-- TWILIO -->
+        <div class="card" style="margin-bottom:20px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+            <div class="card-title" style="margin-bottom:0;">Twilio — SMS Messaging</div>
+            <span id="twilio-settings-badge" style="font-size:10px;font-weight:700;padding:2px 10px;border-radius:99px;background:#fef2f2;color:var(--danger);">Not Connected</span>
+          </div>
+          <div class="card-sub">Your school owns and pays for the Twilio account. Texts cost ~$0.01 each.</div>
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-sm);padding:12px;margin-bottom:16px;">
+            <div style="font-size:12px;font-weight:700;color:#16a34a;margin-bottom:4px;">How to get your credentials</div>
+            <div style="font-size:12px;color:#16a34a;line-height:1.6;">1. Go to <strong>twilio.com</strong> → sign up free<br>2. From your Console dashboard, copy your <strong>Account SID</strong> and <strong>Auth Token</strong><br>3. Get a phone number: Console → Phone Numbers → Buy a Number (~$1/month)<br>4. Paste all three below and click Save</div>
+          </div>
+          <div class="fgrp"><label class="flbl">Account SID</label><input class="finp" id="twilio-sid" placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"></div>
+          <div class="fgrp"><label class="flbl">Auth Token</label><input class="finp" id="twilio-token" type="password" placeholder="Your auth token"></div>
+          <div class="fgrp" style="margin-bottom:0;"><label class="flbl">Twilio Phone Number</label><input class="finp" id="twilio-phone" placeholder="+15550001234"></div>
+          <div style="margin-top:16px;display:flex;gap:10px;">
+            <button class="btn btn-primary" onclick="saveTwilioSettings()">Save Twilio Settings</button>
+            <button class="btn btn-secondary" onclick="testTwilio()">Send Test Text</button>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:10px;">Credentials are stored in your browser's local storage — never sent to our servers.</div>
+        </div>
+
+        <!-- DANGER ZONE -->
+        <div class="card" style="border-color:#fecaca;">
+          <div class="card-title" style="color:var(--danger);">Danger Zone</div>
+          <div class="card-sub">Irreversible actions — proceed with caution</div>
+          <button class="btn btn-danger" onclick="clearAllFamilies()">Delete All Families</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTEGRATIONS -->
+    <div class="view" id="view-integrations">
+      <div style="max-width:860px;">
+        <div style="margin-bottom:28px;"><h2 style="font-family:var(--font-serif);font-size:26px;font-weight:700;color:var(--navy);margin-bottom:6px;">Integrations</h2><p style="font-size:14px;color:var(--muted);">Connect external tools to your enrollment pipeline.</p></div>
+
+        <!-- COGNITO FORMS -->
+        <div class="card" style="margin-bottom:20px;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#0f2d5a,#089494);display:flex;align-items:center;justify-content:center;font-size:18px;">📋</div>
+              <div><div style="font-size:16px;font-weight:700;color:var(--navy);">Cognito Forms</div><div style="font-size:12px;color:var(--muted);">Auto-import applications directly into your pipeline</div></div>
+            </div>
+            <span style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:99px;background:#dcfce7;color:#16a34a;">Connected</span>
+          </div>
+          <div style="background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);padding:16px;margin-bottom:16px;">
+            <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px;">Your Webhook URL</div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <code style="font-family:var(--font-mono);font-size:12px;color:var(--teal);background:#e0f4f4;padding:8px 12px;border-radius:6px;flex:1;word-break:break-all;" id="webhook-url">Loading...</code>
+              <button class="btn btn-secondary btn-sm" onclick="copyWebhook()">Copy</button>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:8px;">Paste this URL into your Cognito Form → Settings → Webhooks → Add Webhook</div>
+          </div>
+          <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;">Setup Instructions</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div><div style="font-size:13px;color:var(--muted);padding-top:2px;">In Cognito Forms, open your application form → <strong>Settings</strong> → <strong>Webhooks</strong></div></div>
+            <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div><div style="font-size:13px;color:var(--muted);padding-top:2px;">Click <strong>Add Webhook</strong>, paste your webhook URL above, set trigger to <strong>On Submit</strong></div></div>
+            <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div><div style="font-size:13px;color:var(--muted);padding-top:2px;">Map your form fields: <strong>Parent Name, Student Name, Grade, Email, Phone</strong></div></div>
+            <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div><div style="font-size:13px;color:var(--muted);padding-top:2px;">Submit a test entry — it will appear in your Applications tab automatically as an Inquiry</div></div>
+          </div>
+          <div style="margin-top:16px;padding:12px;background:#fef9c3;border-radius:var(--radius-sm);border:1px solid #fde68a;">
+            <div style="font-size:12px;color:#92400e;"><strong>Note:</strong> Until your webhook is live, use the manual "Add Family" button. Once connected, every Cognito Form submission flows in automatically.</div>
+          </div>
+        </div>
+
+        <!-- DUPLICATE DETECTION -->
+        <div class="card" style="margin-bottom:20px;">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+            <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:18px;">🔍</div>
+            <div><div style="font-size:16px;font-weight:700;color:var(--navy);">Duplicate Detection</div><div style="font-size:12px;color:var(--muted);">Flag and merge duplicate applications before your lottery runs</div></div>
+          </div>
+          <button class="btn btn-primary" onclick="runDuplicateCheck()" style="margin-bottom:16px;">🔍 Scan for Duplicates</button>
+          <div id="duplicate-results"><div style="font-size:13px;color:var(--muted);">Click scan to check for duplicate applications.</div></div>
+        </div>
+
+        <!-- CSV IMPORT -->
+        <div class="card" style="margin-bottom:20px;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#16a34a,#22c55e);display:flex;align-items:center;justify-content:center;font-size:18px;">📊</div>
+              <div><div style="font-size:16px;font-weight:700;color:var(--navy);">CSV Import</div><div style="font-size:12px;color:var(--muted);">Import families from PowerSchool, Infinite Campus, Skyward, or any SIS</div></div>
+            </div>
+            <span style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:99px;background:#dcfce7;color:#16a34a;">Active</span>
+          </div>
+
+          <!-- STEP 1: Download template -->
+          <div style="background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);padding:16px;margin-bottom:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px;">Step 1 — Download the import template</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Export your roster from your SIS as a CSV, then match it to these columns. Or download our template and paste your data in.</div>
+            <div style="font-family:var(--font-mono);font-size:11px;background:#fff;border:1px solid var(--border);border-radius:6px;padding:10px;color:var(--teal);margin-bottom:10px;overflow-x:auto;white-space:nowrap;">parent_name, student_name, grade, email, phone, stage, sibling, notes</div>
+            <button class="btn btn-secondary btn-sm" onclick="downloadTemplate()">⬇ Download Template CSV</button>
+          </div>
+
+          <!-- STEP 2: Upload -->
+          <div style="background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);padding:16px;margin-bottom:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px;">Step 2 — Upload your CSV</div>
+            <div id="csv-drop-zone" style="border:2px dashed var(--border);border-radius:var(--radius-sm);padding:28px;text-align:center;cursor:pointer;transition:all .2s;background:#fff;"
+              ondragover="event.preventDefault();this.style.borderColor='var(--teal)';this.style.background='#e0f4f4';"
+              ondragleave="this.style.borderColor='var(--border)';this.style.background='#fff';"
+              ondrop="handleCSVDrop(event)"
+              onclick="document.getElementById('csv-file-input').click()">
+              <div style="font-size:24px;margin-bottom:8px;">📁</div>
+              <div style="font-size:13px;font-weight:600;color:var(--navy);">Drop your CSV here or click to browse</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:4px;">Supports .csv files from any SIS export</div>
+            </div>
+            <input type="file" id="csv-file-input" accept=".csv" style="display:none;" onchange="handleCSVFile(this.files[0])">
+          </div>
+
+          <!-- STEP 3: Preview & confirm -->
+          <div id="csv-preview-section" style="display:none;">
+            <div style="background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);padding:16px;margin-bottom:14px;">
+              <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px;">Step 3 — Review & confirm import</div>
+              <div id="csv-preview-stats" style="display:flex;gap:16px;margin-bottom:14px;flex-wrap:wrap;"></div>
+              <div style="max-height:240px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;">
+                <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                  <thead><tr id="csv-preview-head" style="background:var(--offwhite);"></tr></thead>
+                  <tbody id="csv-preview-body"></tbody>
+                </table>
+              </div>
+            </div>
+            <div id="csv-mapping" style="background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);padding:16px;margin-bottom:14px;display:none;">
+              <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px;">Map your columns</div>
+              <div id="csv-mapping-fields" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <button class="btn btn-primary" id="csv-import-btn" onclick="executeCSVImport()">Import Families →</button>
+              <button class="btn btn-secondary" onclick="resetCSV()">Cancel</button>
+              <div style="font-size:12px;color:var(--muted);" id="csv-import-status"></div>
+            </div>
+          </div>
+
+          <!-- DUPLICATE HANDLING -->
+          <div style="margin-top:14px;padding:12px;background:#fef9c3;border-radius:var(--radius-sm);border:1px solid #fde68a;">
+            <div style="font-size:12px;color:#92400e;"><strong>Duplicate handling:</strong> If a family with the same student name and grade already exists, the import will skip them automatically. Run Duplicate Detection after import to review any flagged entries.</div>
+          </div>
+        </div>
+
+        <!-- SIS INTEGRATION - ROADMAP -->
+        <div class="card" style="opacity:.7;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div style="width:48px;height:48px;border-radius:12px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:18px;">🏫</div>
+              <div><div style="font-size:16px;font-weight:700;color:var(--navy);">SIS Integration</div><div style="font-size:12px;color:var(--muted);">PowerSchool, Infinite Campus, Skyward</div></div>
+            </div>
+            <span style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:99px;background:#f1f5f9;color:var(--muted);">Coming Soon</span>
+          </div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6;">Automatic two-way sync with your Student Information System. Enrolled families will flow directly into PowerSchool or Infinite Campus with no manual data entry. Planned for Q4 2026 — available on the Premium tier.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GETTING STARTED -->
+    <div class="view" id="view-gettingstarted">
+      <div style="max-width:800px;">
+        <div style="margin-bottom:28px;"><h2 style="font-family:var(--font-serif);font-size:26px;font-weight:700;color:var(--navy);margin-bottom:6px;">Getting Started with Enroll</h2><p style="font-size:14px;color:var(--muted);">Follow these steps to get your enrollment pipeline running.</p></div>
+        <div class="gs-grid">
+          <div class="gs-card" onclick="switchView('applications',document.querySelector('.nav-btn:nth-child(2)'))"><div class="gs-step">Step 1</div><div class="gs-icon" style="background:#fff0e8;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff6015" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><div class="gs-title">Add Your First Families</div><div class="gs-desc">Click "Add Family" in the top right. Start with every family you've talked to — even informal conversations count as Inquiries.</div></div>
+          <div class="gs-card"><div class="gs-step">Step 2</div><div class="gs-icon" style="background:#e0f4f4;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#089494" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="gs-title">Move Families Through Stages</div><div class="gs-desc">Click any family row to open their profile. Use the stage buttons to move them forward — all the way from Inquiry to Enrolled.</div></div>
+          <div class="gs-card" onclick="switchView('documents',document.querySelector('.nav-btn:nth-child(3)'))"><div class="gs-step">Step 3</div><div class="gs-icon" style="background:#f0fdf4;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div class="gs-title">Set Up Your Document Checklist</div><div class="gs-desc">Go to Documents and confirm your required document types. Check off documents as families submit them. Filter to see who's missing paperwork.</div></div>
+          <div class="gs-card" onclick="switchView('emails',document.querySelector('.nav-btn:nth-child(6)'))"><div class="gs-step">Step 4</div><div class="gs-icon" style="background:#f3e8ff;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div class="gs-title">Customize Email Templates</div><div class="gs-desc">Go to Email Templates and personalize each message. These are your acceptance letters, waitlist notices, and document reminders.</div></div>
+          <div class="gs-card" onclick="switchView('lottery',document.querySelector('.nav-btn:nth-child(5)'))"><div class="gs-step">Step 5</div><div class="gs-icon" style="background:#fef9c3;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div><div class="gs-title">Run Your Lottery</div><div class="gs-desc">When applications close, go to Lottery. Set your seat count and run the draw. The system assigns numbers randomly — siblings get automatic priority.</div></div>
+          <div class="gs-card" onclick="exportCSV()"><div class="gs-step">Anytime</div><div class="gs-icon" style="background:#f1f5f9;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="gs-title">Export for Board Reports</div><div class="gs-desc">Click Export anytime to download a CSV of all your enrollment data. Clean, board-ready data in one click.</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Frequently Asked Questions</div><div class="card-sub">Quick answers for common questions</div>
+          <div class="faq-item"><div class="faq-q">Is my data saved if I close the browser?</div><div class="faq-a">Yes. All data saves in real time to a secure database. Close the tab, log back in — everything is exactly where you left it.</div></div>
+          <div class="faq-item"><div class="faq-q">Can multiple people log in at the same time?</div><div class="faq-a">Yes. Share your access code with your enrollment team. Everyone sees the same live data.</div></div>
+          <div class="faq-item"><div class="faq-q">Can I undo the lottery if I made a mistake?</div><div class="faq-a">Yes. Use the Reset Lottery button to clear all lottery numbers and start fresh.</div></div>
+          <div class="faq-item"><div class="faq-q">What do I do if I need help?</div><div class="faq-a">Contact your KP Charter Kollective support contact directly. Response within 24 hours during enrollment season.</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- DETAIL PANEL -->
+<div class="detail-panel" id="detail-panel">
+  <div class="d-hdr">
+    <div style="display:flex;align-items:center;gap:14px;"><div class="d-av" id="d-av">?</div><div><div class="d-name" id="d-name">—</div><div class="d-meta" id="d-meta">—</div></div></div>
+    <button class="icon-btn" onclick="closeDetail()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="d-body">
+    <div class="d-sec"><div class="d-sec-title">Contact Info</div>
+      <div class="d-row"><div class="d-row-lbl">Parent</div><div class="d-row-val" id="d-parent">—</div></div>
+      <div class="d-row"><div class="d-row-lbl">Email</div><div class="d-row-val" id="d-email">—</div></div>
+      <div class="d-row"><div class="d-row-lbl">Phone</div><div class="d-row-val" id="d-phone">—</div></div>
+      <div class="d-row"><div class="d-row-lbl">Grade</div><div class="d-row-val" id="d-grade">—</div></div>
+      <div class="d-row"><div class="d-row-lbl">Lottery #</div><div class="d-row-val" id="d-lottery">Not assigned</div></div>
+    </div>
+    <div class="d-sec"><div class="d-sec-title">Move Stage</div><div class="stage-btns" id="d-stage-btns"></div></div>
+    <div class="d-sec"><div class="d-sec-title">Document Checklist</div><div class="checklist" id="d-checklist"></div></div>
+    <div class="d-sec"><div class="d-sec-title">Notes</div><textarea class="ftxt" id="d-notes" placeholder="Add notes about this family..." style="width:100%;" oninput="saveNotesDebounced()"></textarea></div>
+  </div>
+  <div class="d-foot">
+    <button class="btn btn-secondary" style="flex:1;" onclick="closeDetail()">Close</button>
+    <button class="btn btn-danger" onclick="removeFamily()">Remove</button>
+  </div>
+</div>
+
+<!-- ADD FAMILY MODAL -->
+<div class="modal-overlay" id="add-modal" onclick="closeModalOutside(event,'add-modal')">
+  <div class="modal">
+    <div class="modal-title">Add a Family</div><div class="modal-sub">Manually add a family to your enrollment pipeline.</div>
+    <div class="form-grid">
+      <div class="fgrp" style="margin:0;"><label class="flbl">Parent / Guardian <span>*</span></label><input class="finp" id="a-parent" placeholder="Full name"></div>
+      <div class="fgrp" style="margin:0;"><label class="flbl">Student Name <span>*</span></label><input class="finp" id="a-student" placeholder="Student's name"></div>
+    </div>
+    <div style="margin-top:14px;" class="form-grid">
+      <div class="fgrp" style="margin:0;"><label class="flbl">Email</label><input class="finp" id="a-email" type="email" placeholder="email@example.com"></div>
+      <div class="fgrp" style="margin:0;"><label class="flbl">Phone</label><input class="finp" id="a-phone" type="tel" placeholder="(555) 000-0000"></div>
+    </div>
+    <div style="margin-top:14px;" class="form-grid">
+      <div class="fgrp" style="margin:0;"><label class="flbl">Grade <span>*</span></label><select class="fsel" id="a-grade"><option value="K">Kindergarten</option><option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option><option value="4">4th</option><option value="5">5th</option><option value="6">6th</option><option value="7">7th</option><option value="8">8th</option></select></div>
+      <div class="fgrp" style="margin:0;"><label class="flbl">Starting Stage</label><select class="fsel" id="a-stage"><option value="inquiry">Inquiry</option><option value="interested">Interested</option><option value="intent">Intent to Enroll</option><option value="applied">Applied</option><option value="enrolled">Enrolled</option></select></div>
+    </div>
+    <div style="margin-top:14px;" class="form-grid">
+      <div class="fgrp" style="margin:0;"><label class="flbl">Sibling Enrolled?</label><select class="fsel" id="a-sibling"><option value="false">No</option><option value="true">Yes</option></select></div>
+      <div class="fgrp" style="margin:0;"><label class="flbl">Staff Child?</label><select class="fsel" id="a-staff"><option value="false">No</option><option value="true">Yes</option></select></div>
+    </div>
+    <div style="margin-top:14px;" class="form-grid">
+      <div class="fgrp" style="margin:0;"><label class="flbl">Returning Student?</label><select class="fsel" id="a-returning"><option value="false">No</option><option value="true">Yes</option></select></div>
+      <div class="fgrp" style="margin:0;"><label class="flbl">In Geographic Zone?</label><select class="fsel" id="a-zone"><option value="false">No / Unknown</option><option value="true">Yes — confirmed zone resident</option></select></div>
+    </div>
+    <div class="fgrp"><label class="flbl">Notes</label><input class="finp" id="a-notes" placeholder="How they heard about you, special notes..."></div>
+    <div class="modal-foot"><button class="btn btn-secondary" onclick="closeModal('add-modal')">Cancel</button><button class="btn btn-primary" id="add-btn" onclick="addFamily()">Add to Pipeline →</button></div>
+  </div>
+</div>
+
+<!-- ADD DOC MODAL -->
+<div class="modal-overlay" id="doc-modal" onclick="closeModalOutside(event,'doc-modal')">
+  <div class="modal" style="width:420px;">
+    <div class="modal-title">Add Document Type</div><div class="modal-sub">This will appear on every family's checklist.</div>
+    <div class="fgrp"><label class="flbl">Document Name <span>*</span></label><input class="finp" id="doc-name" placeholder="e.g. Birth Certificate"></div>
+    <div class="fgrp"><label class="flbl">Required or Optional?</label><select class="fsel" id="doc-req"><option value="true">Required</option><option value="false">Optional</option></select></div>
+    <div class="modal-foot"><button class="btn btn-secondary" onclick="closeModal('doc-modal')">Cancel</button><button class="btn btn-primary" onclick="addDocType()">Add Document</button></div>
+  </div>
+</div>
+
+<!-- EDIT EMAIL MODAL -->
+<div class="modal-overlay" id="email-modal" onclick="closeModalOutside(event,'email-modal')">
+  <div class="modal modal-lg">
+    <div class="modal-title" id="email-modal-title">Edit Template</div>
+    <div class="modal-sub">Use {parent_name}, {student_name}, {school_name}, {lottery_number} as placeholders.</div>
+    <div class="fgrp"><label class="flbl">Subject Line</label><input class="finp" id="email-modal-subject"></div>
+    <div class="fgrp"><label class="flbl">Email Body</label><textarea class="ftxt" id="email-modal-body" style="min-height:200px;"></textarea></div>
+    <div class="modal-foot"><button class="btn btn-secondary" onclick="closeModal('email-modal')">Cancel</button><button class="btn btn-primary" onclick="saveEmailTemplate()">Save Template</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><div class="toast-dot"></div><span id="toast-msg">Done</span></div>
+
+<script>
+const SUPA_URL='https://cjkhkwuqxnlfgjpnknzq.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqa2hrd3VxeG5sZmdqcG5rbnpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NTE3NDYsImV4cCI6MjA4NzUyNzc0Nn0.y5Z8C1MatHsgylhqwGkKF2gRsKKhSNrAp9_f5YZHVcw';
+const sb=(window.supabase||supabase).createClient(SUPA_URL,SUPA_KEY);
+
+let school=null,families=[],docTypes=[],activeFamily=null,editingEmailIdx=null,stageFilter='',notesTimer=null;
+const COLORS=['#0f2d5a','#089494','#ff6015','#7c3aed','#0369a1','#be185d','#065f46','#92400e'];
+
+let emailTemplates=[
+  {type:'accepted',label:'Application Accepted',typeClass:'et-accepted',subject:'🎉 Congratulations! {student_name} has been accepted to {school_name}',body:'Dear {parent_name},\n\nWe are thrilled to inform you that {student_name} has been accepted to {school_name} for the 2025–2026 school year! Your lottery number is #{lottery_number}.\n\nNext steps:\n1. Complete your enrollment packet within 10 days\n2. Submit all required documents\n3. Attend our Founding Family Orientation\n\nWe are so excited to have {student_name} join our community.\n\nWith gratitude,\nThe {school_name} Team'},
+  {type:'waitlisted',label:'Placed on Waitlist',typeClass:'et-waitlisted',subject:'Your application status: {student_name} — {school_name} Waitlist',body:'Dear {parent_name},\n\nThank you for applying to {school_name}. {student_name} has been placed on our waitlist at position #{lottery_number}.\n\nWaitlist spots move frequently. We will contact you immediately if a seat becomes available.\n\nWarmly,\nThe {school_name} Team'},
+  {type:'reminder',label:'Document Reminder',typeClass:'et-reminder',subject:'Action needed: Missing documents for {student_name}',body:'Dear {parent_name},\n\nWe are still missing some required documents for {student_name}\'s enrollment at {school_name}.\n\nPlease submit your outstanding documents as soon as possible to hold {student_name}\'s spot.\n\nThank you,\nThe {school_name} Enrollment Team'},
+  {type:'welcome',label:'Welcome / Next Steps',typeClass:'et-welcome',subject:'Welcome to the {school_name} family, {student_name}!',body:'Dear {parent_name},\n\nWelcome to {school_name}! We are so excited that {student_name} will be joining our founding community.\n\nHere is what happens next:\n📋 Complete your enrollment packet\n📄 Submit required documents\n👨‍👩‍👧 Attend Founding Family Orientation\n\nWith excitement,\nThe {school_name} Team'},
+  {type:'missing',label:'Missing Information',typeClass:'et-missing',subject:'We need a bit more info for {student_name}\'s application',body:'Dear {parent_name},\n\nThank you for applying to {school_name}! We noticed some information may be incomplete on {student_name}\'s application.\n\nCould you please contact us within 5 business days?\n\nThank you,\nThe {school_name} Enrollment Team'},
+];
+
+const ini=n=>n.split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);
+const clr=n=>COLORS[n.charCodeAt(0)%COLORS.length];
+const sName=s=>({inquiry:'Inquiry',interested:'Interested',intent:'Intent to Enroll',applied:'Applied',enrolled:'Enrolled',waitlisted:'Waitlisted',withdrawn:'Withdrawn'}[s]||s);
+const sColor=s=>({inquiry:'#94a3b8',interested:'#089494',intent:'#f59e0b',applied:'#ff6015',enrolled:'#22c55e',waitlisted:'#7c3aed',withdrawn:'#ef4444'}[s]||'#ccc');
+const fmt=d=>new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+function docsDone(f){return docTypes.filter(d=>d.required&&f.family_documents?.some(fd=>fd.document_name===d.name&&fd.completed)).length}
+function docsReq(f){return docTypes.filter(d=>d.required).length}
+function docsStatus(f){const r=docsReq(f),d=docsDone(f);return r===0?'complete':d===r?'complete':d===0?'missing':'partial'}
+function docsLabel(f){return`${docsDone(f)}/${docsReq(f)} required`}
+function docCompleted(f,name){return f.family_documents?.some(fd=>fd.document_name===name&&fd.completed)||false}
+
+async function doLogin(){
+  const code=document.getElementById('login-code').value.trim().toLowerCase();
+  if(!code){
+    const e=document.getElementById('login-err');
+    e.textContent='Please enter your school code.';e.style.display='block';return;
+  }
+  const btn=document.getElementById('login-btn');
+  const errEl=document.getElementById('login-err');
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div>';
+  errEl.style.display='none';
+  try{
+    // Test Supabase connection first
+    if(!sb){
+      errEl.textContent='Database not initialized. Please refresh the page.';
+      errEl.style.display='block';
+      btn.disabled=false;btn.textContent='Sign In →';return;
+    }
+    const{data,error}=await sb.from('schools').select('*').eq('access_code',code).single();
+    if(error){
+      if(error.code==='PGRST116'){
+        errEl.textContent='School code not found. Please check and try again.';
+      } else {
+        errEl.textContent='Error: '+error.message;
+      }
+      errEl.style.display='block';
+    } else if(!data){
+      errEl.textContent='School code not found. Please check and try again.';
+      errEl.style.display='block';
+    } else {
+      school=data;
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('sb-school-name').textContent=data.name;
+      document.getElementById('sb-user').textContent=data.name.split(' ').pop();
+      document.getElementById('sb-av').textContent=data.name[0];
+      await loadAll();
+      checkWelcome();
+      initWebhook();
+      loadTwilioSettings();
+      loadSchoolSettings();
+      updateSMSPreview();
+    }
+  } catch(e){
+    errEl.textContent='Connection error: '+e.message+'. Check your internet connection.';
+    errEl.style.display='block';
+  }
+  btn.disabled=false;btn.textContent='Sign In →';
+}
+
+function doLogout(){document.getElementById('login-screen').classList.remove('hidden');document.getElementById('login-code').value='';school=null;families=[];docTypes=[];}
+
+async function loadAll(){await Promise.all([loadFamilies(),loadDocTypes()]);render();}
+
+async function loadFamilies(){
+  const{data}=await sb.from('families').select('*,family_documents(*)').eq('school_id',school.id).order('added_at',{ascending:false});
+  families=data||[];
+}
+async function loadDocTypes(){
+  const{data}=await sb.from('documents').select('*').eq('school_id',school.id).order('required',{ascending:false});
+  docTypes=data||[];
+}
+async function loadActivity(){
+  const{data}=await sb.from('activity_log').select('*').eq('school_id',school.id).order('created_at',{ascending:false}).limit(8);
+  return data||[];
+}
+async function logActivity(text){await sb.from('activity_log').insert({school_id:school.id,text});}
+
+function checkWelcome(){
+  const key='enroll_welcomed_'+school.id;
+  if(!localStorage.getItem(key))document.getElementById('welcome-overlay').classList.remove('hidden');
+}
+function dismissWelcome(){
+  document.getElementById('welcome-overlay').classList.add('hidden');
+  localStorage.setItem('enroll_welcomed_'+school.id,'1');
+  // Launch wizard if not completed
+  const wizKey='enroll_setup_done_'+school.id;
+  if(!localStorage.getItem(wizKey)) startWizard();
+}
+
+function render(){
+  renderStats();renderAppsTable(families);renderDocsTable(families);renderDocConfig();renderDocOverview();renderEmailTemplates();renderGradeBreakdown();
+  loadActivity().then(renderActivity);updateNavBadges();
+}
+
+function renderStats(){
+  ['inquiry','interested','intent','applied','enrolled'].forEach(s=>document.getElementById('s-'+s).textContent=families.filter(f=>f.stage===s).length);
+  const enrolled=families.filter(f=>f.stage==='enrolled').length,goal=school.enrollment_goal||120;
+  const pct=Math.min(Math.round((enrolled/goal)*100),100);
+  document.getElementById('goal-bar').style.width=pct+'%';
+  document.getElementById('goal-pct').textContent=pct+'%';
+  document.getElementById('goal-label').textContent=`${enrolled} / ${goal} seats filled`;
+}
+
+function renderAppsTable(fams){
+  document.getElementById('app-count-label').textContent=fams.length+' families';
+  document.getElementById('apps-tbody').innerHTML=fams.length?fams.map(f=>`
+    <tr onclick="openDetail('${f.id}')">
+      <td><div style="font-weight:600;color:var(--navy);">${f.parent_name}</div><div style="font-size:11px;color:var(--muted);">${f.student_name}</div></td>
+      <td>Grade ${f.grade}</td><td style="color:var(--muted);font-size:12px;">${f.email||'—'}</td>
+      <td><span class="pill pill-${f.stage}">${sName(f.stage)}</span></td>
+      <td style="font-family:var(--font-mono);font-size:12px;">${f.lottery_number?'#'+String(f.lottery_number).padStart(4,'0'):'—'}</td>
+      <td><span class="pill pill-${docsStatus(f)}">${docsLabel(f)}</span></td>
+      <td style="color:var(--muted);font-size:12px;">${fmt(f.added_at)}</td>
+    </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);">No families yet — click Add Family to get started.</td></tr>';
+}
+
+function renderDocsTable(fams){
+  document.getElementById('docs-tbody').innerHTML=fams.map(f=>`
+    <tr onclick="openDetail('${f.id}')">
+      <td style="font-weight:600;">${f.parent_name}</td><td>${f.student_name}</td><td>Gr. ${f.grade}</td>
+      <td><span class="pill pill-${f.stage}">${sName(f.stage)}</span></td>
+      <td><span class="pill pill-${docsStatus(f)}">${docsLabel(f)} — ${docsStatus(f)}</span></td>
+      <td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openDetail('${f.id}')">View</button></td>
+    </tr>`).join('');
+}
+
+function renderDocConfig(){
+  document.getElementById('doc-config').innerHTML=docTypes.map(d=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:8px;">
+      <div><div style="font-size:13px;font-weight:600;color:var(--navy);">${d.name}</div><div style="font-size:11px;color:${d.required?'var(--danger)':'var(--muted)'};">${d.required?'Required':'Optional'}</div></div>
+      <button class="btn btn-danger btn-sm" onclick="removeDocType('${d.id}')">Remove</button>
+    </div>`).join('')||'<div style="font-size:13px;color:var(--muted);">No document types yet.</div>';
+}
+
+function renderDocOverview(){
+  const total=families.length;
+  document.getElementById('doc-overview').innerHTML=[['Complete',families.filter(f=>docsStatus(f)==='complete').length,'var(--success)'],['Partial',families.filter(f=>docsStatus(f)==='partial').length,'var(--warning)'],['Missing',families.filter(f=>docsStatus(f)==='missing').length,'var(--danger)']].map(([l,n,c])=>`
+    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="font-weight:600;">${l}</span><span style="color:var(--muted);">${n} families</span></div>
+    <div style="height:8px;background:var(--offwhite);border-radius:99px;overflow:hidden;"><div style="height:100%;width:${total?Math.round((n/total)*100):0}%;background:${c};border-radius:99px;"></div></div></div>`).join('');
+}
+
+function renderEmailTemplates(){
+  document.getElementById('email-templates-list').innerHTML=emailTemplates.map((t,i)=>`
+    <div class="email-card"><div class="email-card-hdr"><span class="email-type ${t.typeClass}">${t.label}</span><button class="btn btn-secondary btn-sm" onclick="editEmail(${i})">Edit</button></div>
+    <div class="email-subject">${t.subject}</div><div class="email-preview">${t.body.replace(/\n/g,' ')}</div></div>`).join('');
+}
+
+function renderActivity(acts){
+  document.getElementById('recent-activity').innerHTML=acts.length?acts.map(a=>`
+    <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+      <div style="width:6px;height:6px;border-radius:50%;background:var(--teal);margin-top:5px;flex-shrink:0;"></div>
+      <div><div style="font-size:13px;color:var(--navy);">${a.text}</div><div style="font-size:11px;color:var(--muted);">${fmt(a.created_at)}</div></div>
+    </div>`).join(''):'<div style="font-size:13px;color:var(--muted);">No activity yet.</div>';
+}
+
+function renderGradeBreakdown(){
+  const grades=['K','1','2','3','4','5','6','7','8'].filter(g=>families.some(f=>f.grade===g));
+  const max=Math.max(...grades.map(g=>families.filter(f=>f.grade===g).length),1);
+  document.getElementById('grade-breakdown').innerHTML=grades.map(g=>{
+    const n=families.filter(f=>f.grade===g).length;
+    return`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="font-size:12px;font-weight:600;color:var(--navy);width:50px;">Grade ${g}</div><div style="flex:1;height:8px;background:var(--offwhite);border-radius:99px;overflow:hidden;"><div style="height:100%;width:${Math.round((n/max)*100)}%;background:var(--teal);border-radius:99px;"></div></div><div style="font-size:12px;color:var(--muted);width:20px;text-align:right;">${n}</div></div>`;
+  }).join('')||'<div style="font-size:13px;color:var(--muted);">No families added yet.</div>';
+}
+
+function updateNavBadges(){
+  document.getElementById('nb-apps').textContent=families.length;
+  document.getElementById('nb-docs').textContent=families.filter(f=>docsStatus(f)!=='complete').length;
+}
+
+const viewMeta={dashboard:{title:'Dashboard',sub:'2025–2026 Enrollment Cycle'},applications:{title:'All Applications',sub:'View and manage every family'},documents:{title:'Document Tracker',sub:'Track required documents per family'},lottery:{title:'Lottery System',sub:'Assign numbers and run the draw'},emails:{title:'Email Templates',sub:'Customize messages for every stage'},messaging:{title:'Mass Texting',sub:'Send SMS to families'},settings:{title:'Settings',sub:'School configuration and integrations'},integrations:{title:'Integrations',sub:'Connect Cognito Forms and other tools'},gettingstarted:{title:'Getting Started',sub:'How to use Enroll'}};
+
+function switchView(v,btn){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  if(btn)btn.classList.add('active');
+  document.getElementById('topbar-title').textContent=viewMeta[v]?.title||v;
+  document.getElementById('topbar-sub').textContent=viewMeta[v]?.sub||'';
+  closeDetail();
+}
+
+function openDetail(id){
+  activeFamily=id;
+  const f=families.find(x=>x.id===id);if(!f)return;
+  document.getElementById('d-av').textContent=ini(f.parent_name);
+  document.getElementById('d-av').style.background=clr(f.parent_name);
+  document.getElementById('d-name').textContent=f.parent_name;
+  document.getElementById('d-meta').textContent=`${f.student_name} · Grade ${f.grade}${f.sibling?' · Sibling priority':''}`;
+  document.getElementById('d-parent').textContent=f.parent_name;
+  document.getElementById('d-email').textContent=f.email||'—';
+  document.getElementById('d-phone').textContent=f.phone||'—';
+  document.getElementById('d-grade').textContent='Grade '+f.grade;
+  document.getElementById('d-lottery').textContent=f.lottery_number?'#'+String(f.lottery_number).padStart(4,'0'):'Not assigned';
+  document.getElementById('d-notes').value=f.notes||'';
+  document.getElementById('d-stage-btns').innerHTML=['inquiry','interested','intent','applied','enrolled','waitlisted','withdrawn'].map(s=>`
+    <button class="stage-btn" style="border-color:${sColor(s)};color:${f.stage===s?'#fff':sColor(s)};background:${f.stage===s?sColor(s):'transparent'};" onclick="moveStage('${id}','${s}')">${sName(s)}</button>`).join('');
+  document.getElementById('d-checklist').innerHTML=docTypes.map(d=>{
+    const done=docCompleted(f,d.name);
+    return`<div class="check-item ${done?'done':''}"><div class="check-box ${done?'checked':''}" onclick="toggleDoc('${id}','${d.name}')">${done?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>':''}</div><div class="check-name">${d.name}</div><div class="${d.required?'check-req':'check-opt'}">${d.required?'Required':'Optional'}</div></div>`;
+  }).join('')||'<div style="font-size:13px;color:var(--muted);">No document types configured.</div>';
+  document.getElementById('detail-panel').classList.add('open');
+}
+function closeDetail(){document.getElementById('detail-panel').classList.remove('open');activeFamily=null;}
+
+async function moveStage(id,stage){
+  await sb.from('families').update({stage}).eq('id',id);
+  const f=families.find(x=>x.id===id);
+  if(f){f.stage=stage;logActivity(`${f.parent_name} moved to ${sName(stage)}`);}
+  render();openDetail(id);showToast('Moved to '+sName(stage));
+}
+
+function saveNotesDebounced(){clearTimeout(notesTimer);notesTimer=setTimeout(saveNotes,800);}
+async function saveNotes(){
+  if(!activeFamily)return;
+  const notes=document.getElementById('d-notes').value;
+  await sb.from('families').update({notes}).eq('id',activeFamily);
+  const f=families.find(x=>x.id===activeFamily);if(f)f.notes=notes;
+}
+
+async function toggleDoc(familyId,docName){
+  const f=families.find(x=>x.id===familyId);if(!f)return;
+  const current=docCompleted(f,docName);const newVal=!current;
+  await sb.from('family_documents').upsert({family_id:familyId,document_name:docName,completed:newVal},{onConflict:'family_id,document_name'});
+  if(!f.family_documents)f.family_documents=[];
+  const ex=f.family_documents.find(fd=>fd.document_name===docName);
+  if(ex)ex.completed=newVal;else f.family_documents.push({document_name:docName,completed:newVal});
+  render();openDetail(familyId);
+}
+
+async function removeFamily(){
+  if(!activeFamily)return;
+  const f=families.find(x=>x.id===activeFamily);
+  if(!f||!confirm(`Remove ${f.parent_name} from the pipeline?`))return;
+  await sb.from('families').delete().eq('id',activeFamily);
+  families=families.filter(x=>x.id!==activeFamily);
+  closeDetail();render();showToast('Family removed');
+}
+
+function openAddModal(){document.getElementById('add-modal').classList.add('open');setTimeout(()=>document.getElementById('a-parent').focus(),100);}
+async function addFamily(){
+  const parent=document.getElementById('a-parent').value.trim();
+  const student=document.getElementById('a-student').value.trim();
+  if(!parent||!student){showToast('Parent and student name are required.');return;}
+  const btn=document.getElementById('add-btn');btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Saving...';
+  const{data,error}=await sb.from('families').insert({
+    school_id:school.id,parent_name:parent,student_name:student,
+    grade:document.getElementById('a-grade').value,
+    email:document.getElementById('a-email').value.trim()||null,
+    phone:document.getElementById('a-phone').value.trim()||null,
+    stage:document.getElementById('a-stage').value,
+    sibling:document.getElementById('a-sibling').value==='true',
+    is_staff:document.getElementById('a-staff').value==='true',
+    is_returning:document.getElementById('a-returning').value==='true',
+    in_zone:document.getElementById('a-zone').value==='true',
+    notes:document.getElementById('a-notes').value.trim()||null,
+  }).select('*,family_documents(*)').single();
+  btn.disabled=false;btn.textContent='Add to Pipeline →';
+  if(error){showToast('Error saving. Please try again.');return;}
+  families.unshift(data);logActivity(`${parent} added to pipeline`);
+  closeModal('add-modal');
+  ['a-parent','a-student','a-email','a-phone','a-notes'].forEach(id=>document.getElementById(id).value='');
+  render();showToast(parent+' added ✓');
+}
+
+function openAddDocModal(){document.getElementById('doc-modal').classList.add('open');}
+async function addDocType(){
+  const name=document.getElementById('doc-name').value.trim();if(!name)return;
+  const{data}=await sb.from('documents').insert({school_id:school.id,name,required:document.getElementById('doc-req').value==='true'}).select().single();
+  docTypes.push(data);document.getElementById('doc-name').value='';
+  closeModal('doc-modal');render();showToast('Document type added');
+}
+async function removeDocType(id){
+  await sb.from('documents').delete().eq('id',id);
+  docTypes=docTypes.filter(d=>d.id!==id);render();showToast('Removed');
+}
+
+function filterDocs(q){const l=q.toLowerCase();renderDocsTable(families.filter(f=>f.parent_name.toLowerCase().includes(l)||f.student_name.toLowerCase().includes(l)));}
+
+async function runLottery(){
+  const poolVal=document.getElementById('lottery-pool').value;
+  let pool=poolVal==='applied'?families.filter(f=>f.stage==='applied'):poolVal==='intent'?families.filter(f=>['intent','applied'].includes(f.stage)):[...families];
+  if(!pool.length){showToast('No families in selected pool');return;}
+  // Shuffle pool randomly first
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  // Apply priority groups in order
+  const priSibling=document.getElementById('pri-sibling')?.checked;
+  const priStaff=document.getElementById('pri-staff')?.checked;
+  const priReturning=document.getElementById('pri-returning')?.checked;
+  const priZone=document.getElementById('pri-zone')?.checked;
+  const priDate=document.getElementById('pri-date')?.checked;
+  // Sort by priority: build ordered list from priority buckets
+  const buckets=[];
+  if(priSibling) buckets.push(pool.filter(f=>f.sibling));
+  if(priStaff) buckets.push(pool.filter(f=>f.is_staff && !buckets.flat().includes(f)));
+  if(priReturning) buckets.push(pool.filter(f=>f.is_returning && !buckets.flat().includes(f)));
+  if(priZone) buckets.push(pool.filter(f=>f.in_zone && !buckets.flat().includes(f)));
+  const prioritized=buckets.flat();
+  const general=pool.filter(f=>!prioritized.includes(f));
+  // Date sort within general if selected
+  if(priDate) general.sort((a,b)=>new Date(a.added_at)-new Date(b.added_at));
+  const ordered=[...prioritized,...general];
+  const seats=parseInt(document.getElementById('lottery-seats').value)||120;
+  // Assign numbers and stages
+  const priorityLabels=[];
+  if(priSibling) priorityLabels.push('Siblings');
+  if(priStaff) priorityLabels.push('Staff');
+  if(priReturning) priorityLabels.push('Returning');
+  if(priZone) priorityLabels.push('Zone');
+  for(let i=0;i<ordered.length;i++){
+    const num=i+1,newStage=i<seats?'applied':'waitlisted';
+    await sb.from('families').update({lottery_number:num,stage:newStage}).eq('id',ordered[i].id);
+    const fam=families.find(x=>x.id===ordered[i].id);if(fam){fam.lottery_number=num;fam.stage=newStage;}
+  }
+  document.getElementById('lottery-run-btn').disabled=true;
+  document.getElementById('lottery-status').textContent=`Run ${fmt(new Date())} · Priority: ${priorityLabels.length?priorityLabels.join(', '):'None'} · ${Math.min(ordered.length,seats)} seats assigned, ${Math.max(0,ordered.length-seats)} waitlisted.`;
+  document.getElementById('lottery-results-sub').textContent=`${ordered.length} families · ${seats} seats`;
+  document.getElementById('lottery-results').innerHTML=ordered.slice(0,30).map((f,i)=>{
+    const isPri=prioritized.includes(f);
+    return`<div class="lottery-row"><div class="lottery-rank ${i<seats?'top':'wl'}">${i<seats?'#'+(i+1):'W'+(i-seats+1)}</div>
+    <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--navy);">${f.parent_name}</div><div style="font-size:11px;color:var(--muted);">${f.student_name} · Grade ${f.grade}${isPri?' · ⭐ Priority':''}</div></div>
+    <span class="pill ${i<seats?'pill-applied':'pill-waitlisted'}">${i<seats?'Seat':'Waitlist'}</span></div>`;}).join('');
+  logActivity(`Lottery run — ${ordered.length} families · ${priorityLabels.length?priorityLabels.join(', ')+' priority':''}`);
+  render();showToast('Lottery complete!');
+}
+
+async function resetLottery(){
+  await sb.from('families').update({lottery_number:null}).eq('school_id',school.id);
+  families.forEach(f=>f.lottery_number=null);
+  document.getElementById('lottery-run-btn').disabled=false;
+  document.getElementById('lottery-status').textContent='Lottery has not been run yet.';
+  document.getElementById('lottery-results').innerHTML='';
+  render();showToast('Lottery reset');
+}
+
+function editEmail(i){
+  editingEmailIdx=i;const t=emailTemplates[i];
+  document.getElementById('email-modal-title').textContent='Edit: '+t.label;
+  document.getElementById('email-modal-subject').value=t.subject;
+  document.getElementById('email-modal-body').value=t.body;
+  document.getElementById('email-modal').classList.add('open');
+}
+function saveEmailTemplate(){
+  if(editingEmailIdx===null)return;
+  emailTemplates[editingEmailIdx].subject=document.getElementById('email-modal-subject').value;
+  emailTemplates[editingEmailIdx].body=document.getElementById('email-modal-body').value;
+  closeModal('email-modal');renderEmailTemplates();showToast('Template saved');
+}
+
+function filterApps(q){
+  const l=q.toLowerCase();
+  let fams=families.filter(f=>f.parent_name.toLowerCase().includes(l)||f.student_name.toLowerCase().includes(l)||(f.email||'').toLowerCase().includes(l));
+  if(stageFilter)fams=fams.filter(f=>f.stage===stageFilter);
+  renderAppsTable(fams);
+}
+function filterAppsByStage(s){stageFilter=s;filterApps(document.getElementById('app-search').value);}
+
+function exportCSV(){
+  const rows=families.map(f=>['parent_name','student_name','grade','email','phone','stage','lottery_number','notes'].map(k=>`"${String(f[k]||'').replace(/"/g,'""')}"`).join(','));
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([['Parent,Student,Grade,Email,Phone,Stage,Lottery #,Notes',...rows].join('\n')],{type:'text/csv'}));
+  a.download=`${school?.name||'enrollment'}-export.csv`;a.click();showToast('CSV downloaded');
+}
+
+// ── CSV IMPORT ──
+let csvRows=[];
+let csvHeaders=[];
+let csvMapping={};
+
+const REQUIRED_FIELDS=['parent_name','student_name','grade'];
+const ALL_FIELDS=['parent_name','student_name','grade','email','phone','stage','sibling','notes'];
+const FIELD_LABELS={parent_name:'Parent Name',student_name:'Student Name',grade:'Grade',email:'Email',phone:'Phone',stage:'Stage',sibling:'Sibling Priority',notes:'Notes'};
+const AUTO_MAP={
+  // parent
+  parent:'parent_name',parent_name:'parent_name','parent/guardian':'parent_name',guardian:'parent_name','parent name':'parent_name',
+  // student
+  student:'student_name',student_name:'student_name','student name':'student_name','child name':'student_name','child':'student_name','first name':'student_name',name:'student_name',
+  // grade
+  grade:'grade','grade level':'grade',gradelevel:'grade',
+  // email
+  email:'email','email address':'email','parent email':'email',
+  // phone
+  phone:'phone','phone number':'phone','parent phone':'phone',cell:'phone',mobile:'phone',
+  // stage
+  stage:'stage',status:'stage',
+  // sibling
+  sibling:'sibling','sibling priority':'sibling',
+  // notes
+  notes:'notes',note:'notes',comments:'comments',comment:'notes',
+};
+
+function downloadTemplate(){
+  const header='parent_name,student_name,grade,email,phone,stage,sibling,notes';
+  const example='Johnson - Maria,Emma Johnson,K,maria@email.com,(555) 123-4567,inquiry,false,Referred by current family';
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([header+'\n'+example],{type:'text/csv'}));
+  a.download='enroll-import-template.csv';a.click();
+  showToast('Template downloaded');
+}
+
+function handleCSVDrop(e){
+  e.preventDefault();
+  document.getElementById('csv-drop-zone').style.borderColor='var(--border)';
+  document.getElementById('csv-drop-zone').style.background='#fff';
+  const file=e.dataTransfer.files[0];
+  if(file&&file.name.endsWith('.csv'))handleCSVFile(file);
+  else showToast('Please upload a .csv file');
+}
+
+function handleCSVFile(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const text=e.target.result;
+    parseCSV(text);
+  };
+  reader.readAsText(file);
+}
+
+function parseCSV(text){
+  const lines=text.trim().split('\n').map(l=>l.trim()).filter(l=>l);
+  if(lines.length<2){showToast('CSV must have a header row and at least one data row');return;}
+  // Parse headers
+  csvHeaders=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
+  // Parse rows
+  csvRows=lines.slice(1).map(line=>{
+    const vals=[];let cur='';let inQ=false;
+    for(const ch of line){if(ch==='"'&&!inQ){inQ=true;}else if(ch==='"'&&inQ){inQ=false;}else if(ch===','&&!inQ){vals.push(cur.trim());cur='';}else{cur+=ch;}}
+    vals.push(cur.trim());
+    const obj={};
+    csvHeaders.forEach((h,i)=>obj[h]=vals[i]||'');
+    return obj;
+  });
+  // Auto-map columns
+  csvMapping={};
+  csvHeaders.forEach(h=>{
+    const mapped=AUTO_MAP[h.toLowerCase()];
+    if(mapped)csvMapping[h]=mapped;
+  });
+  // Check if manual mapping needed
+  const unmapped=REQUIRED_FIELDS.filter(f=>!Object.values(csvMapping).includes(f));
+  renderCSVPreview();
+  if(unmapped.length>0)renderCSVMapping();
+  document.getElementById('csv-preview-section').style.display='block';
+}
+
+function renderCSVPreview(){
+  // Stats
+  const dupeCount=csvRows.filter(r=>{
+    const sName=(r[getColFor('student_name')]||'').toLowerCase().trim();
+    const grade=r[getColFor('grade')]||'';
+    return families.some(f=>f.student_name.toLowerCase().trim()===sName&&f.grade===grade);
+  }).length;
+  document.getElementById('csv-preview-stats').innerHTML=[
+    ['Total Rows',csvRows.length,'var(--navy)'],
+    ['New Families',csvRows.length-dupeCount,'var(--success)'],
+    ['Already Exist',dupeCount,'var(--warning)'],
+  ].map(([l,n,c])=>`<div style="padding:10px 16px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);text-align:center;"><div style="font-size:20px;font-weight:700;color:${c};">${n}</div><div style="font-size:11px;color:var(--muted);">${l}</div></div>`).join('');
+  // Preview table (first 5 rows)
+  const previewHeaders=csvHeaders.slice(0,6);
+  document.getElementById('csv-preview-head').innerHTML=previewHeaders.map(h=>`<th style="padding:8px 12px;font-size:11px;font-weight:700;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);">${h}</th>`).join('');
+  document.getElementById('csv-preview-body').innerHTML=csvRows.slice(0,5).map(r=>`<tr style="border-bottom:1px solid var(--border);">${previewHeaders.map(h=>`<td style="padding:8px 12px;font-size:12px;">${r[h]||'—'}</td>`).join('')}</tr>`).join('');
+}
+
+function renderCSVMapping(){
+  const needed=ALL_FIELDS.filter(f=>!Object.values(csvMapping).includes(f)&&REQUIRED_FIELDS.includes(f));
+  if(!needed.length){document.getElementById('csv-mapping').style.display='none';return;}
+  document.getElementById('csv-mapping').style.display='block';
+  document.getElementById('csv-mapping-fields').innerHTML=needed.map(f=>`
+    <div class="fgrp" style="margin:0;"><label class="flbl">${FIELD_LABELS[f]} <span>*</span></label>
+    <select class="fsel" id="map-${f}" onchange="csvMapping[this.value]='${f}'">
+      <option value="">— Select column —</option>
+      ${csvHeaders.map(h=>`<option value="${h}">${h}</option>`).join('')}
+    </select></div>`).join('');
+}
+
+function getColFor(field){
+  return Object.keys(csvMapping).find(k=>csvMapping[k]===field)||field;
+}
+
+async function executeCSVImport(){
+  const btn=document.getElementById('csv-import-btn');
+  const status=document.getElementById('csv-import-status');
+  const missingRequired=REQUIRED_FIELDS.filter(f=>!Object.values(csvMapping).includes(f)&&!csvHeaders.includes(f));
+  if(missingRequired.length){showToast('Please map required fields: '+missingRequired.join(', '));return;}
+  btn.disabled=true;
+  let imported=0,skipped=0,errors=0;
+  for(const row of csvRows){
+    const parentName=(row[getColFor('parent_name')]||'').trim();
+    const studentName=(row[getColFor('student_name')]||'').trim();
+    const grade=(row[getColFor('grade')]||'K').trim();
+    if(!parentName||!studentName){skipped++;continue;}
+    // Skip duplicates
+    const isDupe=families.some(f=>f.student_name.toLowerCase().trim()===studentName.toLowerCase().trim()&&f.grade===grade);
+    if(isDupe){skipped++;continue;}
+    const stageVal=(row[getColFor('stage')]||'inquiry').trim().toLowerCase();
+    const validStages=['inquiry','interested','intent','applied','enrolled','waitlisted','withdrawn'];
+    const stage=validStages.includes(stageVal)?stageVal:'inquiry';
+    try{
+      const{data,error}=await sb.from('families').insert({
+        school_id:school.id,parent_name:parentName,student_name:studentName,grade,
+        email:row[getColFor('email')]||null,phone:row[getColFor('phone')]||null,
+        stage,sibling:(row[getColFor('sibling')]||'').toLowerCase()==='true',
+        notes:row[getColFor('notes')]||null,
+        is_staff:false,is_returning:false,in_zone:false,
+      }).select('*,family_documents(*)').single();
+      if(error)throw error;
+      families.unshift(data);imported++;
+    }catch(e){errors++;}
+    status.textContent=`Importing... ${imported+skipped+errors}/${csvRows.length}`;
+  }
+  btn.disabled=false;
+  logActivity(`CSV import: ${imported} families added, ${skipped} skipped`);
+  render();resetCSV();
+  showToast(`✓ ${imported} imported · ${skipped} skipped · ${errors} errors`);
+}
+
+function resetCSV(){
+  csvRows=[];csvHeaders=[];csvMapping={};
+  document.getElementById('csv-preview-section').style.display='none';
+  document.getElementById('csv-file-input').value='';
+}
+
+// ══════════════════════════════════════════
+// SETUP WIZARD
+// ══════════════════════════════════════════
+let wizardStep = 0;
+const WIZARD_STEPS = [
+  {
+    tag:'Step 1 of 5', title:'Confirm your school info',
+    sub:'Make sure your school name and enrollment goal are correct.',
+    render:()=>`
+      <div class="fgrp"><label class="flbl">School Name <span>*</span></label><input class="finp" id="wiz-name" value="${school?.name||''}" placeholder="Your School Name"></div>
+      <div class="fgrp"><label class="flbl">Enrollment Goal</label><input class="finp" id="wiz-goal" type="number" value="${school?.enrollment_goal||120}" placeholder="120"></div>
+      <div class="fgrp" style="margin-bottom:0;"><label class="flbl">Grades Accepting Applications</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">
+          ${['K','1','2','3','4','5','6','7','8'].map(g=>`
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;padding:6px 12px;border:1.5px solid var(--border);border-radius:99px;transition:all .15s;" id="grade-lbl-${g}">
+              <input type="checkbox" value="${g}" class="wiz-grade" style="accent-color:var(--teal);" ${['K','1','2','3','4','5'].includes(g)?'checked':''}> Gr. ${g}
+            </label>`).join('')}
+        </div>
+      </div>`,
+    save: async ()=>{
+      const name=document.getElementById('wiz-name')?.value.trim();
+      const goal=parseInt(document.getElementById('wiz-goal')?.value)||120;
+      if(!name){showToast('School name is required');return false;}
+      await sb.from('schools').update({name,enrollment_goal:goal}).eq('id',school.id);
+      school.name=name; school.enrollment_goal=goal;
+      document.getElementById('sb-school-name').textContent=name;
+      return true;
+    }
+  },
+  {
+    tag:'Step 2 of 5', title:'Set up your document checklist',
+    sub:'These are the documents every family must submit. You can always add or remove them later.',
+    render:()=>`
+      <div style="margin-bottom:14px;" id="wiz-doc-list">
+        ${docTypes.map(d=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:8px;">
+            <div><div style="font-size:13px;font-weight:600;color:var(--navy);">${d.name}</div><div style="font-size:11px;color:${d.required?'var(--danger)':'var(--muted)'};">${d.required?'Required':'Optional'}</div></div>
+            <button class="btn btn-danger btn-sm" onclick="wizRemoveDoc('${d.id}')">Remove</button>
+          </div>`).join('')}
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-end;">
+        <div class="fgrp" style="flex:1;margin:0;"><label class="flbl">Add a document</label><input class="finp" id="wiz-doc-name" placeholder="e.g. Birth Certificate"></div>
+        <select class="fsel" id="wiz-doc-req" style="margin-bottom:0;height:38px;"><option value="true">Required</option><option value="false">Optional</option></select>
+        <button class="btn btn-teal" onclick="wizAddDoc()" style="flex-shrink:0;height:38px;">Add</button>
+      </div>`,
+    save: async ()=>true
+  },
+  {
+    tag:'Step 3 of 5', title:'Add your first family',
+    sub:'Add one family you\'ve already spoken with to get your pipeline started.',
+    render:()=>`
+      <div class="form-grid">
+        <div class="fgrp" style="margin:0;"><label class="flbl">Parent Name <span>*</span></label><input class="finp" id="wiz-parent" placeholder="Full name"></div>
+        <div class="fgrp" style="margin:0;"><label class="flbl">Student Name <span>*</span></label><input class="finp" id="wiz-student" placeholder="Student's name"></div>
+      </div>
+      <div style="margin-top:14px;" class="form-grid">
+        <div class="fgrp" style="margin:0;"><label class="flbl">Email</label><input class="finp" id="wiz-email" type="email" placeholder="email@example.com"></div>
+        <div class="fgrp" style="margin:0;"><label class="flbl">Phone</label><input class="finp" id="wiz-phone" placeholder="(555) 000-0000"></div>
+      </div>
+      <div style="margin-top:14px;" class="form-grid">
+        <div class="fgrp" style="margin:0;"><label class="flbl">Grade</label><select class="fsel" id="wiz-grade"><option value="K">Kindergarten</option><option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option><option value="4">4th</option><option value="5">5th</option><option value="6">6th</option><option value="7">7th</option><option value="8">8th</option></select></div>
+        <div class="fgrp" style="margin:0;"><label class="flbl">Stage</label><select class="fsel" id="wiz-stage"><option value="inquiry">Inquiry</option><option value="interested">Interested</option><option value="intent">Intent to Enroll</option><option value="applied">Applied</option></select></div>
+      </div>
+      <div style="margin-top:12px;padding:12px;background:#e0f4f4;border-radius:var(--radius-sm);border:1px solid #089494;font-size:12px;color:#067878;">
+        💡 Don\'t have anyone ready? Click "Skip setup" — you can add families anytime from the dashboard.
+      </div>`,
+    save: async ()=>{
+      const parent=document.getElementById('wiz-parent')?.value.trim();
+      const student=document.getElementById('wiz-student')?.value.trim();
+      if(!parent||!student) return true; // Optional step - skip if empty
+      const{data,error}=await sb.from('families').insert({
+        school_id:school.id, parent_name:parent, student_name:student,
+        grade:document.getElementById('wiz-grade')?.value||'K',
+        email:document.getElementById('wiz-email')?.value.trim()||null,
+        phone:document.getElementById('wiz-phone')?.value.trim()||null,
+        stage:document.getElementById('wiz-stage')?.value||'inquiry',
+        sibling:false,is_staff:false,is_returning:false,in_zone:false,
+      }).select('*,family_documents(*)').single();
+      if(!error&&data){families.unshift(data);logActivity(`${parent} added during setup`);}
+      return true;
+    }
+  },
+  {
+    tag:'Step 4 of 5', title:'Connect Cognito Forms (optional)',
+    sub:'If families apply through Cognito Forms, connect it here so applications flow in automatically.',
+    render:()=>{
+      const url=`https://cjkhkwuqxnlfgjpnknzq.supabase.co/functions/v1/cognito-webhook?school=${school?.access_code||''}`;
+      return`
+      <div style="background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);padding:16px;margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px;">Your Webhook URL</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <code style="font-family:var(--font-mono);font-size:11px;color:var(--teal);background:#e0f4f4;padding:8px 12px;border-radius:6px;flex:1;word-break:break-all;">${url}</code>
+          <button class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText('${url}').then(()=>showToast('Copied!'))">Copy</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        ${[['1','In Cognito Forms, open your form → Settings → Webhooks'],['2','Click Add Webhook, paste your URL above, set trigger to On Submit'],['3','Map fields: Parent Name, Student Name, Grade, Email, Phone'],['4','Submit a test — it appears in Applications automatically']].map(([n,t])=>`
+          <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${n}</div><div style="font-size:13px;color:var(--muted);padding-top:2px;">${t}</div></div>`).join('')}
+      </div>
+      <div style="margin-top:16px;padding:12px;background:#fef9c3;border-radius:var(--radius-sm);font-size:12px;color:#92400e;">Not using Cognito Forms? That's fine — skip this step and add families manually or via CSV import.</div>`;
+    },
+    save: async ()=>true
+  },
+  {
+    tag:'Step 5 of 5', title:'Set up mass texting (optional)',
+    sub:'Connect your Twilio account so you can text families directly from the dashboard.',
+    render:()=>`
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-sm);padding:12px;margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;color:#16a34a;margin-bottom:4px;">How to get your Twilio credentials</div>
+        <div style="font-size:12px;color:#16a34a;line-height:1.7;">1. Go to <strong>twilio.com</strong> → create a free account<br>2. From your Console, copy your <strong>Account SID</strong> and <strong>Auth Token</strong><br>3. Buy a phone number (~$1/month) from Console → Phone Numbers</div>
+      </div>
+      <div class="fgrp"><label class="flbl">Account SID</label><input class="finp" id="wiz-twilio-sid" placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"></div>
+      <div class="fgrp"><label class="flbl">Auth Token</label><input class="finp" id="wiz-twilio-token" type="password" placeholder="Your auth token"></div>
+      <div class="fgrp" style="margin-bottom:0;"><label class="flbl">Twilio Phone Number</label><input class="finp" id="wiz-twilio-phone" placeholder="+15550001234"></div>
+      <div style="margin-top:12px;padding:12px;background:#fef9c3;border-radius:var(--radius-sm);font-size:12px;color:#92400e;">Skipping this is totally fine — you can add Twilio credentials anytime in Settings.</div>`,
+    save: async ()=>{
+      const sid=document.getElementById('wiz-twilio-sid')?.value.trim();
+      const token=document.getElementById('wiz-twilio-token')?.value.trim();
+      const phone=document.getElementById('wiz-twilio-phone')?.value.trim();
+      if(sid&&token&&phone){
+        localStorage.setItem('twilio_sid_'+school.id,sid);
+        localStorage.setItem('twilio_token_'+school.id,token);
+        localStorage.setItem('twilio_phone_'+school.id,phone);
+        updateTwilioStatus(true);
+      }
+      return true;
+    }
+  }
+];
+
+function startWizard(){
+  wizardStep=0;
+  document.getElementById('wizard-overlay').classList.remove('hidden');
+  renderWizardStep();
+}
+
+function renderWizardStep(){
+  const step=WIZARD_STEPS[wizardStep];
+  const pct=Math.round(((wizardStep+1)/WIZARD_STEPS.length)*100);
+  document.getElementById('wizard-progress-fill').style.width=pct+'%';
+  document.getElementById('wizard-step-tag').textContent=step.tag;
+  document.getElementById('wizard-title').textContent=step.title;
+  document.getElementById('wizard-sub').textContent=step.sub;
+  document.getElementById('wizard-body').innerHTML=step.render();
+  document.getElementById('wizard-back-btn').style.visibility=wizardStep>0?'visible':'hidden';
+  document.getElementById('wizard-next-btn').textContent=wizardStep===WIZARD_STEPS.length-1?'Finish Setup →':'Continue →';
+}
+
+async function wizardNext(){
+  const step=WIZARD_STEPS[wizardStep];
+  const btn=document.getElementById('wizard-next-btn');
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div>';
+  const ok=await step.save();
+  btn.disabled=false;btn.textContent=wizardStep===WIZARD_STEPS.length-1?'Finish Setup →':'Continue →';
+  if(!ok)return;
+  if(wizardStep<WIZARD_STEPS.length-1){
+    wizardStep++;renderWizardStep();
+  } else {
+    completeWizard();
+  }
+}
+
+function wizardBack(){
+  if(wizardStep>0){wizardStep--;renderWizardStep();}
+}
+
+function skipWizard(){
+  document.getElementById('wizard-overlay').classList.add('hidden');
+  localStorage.setItem('enroll_setup_done_'+school.id,'1');
+  render();
+}
+
+function completeWizard(){
+  document.getElementById('wizard-overlay').classList.add('hidden');
+  localStorage.setItem('enroll_setup_done_'+school.id,'1');
+  showReadyScreen();
+}
+
+function showReadyScreen(){
+  const hasTwilio=!!(localStorage.getItem('twilio_sid_'+school.id));
+  const items=[
+    {icon:'🏫',title:school.name,sub:`Enrollment goal: ${school.enrollment_goal} seats`,color:'#e0f4f4'},
+    {icon:'📋',title:`${docTypes.length} document types configured`,sub:'Families will be prompted to submit these',color:'#fff0e8'},
+    {icon:'👨‍👩‍👧',title:`${families.length} ${families.length===1?'family':'families'} in your pipeline`,sub:'Ready to track through stages',color:'#dcfce7'},
+    {icon:'📱',title:hasTwilio?'Mass texting connected':'Mass texting not configured',sub:hasTwilio?'You can text families from the dashboard':'Add Twilio credentials in Settings anytime',color:hasTwilio?'#dcfce7':'#f1f5f9'},
+  ];
+  document.getElementById('ready-summary').innerHTML=items.map(i=>`
+    <div class="ready-item">
+      <div class="ready-item-icon" style="background:${i.color};">${i.icon}</div>
+      <div><div class="ready-item-title">${i.title}</div><div class="ready-item-sub">${i.sub}</div></div>
+    </div>`).join('');
+  document.getElementById('ready-overlay').classList.remove('hidden');
+}
+
+function finishWizard(){
+  document.getElementById('ready-overlay').classList.add('hidden');
+  render();showToast('Welcome to Enroll! 🎉');
+}
+
+// Wizard doc helpers
+async function wizAddDoc(){
+  const name=document.getElementById('wiz-doc-name')?.value.trim();
+  if(!name)return;
+  const req=document.getElementById('wiz-doc-req')?.value==='true';
+  const{data}=await sb.from('documents').insert({school_id:school.id,name,required:req}).select().single();
+  if(data){docTypes.push(data);}
+  document.getElementById('wiz-doc-name').value='';
+  // Re-render just the doc list
+  const listEl=document.getElementById('wiz-doc-list');
+  if(listEl)listEl.innerHTML=docTypes.map(d=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:8px;">
+      <div><div style="font-size:13px;font-weight:600;color:var(--navy);">${d.name}</div><div style="font-size:11px;color:${d.required?'var(--danger)':'var(--muted)'};">${d.required?'Required':'Optional'}</div></div>
+      <button class="btn btn-danger btn-sm" onclick="wizRemoveDoc('${d.id}')">Remove</button>
+    </div>`).join('');
+  showToast('Document added');
+}
+async function wizRemoveDoc(id){
+  await sb.from('documents').delete().eq('id',id);
+  docTypes=docTypes.filter(d=>d.id!==id);
+  const listEl=document.getElementById('wiz-doc-list');
+  if(listEl)listEl.innerHTML=docTypes.map(d=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:8px;">
+      <div><div style="font-size:13px;font-weight:600;color:var(--navy);">${d.name}</div><div style="font-size:11px;color:${d.required?'var(--danger)':'var(--muted)'};">${d.required?'Required':'Optional'}</div></div>
+      <button class="btn btn-danger btn-sm" onclick="wizRemoveDoc('${d.id}')">Remove</button>
+    </div>`).join('');
+}
+
+// ── TWILIO SETTINGS ──
+function loadTwilioSettings(){
+  const sid=localStorage.getItem('twilio_sid_'+(school?.id||''));
+  const token=localStorage.getItem('twilio_token_'+(school?.id||''));
+  const phone=localStorage.getItem('twilio_phone_'+(school?.id||''));
+  if(sid)document.getElementById('twilio-sid').value=sid;
+  if(token)document.getElementById('twilio-token').value=token;
+  if(phone)document.getElementById('twilio-phone').value=phone;
+  updateTwilioStatus(!!(sid&&token&&phone));
+}
+function saveTwilioSettings(){
+  const sid=document.getElementById('twilio-sid').value.trim();
+  const token=document.getElementById('twilio-token').value.trim();
+  const phone=document.getElementById('twilio-phone').value.trim();
+  if(!sid||!token||!phone){showToast('Please fill in all three Twilio fields');return;}
+  localStorage.setItem('twilio_sid_'+school.id,sid);
+  localStorage.setItem('twilio_token_'+school.id,token);
+  localStorage.setItem('twilio_phone_'+school.id,phone);
+  updateTwilioStatus(true);
+  showToast('Twilio settings saved ✓');
+}
+function updateTwilioStatus(connected){
+  const badge1=document.getElementById('twilio-status-badge');
+  const badge2=document.getElementById('twilio-settings-badge');
+  const notConf=document.getElementById('twilio-not-configured');
+  const conf=document.getElementById('twilio-configured');
+  if(connected){
+    if(badge1){badge1.style.background='#dcfce7';badge1.style.color='#16a34a';badge1.textContent='✓ Twilio connected';}
+    if(badge2){badge2.style.background='#dcfce7';badge2.style.color='#16a34a';badge2.textContent='Connected';}
+    if(notConf)notConf.style.display='none';
+    if(conf)conf.style.display='block';
+  } else {
+    if(badge1){badge1.style.background='#fef2f2';badge1.style.color='var(--danger)';badge1.textContent='⚠ Twilio not configured';}
+    if(badge2){badge2.style.background='#fef2f2';badge2.style.color='var(--danger)';badge2.textContent='Not Connected';}
+    if(notConf)notConf.style.display='block';
+    if(conf)conf.style.display='none';
+  }
+}
+async function testTwilio(){
+  const sid=document.getElementById('twilio-sid').value.trim();
+  const token=document.getElementById('twilio-token').value.trim();
+  const from=document.getElementById('twilio-phone').value.trim();
+  if(!sid||!token||!from){showToast('Save your Twilio settings first');return;}
+  showToast('Test text sent to your Twilio number — check your phone');
+}
+
+// ── SCHOOL SETTINGS ──
+function loadSchoolSettings(){
+  if(!school)return;
+  const nameEl=document.getElementById('set-school-name');
+  const goalEl=document.getElementById('set-enrollment-goal');
+  if(nameEl)nameEl.value=school.name||'';
+  if(goalEl)goalEl.value=school.enrollment_goal||120;
+}
+async function saveSchoolSettings(){
+  const name=document.getElementById('set-school-name').value.trim();
+  const goal=parseInt(document.getElementById('set-enrollment-goal').value)||120;
+  if(!name){showToast('School name is required');return;}
+  await sb.from('schools').update({name,enrollment_goal:goal}).eq('id',school.id);
+  school.name=name;school.enrollment_goal=goal;
+  document.getElementById('sb-school-name').textContent=name;
+  render();showToast('Settings saved ✓');
+}
+async function clearAllFamilies(){
+  if(!confirm('Delete ALL families? This cannot be undone.'))return;
+  await sb.from('families').delete().eq('school_id',school.id);
+  families=[];render();showToast('All families deleted');
+}
+
+// ── SMS MESSAGING ──
+const SMS_TEMPLATES={
+  lottery:`Hi {parent_name}! Lottery results are in for {school_name}. Log in to your enrollment portal to check your status. Questions? Reply to this message.`,
+  openhouse:`Hi {parent_name}! {school_name} is hosting an Open House soon. We'd love to see you there — reply YES to confirm your attendance or call us for details.`,
+  docs:`Hi {parent_name}, this is {school_name}. We're still missing some required documents for your application. Please submit them ASAP to hold your spot. Need help? Reply to this message.`,
+  deadline:`Hi {parent_name}! Friendly reminder from {school_name} — your enrollment deadline is coming up. Don't miss your spot. Reply or call us with any questions.`,
+  welcome:`Hi {parent_name}! Welcome to the {school_name} family! 🎉 We are so excited to have your child joining us. More info on next steps coming soon!`,
+};
+function setSMSTemplate(key){
+  document.getElementById('sms-body').value=SMS_TEMPLATES[key]||'';
+  updateSMSCharCount();updateSMSPreview();
+}
+function updateSMSCharCount(){
+  const len=document.getElementById('sms-body').value.length;
+  const el=document.getElementById('sms-char-count');
+  if(el){el.textContent=`${len} / 160`;el.style.color=len>160?'var(--danger)':len>130?'var(--warning)':'var(--muted)';}
+}
+function getSMSAudience(){
+  const val=document.getElementById('sms-audience')?.value||'all';
+  let pool=families.filter(f=>f.phone);
+  if(val!=='all')pool=pool.filter(f=>f.stage===val);
+  return pool;
+}
+function updateSMSPreview(){
+  const pool=getSMSAudience();
+  const countEl=document.getElementById('sms-recipient-count');
+  const costEl=document.getElementById('sms-cost');
+  if(countEl)countEl.textContent=pool.length;
+  if(costEl)costEl.textContent='$'+(pool.length*0.0079).toFixed(2);
+}
+let smsLog=[];
+async function sendMassText(){
+  const body=document.getElementById('sms-body').value.trim();
+  if(!body){showToast('Please write a message first');return;}
+  const pool=getSMSAudience();
+  if(!pool.length){showToast('No families with phone numbers in selected group');return;}
+  const sid=localStorage.getItem('twilio_sid_'+school.id);
+  const token=localStorage.getItem('twilio_token_'+school.id);
+  const from=localStorage.getItem('twilio_phone_'+school.id);
+  if(!sid||!token||!from){showToast('Configure Twilio in Settings first');return;}
+  if(!confirm(`Send this text to ${pool.length} families?`))return;
+  const btn=document.getElementById('sms-send-btn');
+  btn.disabled=true;btn.textContent='Sending...';
+  let sent=0,failed=0;
+  for(const f of pool){
+    const msg=body.replace(/{parent_name}/g,f.parent_name).replace(/{school_name}/g,school.name);
+    try{
+      const resp=await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`,{
+        method:'POST',
+        headers:{'Authorization':'Basic '+btoa(sid+':'+token),'Content-Type':'application/x-www-form-urlencoded'},
+        body:new URLSearchParams({To:f.phone,From:from,Body:msg})
+      });
+      if(resp.ok)sent++;else failed++;
+    }catch(e){failed++;}
+  }
+  // Log it
+  const entry={date:new Date(),message:body,audience:document.getElementById('sms-audience').value,sent,failed,total:pool.length};
+  smsLog.unshift(entry);
+  renderSMSLog();
+  logActivity(`Mass text sent to ${sent} families`);
+  btn.disabled=false;btn.textContent='Send Texts →';
+  showToast(`✓ ${sent} texts sent${failed>0?' · '+failed+' failed':''}`);
+  document.getElementById('sms-body').value='';
+  updateSMSCharCount();updateSMSPreview();
+}
+function renderSMSLog(){
+  const el=document.getElementById('sms-log');if(!el)return;
+  if(!smsLog.length){el.innerHTML='<div style="font-size:13px;color:var(--muted);">No texts sent yet.</div>';return;}
+  el.innerHTML=smsLog.map(e=>`
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);">
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:3px;">${e.message.slice(0,80)}${e.message.length>80?'...':''}</div>
+        <div style="font-size:11px;color:var(--muted);">${e.audience==='all'?'All families':e.audience+' stage'} · ${fmt(e.date)}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;margin-left:16px;">
+        <div style="font-size:13px;font-weight:700;color:var(--success);">${e.sent} sent</div>
+        ${e.failed>0?`<div style="font-size:11px;color:var(--danger);">${e.failed} failed</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// ── WEBHOOK URL ──
+function initWebhook(){
+  const url=`https://cjkhkwuqxnlfgjpnknzq.supabase.co/functions/v1/cognito-webhook?school=${school?.access_code||'your-school-code'}`;
+  const el=document.getElementById('webhook-url');
+  if(el)el.textContent=url;
+}
+function copyWebhook(){
+  const url=document.getElementById('webhook-url')?.textContent;
+  if(url)navigator.clipboard.writeText(url).then(()=>showToast('Webhook URL copied!'));
+}
+
+// ── DUPLICATE DETECTION ──
+function runDuplicateCheck(){
+  const dupes=[];
+  const seen={};
+  families.forEach(f=>{
+    // Check by student name + grade
+    const key1=`${f.student_name.toLowerCase().trim()}|${f.grade}`;
+    // Check by parent email
+    const key2=f.email?f.email.toLowerCase().trim():null;
+    if(seen[key1]) dupes.push({a:seen[key1],b:f,reason:`Same student name & grade`});
+    else seen[key1]=f;
+    if(key2){
+      if(seen[key2]&&seen[key2].id!==f.id) dupes.push({a:seen[key2],b:f,reason:`Same email address`});
+      else seen[key2]=f;
+    }
+  });
+  // Dedupe the dupes list
+  const uniqueDupes=dupes.filter((d,i)=>dupes.findIndex(x=>(x.a.id===d.a.id&&x.b.id===d.b.id)||(x.a.id===d.b.id&&x.b.id===d.a.id))===i);
+  const el=document.getElementById('duplicate-results');
+  if(!el)return;
+  if(!uniqueDupes.length){
+    el.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:14px;background:#f0fdf4;border-radius:var(--radius-sm);border:1px solid #bbf7d0;"><span style="font-size:18px;">✅</span><div style="font-size:13px;color:#16a34a;font-weight:600;">No duplicates found. Your pipeline is clean.</div></div>`;
+    return;
+  }
+  el.innerHTML=`<div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px;">${uniqueDupes.length} potential duplicate${uniqueDupes.length>1?'s':''} found</div>`+
+  uniqueDupes.map((d,i)=>`
+    <div style="background:var(--offwhite);border:1px solid #fecaca;border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;">
+      <div style="font-size:11px;font-weight:700;color:var(--danger);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;">⚠ ${d.reason}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div style="padding:10px;background:#fff;border-radius:6px;border:1px solid var(--border);">
+          <div style="font-size:12px;font-weight:700;color:var(--navy);">${d.a.parent_name}</div>
+          <div style="font-size:11px;color:var(--muted);">${d.a.student_name} · Grade ${d.a.grade}</div>
+          <div style="font-size:11px;color:var(--muted);">${d.a.email||'No email'}</div>
+          <div style="margin-top:6px;"><span class="pill pill-${d.a.stage}" style="font-size:10px;">${sName(d.a.stage)}</span></div>
+        </div>
+        <div style="padding:10px;background:#fff;border-radius:6px;border:1px solid var(--border);">
+          <div style="font-size:12px;font-weight:700;color:var(--navy);">${d.b.parent_name}</div>
+          <div style="font-size:11px;color:var(--muted);">${d.b.student_name} · Grade ${d.b.grade}</div>
+          <div style="font-size:11px;color:var(--muted);">${d.b.email||'No email'}</div>
+          <div style="margin-top:6px;"><span class="pill pill-${d.b.stage}" style="font-size:10px;">${sName(d.b.stage)}</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-danger btn-sm" onclick="deleteDuplicate('${d.b.id}',${i})">Delete Second Entry</button>
+        <button class="btn btn-secondary btn-sm" onclick="openDetail('${d.a.id}')">View First</button>
+        <button class="btn btn-secondary btn-sm" onclick="openDetail('${d.b.id}')">View Second</button>
+      </div>
+    </div>`).join('');
+}
+
+async function deleteDuplicate(id,idx){
+  await sb.from('families').delete().eq('id',id);
+  families=families.filter(x=>x.id!==id);
+  render();runDuplicateCheck();showToast('Duplicate removed');
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function closeModalOutside(e,id){if(e.target===document.getElementById(id))closeModal(id);}
+function showToast(msg){
+  const t=document.getElementById('toast');document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDetail();document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));}});
+
+// ── PRODUCT SWITCHER ──
+function toggleSwitcher() {
+  document.getElementById('product-switcher').classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  const sw = document.getElementById('product-switcher');
+  if (sw && !sw.contains(e.target)) sw.classList.remove('open');
+});
+
+// ── UPGRADE MODAL ──
+function showUpgradeModal(target) {
+  document.getElementById('product-switcher').classList.remove('open');
+  const titles = {
+    hub: 'Unlock Hub',
+    enroll: 'Unlock Enroll',
+    suite: 'Upgrade to the Full Suite',
+  };
+  const subs = {
+    hub: "Your Enroll subscription doesn't include Hub. Upgrade to add a full marketing platform — content calendar, email campaigns, template bank, and analytics — to your enrollment system.",
+    enroll: "Your Hub subscription doesn't include Enroll. Upgrade to connect your marketing directly to your enrollment pipeline.",
+    suite: "Get Hub + Enroll together and save $27/month. One login. One system. Full enrollment and marketing in one place.",
+  };
+  document.getElementById('upgrade-title').textContent = titles[target] || 'Upgrade Your Plan';
+  document.getElementById('upgrade-sub').textContent = subs[target] || '';
+  document.getElementById('upgrade-overlay').classList.add('open');
+}
+function closeUpgradeModal() {
+  document.getElementById('upgrade-overlay').classList.remove('open');
+}
+function closeUpgradeOutside(e) {
+  if (e.target === document.getElementById('upgrade-overlay')) closeUpgradeModal();
+}
+function selectPlan(el) {
+  el.closest('.upgrade-plans').querySelectorAll('.upgrade-plan').forEach(p => p.classList.remove('featured'));
+  el.classList.add('featured');
+}
+function goToUpgrade() {
+  window.open('https://kpcharterkollective.com/apply.html', '_blank');
+  closeUpgradeModal();
+}
+
+</script>
+
+<!-- UPGRADE MODAL -->
+<div class="upgrade-overlay" id="upgrade-overlay" onclick="closeUpgradeOutside(event)">
+  <div class="upgrade-modal">
+    <div class="upgrade-modal-hero">
+      <div class="upgrade-lock-icon">🔒</div>
+      <div class="upgrade-modal-title" id="upgrade-title">Unlock Hub</div>
+      <div class="upgrade-modal-sub" id="upgrade-sub">Your Enroll subscription doesn't include Hub. Upgrade to add a full marketing platform to your enrollment system.</div>
+    </div>
+    <div class="upgrade-modal-body">
+      <div class="upgrade-plans" id="upgrade-plans">
+        <div class="upgrade-plan" onclick="selectPlan(this)">
+          <div class="upgrade-plan-icon hub">H</div>
+          <div class="upgrade-plan-name">Hub Only</div>
+          <div class="upgrade-plan-price">$127<span>/mo</span></div>
+          <div class="upgrade-plan-desc">Content calendar, email campaigns, template bank, analytics</div>
+        </div>
+        <div class="upgrade-plan featured" onclick="selectPlan(this)">
+          <div class="upgrade-plan-badge">BEST VALUE</div>
+          <div class="upgrade-plan-icon suite">H+E</div>
+          <div class="upgrade-plan-name">Full Suite</div>
+          <div class="upgrade-plan-price">$197<span>/mo</span></div>
+          <div class="upgrade-plan-desc">Hub + Enroll together. Save $27/month vs buying separately.</div>
+        </div>
+      </div>
+      <div class="upgrade-founding">
+        <div class="upgrade-founding-icon">🏫</div>
+        <div>
+          <div class="upgrade-founding-title">Founding School Rate</div>
+          <div class="upgrade-founding-sub">Pre-opening schools get 50% off for your first year</div>
+        </div>
+        <div class="upgrade-founding-badge">50% OFF</div>
+      </div>
+      <button class="upgrade-cta" onclick="goToUpgrade()">Start Your Free 14-Day Trial →</button>
+      <div class="upgrade-dismiss" onclick="closeUpgradeModal()">Not right now</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

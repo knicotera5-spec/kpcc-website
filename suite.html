@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The KPCC Suite — Hub + Enroll | KP Charter Kollective</title>
+<meta name="description" content="The only platform built for charter school enrollment. Hub manages your marketing. Enroll manages your families. Together they turn campaigns into enrolled students.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* ── SUITE PAGE ── */
+.suite-hero {
+  background: var(--navy-dark, #091e3e);
+  padding: 140px 0 100px;
+  position: relative;
+  overflow: hidden;
+}
+.suite-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 90% at 50% 50%, black, transparent);
+}
+.suite-hero::after {
+  content: '';
+  position: absolute; top: -10%; right: -8%;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,96,21,.08), transparent 65%);
+  pointer-events: none;
+}
+.suite-hero-inner {
+  max-width: 1160px; margin: 0 auto; padding: 0 48px;
+  position: relative; z-index: 1;
+  text-align: center;
+}
+.suite-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,96,21,.1); border: 1px solid rgba(255,96,21,.2);
+  border-radius: 99px; padding: 5px 14px; margin-bottom: 24px;
+}
+.suite-eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--orange);
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+.suite-eyebrow span { font-size: 11px; font-weight: 600; color: var(--orange); letter-spacing: .1em; text-transform: uppercase; }
+.suite-h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(38px, 4.5vw, 62px);
+  font-weight: 900; color: #fff;
+  line-height: 1.08; letter-spacing: -.022em;
+  margin-bottom: 24px; max-width: 820px; margin-left: auto; margin-right: auto;
+}
+.suite-h1 em { color: var(--orange); font-style: italic; }
+.suite-lead {
+  font-size: 18px; font-weight: 300;
+  color: rgba(255,255,255,.5);
+  line-height: 1.75; margin-bottom: 44px;
+  max-width: 580px; margin-left: auto; margin-right: auto;
+}
+.suite-actions { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 56px; }
+.suite-trust { display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; }
+.suite-trust-item { text-align: center; }
+.suite-trust-num { font-family: var(--font-serif); font-size: 28px; font-weight: 900; color: #fff; line-height: 1; }
+.suite-trust-label { font-size: 11px; color: rgba(255,255,255,.3); letter-spacing: .06em; margin-top: 4px; }
+.suite-trust-divider { width: 1px; height: 36px; background: rgba(255,255,255,.1); }
+
+/* PRODUCT SPLIT */
+.product-split { padding: 100px 0; background: var(--offwhite); }
+.product-split-inner { max-width: 1160px; margin: 0 auto; padding: 0 48px; }
+.split-header { text-align: center; margin-bottom: 64px; }
+.split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.split-card {
+  background: var(--white); border-radius: 16px;
+  border: 1.5px solid var(--border);
+  overflow: hidden; box-shadow: var(--shadow-md);
+  transition: transform .2s, box-shadow .2s;
+}
+.split-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.split-card-header {
+  padding: 36px 36px 28px;
+  position: relative; overflow: hidden;
+}
+.split-card-header.hub { background: linear-gradient(135deg, #0f2d5a, #1a3a6e); }
+.split-card-header.enroll { background: linear-gradient(135deg, #056565, #089494); }
+.split-card-icon {
+  width: 52px; height: 52px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 24px; font-weight: 900; color: #fff;
+  margin-bottom: 16px;
+}
+.split-card-icon.hub { background: linear-gradient(135deg, var(--orange), #ff7633); }
+.split-card-icon.enroll { background: linear-gradient(135deg, #0ab3b3, #0cd4d4); }
+.split-card-name { font-family: var(--font-serif); font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+.split-card-tagline { font-size: 14px; color: rgba(255,255,255,.5); line-height: 1.6; }
+.split-card-price {
+  position: absolute; top: 36px; right: 36px;
+  text-align: right;
+}
+.split-card-price-num { font-family: var(--font-serif); font-size: 26px; font-weight: 900; color: #fff; }
+.split-card-price-per { font-size: 12px; color: rgba(255,255,255,.4); }
+.split-card-body { padding: 32px 36px; }
+.split-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+.split-features li {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 14px; color: var(--text); line-height: 1.5;
+}
+.split-features li::before {
+  content: '→'; color: var(--orange); font-weight: 700;
+  flex-shrink: 0; margin-top: 1px;
+}
+.split-card-cta { display: block; text-align: center; }
+
+/* CONNECTED SECTION */
+.connected-section { padding: 100px 0; background: var(--navy); }
+.connected-inner { max-width: 1160px; margin: 0 auto; padding: 0 48px; }
+.connected-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.connected-text {}
+.connected-visual {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 32px;
+}
+.connected-flow { display: flex; flex-direction: column; gap: 0; }
+.flow-step {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.flow-step:last-child { border-bottom: none; }
+.flow-icon {
+  width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.flow-icon.hub { background: rgba(255,96,21,.15); }
+.flow-icon.enroll { background: rgba(8,148,148,.15); }
+.flow-icon.both { background: rgba(255,255,255,.08); }
+.flow-text {}
+.flow-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+.flow-desc { font-size: 12px; color: rgba(255,255,255,.4); line-height: 1.5; }
+.flow-arrow {
+  display: flex; justify-content: center; padding: 6px 0;
+  color: rgba(255,255,255,.2); font-size: 18px;
+}
+
+/* PROBLEM SECTION */
+.problem-section { padding: 100px 0; background: var(--white); }
+.problem-inner { max-width: 1160px; margin: 0 auto; padding: 0 48px; }
+.problem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px; }
+.problem-card {
+  background: var(--offwhite); border-radius: 12px;
+  padding: 28px; border: 1.5px solid var(--border);
+}
+.problem-card-icon { font-size: 28px; margin-bottom: 14px; }
+.problem-card-title { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.problem-card-desc { font-size: 13.5px; color: var(--muted); line-height: 1.65; }
+
+/* PRICING */
+.pricing-section { padding: 100px 0; background: var(--offwhite); }
+.pricing-inner { max-width: 1160px; margin: 0 auto; padding: 0 48px; }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px; }
+.pricing-card {
+  background: var(--white); border-radius: 16px;
+  border: 1.5px solid var(--border);
+  padding: 36px 32px; position: relative;
+  transition: transform .2s, box-shadow .2s;
+}
+.pricing-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.pricing-card.featured { border-color: var(--orange); background: #fff8f5; }
+.pricing-badge {
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  background: var(--orange); color: #fff;
+  font-size: 11px; font-weight: 700; padding: 4px 14px;
+  border-radius: 99px; white-space: nowrap;
+  font-family: var(--font-mono); letter-spacing: .06em;
+}
+.pricing-icon {
+  width: 44px; height: 44px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 20px; font-weight: 900; color: #fff;
+  margin-bottom: 16px;
+}
+.pricing-icon.hub { background: linear-gradient(135deg, var(--orange), #ff7633); }
+.pricing-icon.enroll { background: linear-gradient(135deg, var(--teal), #0ab3b3); }
+.pricing-icon.suite { background: linear-gradient(135deg, var(--navy), #2255a0); font-size: 13px; font-family: var(--font-mono); }
+.pricing-name { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.pricing-price { font-family: var(--font-serif); font-size: 42px; font-weight: 900; color: var(--navy); line-height: 1; margin-bottom: 6px; }
+.pricing-price span { font-size: 16px; font-weight: 500; color: var(--muted); font-family: var(--font-sans); }
+.pricing-annual { font-size: 12px; color: var(--teal); font-weight: 600; margin-bottom: 20px; }
+.pricing-divider { height: 1px; background: var(--border); margin-bottom: 20px; }
+.pricing-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.pricing-features li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--text); }
+.pricing-features li::before { content: '✓'; color: var(--teal); font-weight: 700; flex-shrink: 0; }
+.pricing-cta { display: block; text-align: center; }
+
+.founding-banner {
+  background: linear-gradient(135deg, var(--teal), #056565);
+  border-radius: 14px; padding: 32px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; margin-top: 40px; flex-wrap: wrap;
+}
+.founding-banner-text {}
+.founding-banner-title { font-family: var(--font-serif); font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 6px; }
+.founding-banner-sub { font-size: 14px; color: rgba(255,255,255,.6); }
+
+/* SOCIAL PROOF */
+.proof-section { padding: 100px 0; background: var(--white); }
+.proof-inner { max-width: 1160px; margin: 0 auto; padding: 0 48px; }
+.proof-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 56px; }
+.proof-stat {
+  text-align: center; padding: 36px 24px;
+  background: var(--offwhite); border-radius: 12px;
+  border: 1.5px solid var(--border);
+}
+.proof-stat-num { font-family: var(--font-serif); font-size: 44px; font-weight: 900; color: var(--navy); line-height: 1; margin-bottom: 8px; }
+.proof-stat-num em { color: var(--orange); font-style: normal; }
+.proof-stat-label { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+/* FINAL CTA */
+.final-cta { padding: 100px 0; background: var(--navy); }
+.final-cta-inner { max-width: 680px; margin: 0 auto; padding: 0 48px; text-align: center; }
+.final-cta h2 { font-family: var(--font-serif); font-size: clamp(30px, 3.5vw, 48px); font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 16px; }
+.final-cta h2 em { color: var(--orange); font-style: italic; }
+.final-cta p { font-size: 16px; color: rgba(255,255,255,.45); line-height: 1.7; margin-bottom: 40px; }
+.trial-form { display: flex; flex-direction: column; gap: 14px; max-width: 440px; margin: 0 auto; }
+.trial-input {
+  padding: 14px 18px; border-radius: 9px;
+  border: 1.5px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  font-family: var(--font-sans); font-size: 14px;
+  color: #fff; outline: none;
+  transition: border-color .15s;
+}
+.trial-input::placeholder { color: rgba(255,255,255,.3); }
+.trial-input:focus { border-color: var(--orange); }
+.trial-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.trial-submit {
+  padding: 15px; border-radius: 9px;
+  background: var(--orange); color: #fff;
+  font-size: 15px; font-weight: 700; border: none;
+  cursor: pointer; font-family: var(--font-sans);
+  transition: background .15s;
+}
+.trial-submit:hover { background: var(--orange-lt, #ff7633); }
+.trial-note { font-size: 12px; color: rgba(255,255,255,.25); text-align: center; }
+.trial-select {
+  padding: 14px 18px; border-radius: 9px;
+  border: 1.5px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  font-family: var(--font-sans); font-size: 14px;
+  color: #fff; outline: none;
+  transition: border-color .15s;
+  appearance: none;
+}
+.trial-select option { background: var(--navy); color: #fff; }
+
+@media (max-width: 768px) {
+  .split-grid, .connected-grid, .problem-grid, .pricing-grid, .proof-stats { grid-template-columns: 1fr; }
+  .suite-hero-inner, .connected-inner, .problem-inner, .pricing-inner, .proof-inner, .final-cta-inner, .product-split-inner { padding: 0 24px; }
+  .trial-row { grid-template-columns: 1fr; }
+  .founding-banner { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="site-nav" id="site-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="https://images.squarespace-cdn.com/content/v1/67843328034d591e0587586c/7e9c3fdc-d61e-4c4c-9932-b357cc6bdd78/KP+Charter.png?format=400w" alt="KP Charter Kollective">
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li class="nav-dd"><a href="about.html">Our Work</a>
+        <ul class="nav-drop">
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="team.html">Meet the Founder</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="portfolio.html">Portfolio</a></li>
+        </ul>
+      </li>
+      <li class="nav-dd"><a href="services.html">How We Help</a>
+        <ul class="nav-drop">
+          <li><a href="services.html">What We Do</a></li>
+          <li><a href="atl-advantage.html">ATL Advantage</a></li>
+          <li><a href="services.html#enrollment">Enrollment Strategy</a></li>
+          <li><a href="services.html#brand">Brand &amp; Messaging</a></li>
+          <li><a href="services.html#academic">Academic &amp; Curriculum</a></li>
+          <li><a href="services.html#advisory">Founder Advisory</a></li>
+        </ul>
+      </li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="apply.html">Apply</a></li>
+      <li><a href="suite.html" style="color:var(--orange);font-weight:600;">KPCC Suite</a></li>
+    </ul>
+    <a href="#start-trial" class="nav-cta">Start Free Trial</a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="suite-hero">
+  <div class="suite-hero-inner">
+    <div class="suite-eyebrow">
+      <div class="suite-eyebrow-dot"></div>
+      <span>Now Available — 14-Day Free Trial</span>
+    </div>
+    <h1 class="suite-h1">The Only Platform Built for<br><em>Charter School Enrollment.</em></h1>
+    <p class="suite-lead">Hub manages your marketing. Enroll manages your families. Together they turn campaigns into enrolled students — automatically.</p>
+    <div class="suite-actions">
+      <a href="#start-trial" class="btn btn-orange">Start Free Trial &rarr;</a>
+      <a href="#how-it-works" class="btn btn-outline-white">See How It Works</a>
+    </div>
+    <div class="suite-trust">
+      <div class="suite-trust-item">
+        <div class="suite-trust-num">400+</div>
+        <div class="suite-trust-label">Intent-to-enrolls in 30 days</div>
+      </div>
+      <div class="suite-trust-divider"></div>
+      <div class="suite-trust-item">
+        <div class="suite-trust-num">350+</div>
+        <div class="suite-trust-label">Family contacts in 60 days</div>
+      </div>
+      <div class="suite-trust-divider"></div>
+      <div class="suite-trust-item">
+        <div class="suite-trust-num">40%+</div>
+        <div class="suite-trust-label">Open house attendance boost</div>
+      </div>
+      <div class="suite-trust-divider"></div>
+      <div class="suite-trust-item">
+        <div class="suite-trust-num">$15M+</div>
+        <div class="suite-trust-label">In funding supported</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE PROBLEM -->
+<section class="problem-section">
+  <div class="problem-inner">
+    <div class="split-header">
+      <div class="label label--orange label--center">The Problem</div>
+      <h2 class="h2" style="text-align:center;margin-top:12px;">Most founding schools are running<br>enrollment on broken systems.</h2>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-card-icon">📋</div>
+        <div class="problem-card-title">Families managed in spreadsheets</div>
+        <div class="problem-card-desc">Color-coded Google Sheets with no follow-up system, no pipeline tracking, and no way to know where each family stands.</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-card-icon">📣</div>
+        <div class="problem-card-title">Marketing disconnected from enrollment</div>
+        <div class="problem-card-desc">You post on Instagram. A family clicks. And then nothing. No way to track where families came from or what moved them to apply.</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-card-icon">⏳</div>
+        <div class="problem-card-title">Starting too late</div>
+        <div class="problem-card-desc">Schools that open fully enrolled start 12–18 months out. Most founders don't start thinking about enrollment until 90 days before opening.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="connected-section" id="how-it-works">
+  <div class="connected-inner">
+    <div class="connected-grid">
+      <div class="connected-text">
+        <div class="label" style="color:var(--teal-lt,#0ab3b3);">— How It Works</div>
+        <h2 class="h2" style="color:#fff;margin-top:12px;margin-bottom:20px;">One system.<br>Marketing and enrollment<br><em style="color:var(--orange);">finally connected.</em></h2>
+        <p style="font-size:15px;color:rgba(255,255,255,.45);line-height:1.75;margin-bottom:32px;">Every family Hub finds flows directly into Enroll — tagged by source, tracked through every stage, and managed in one place. No manual data entry. No guessing what worked.</p>
+        <a href="#start-trial" class="btn btn-orange">Start Free Trial &rarr;</a>
+      </div>
+      <div class="connected-visual">
+        <div class="connected-flow">
+          <div class="flow-step">
+            <div class="flow-icon hub">📣</div>
+            <div class="flow-text">
+              <div class="flow-title">Hub publishes your content</div>
+              <div class="flow-desc">Scheduled posts, email campaigns, and SMS go out automatically at the right time.</div>
+            </div>
+          </div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-step">
+            <div class="flow-icon hub">📊</div>
+            <div class="flow-text">
+              <div class="flow-title">Families engage and click</div>
+              <div class="flow-desc">Hub tracks reach, clicks, and email opens — showing you what's actually working.</div>
+            </div>
+          </div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-step">
+            <div class="flow-icon enroll">👨‍👩‍👧</div>
+            <div class="flow-text">
+              <div class="flow-title">Families flow into Enroll automatically</div>
+              <div class="flow-desc">Every responding family is added to your pipeline, tagged by campaign source.</div>
+            </div>
+          </div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-step">
+            <div class="flow-icon enroll">🎰</div>
+            <div class="flow-text">
+              <div class="flow-title">Enroll moves them to enrolled</div>
+              <div class="flow-desc">Pipeline tracking, lottery, mass texting, and document collection — all in one place.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="product-split" id="products">
+  <div class="product-split-inner">
+    <div class="split-header">
+      <div class="label label--orange label--center">Two Products. One System.</div>
+      <h2 class="h2" style="text-align:center;margin-top:12px;">Everything your school needs<br>from first impression to enrolled family.</h2>
+    </div>
+    <div class="split-grid">
+      <!-- HUB -->
+      <div class="split-card">
+        <div class="split-card-header hub">
+          <div class="split-card-price">
+            <div class="split-card-price-num">$127</div>
+            <div class="split-card-price-per">/month</div>
+          </div>
+          <div class="split-card-icon hub">H</div>
+          <div class="split-card-name">Hub</div>
+          <div class="split-card-tagline">Your marketing platform. Plan content, send campaigns, and track what's driving families to your door.</div>
+        </div>
+        <div class="split-card-body">
+          <ul class="split-features">
+            <li>Content calendar with drag-and-drop scheduling</li>
+            <li>16 charter-specific post templates — open house, lottery, Meliora Monday, and more</li>
+            <li>Email campaign builder with open rate tracking</li>
+            <li>Canva integration — one master template, every school</li>
+            <li>Auto-publish to Instagram and Facebook</li>
+            <li>Analytics dashboard — reach, clicks, email opens</li>
+            <li>Campaign-to-enrollment source attribution</li>
+          </ul>
+          <a href="#start-trial" class="btn btn-orange split-card-cta">Start Free Trial &rarr;</a>
+        </div>
+      </div>
+      <!-- ENROLL -->
+      <div class="split-card">
+        <div class="split-card-header enroll">
+          <div class="split-card-price">
+            <div class="split-card-price-num">$97</div>
+            <div class="split-card-price-per">/month</div>
+          </div>
+          <div class="split-card-icon enroll">E</div>
+          <div class="split-card-name">Enroll</div>
+          <div class="split-card-tagline">Your enrollment platform. Track every family from first inquiry to enrolled seat — without the enterprise price tag.</div>
+        </div>
+        <div class="split-card-body">
+          <ul class="split-features">
+            <li>Full enrollment pipeline — Inquiry to Enrolled</li>
+            <li>Built-in lottery system with audit trail</li>
+            <li>Mass SMS texting via Twilio integration</li>
+            <li>Document tracker and checklist management</li>
+            <li>Cognito Forms integration for applications</li>
+            <li>Email templates for every enrollment stage</li>
+            <li>Family profiles with full activity history</li>
+          </ul>
+          <a href="#start-trial" class="btn btn-teal split-card-cta">Start Free Trial &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="pricing-inner">
+    <div class="split-header">
+      <div class="label label--orange label--center">Pricing</div>
+      <h2 class="h2" style="text-align:center;margin-top:12px;">Simple pricing. No enterprise contracts.<br>No surprise fees.</h2>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-icon hub">H</div>
+        <div class="pricing-name">Hub</div>
+        <div class="pricing-price">$127<span>/mo</span></div>
+        <div class="pricing-annual">or $1,270/year — save 2 months</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li>Content calendar + scheduler</li>
+          <li>Email campaign builder</li>
+          <li>16 charter post templates</li>
+          <li>Canva integration</li>
+          <li>Auto-publish (Instagram + Facebook)</li>
+          <li>Analytics dashboard</li>
+          <li>14-day free trial</li>
+        </ul>
+        <a href="#start-trial" class="btn btn-orange pricing-cta">Start Free Trial</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-badge">BEST VALUE</div>
+        <div class="pricing-icon suite">H+E</div>
+        <div class="pricing-name">Full Suite</div>
+        <div class="pricing-price">$197<span>/mo</span></div>
+        <div class="pricing-annual">or $1,970/year — save $27/month</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li>Everything in Hub</li>
+          <li>Everything in Enroll</li>
+          <li>Marketing + enrollment connected</li>
+          <li>Campaign source attribution</li>
+          <li>One login for both platforms</li>
+          <li>Save $27/month vs buying separately</li>
+          <li>14-day free trial</li>
+        </ul>
+        <a href="#start-trial" class="btn btn-orange pricing-cta">Start Free Trial</a>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-icon enroll">E</div>
+        <div class="pricing-name">Enroll</div>
+        <div class="pricing-price">$97<span>/mo</span></div>
+        <div class="pricing-annual">or $970/year — save 2 months</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li>Full enrollment pipeline</li>
+          <li>Built-in lottery system</li>
+          <li>Mass SMS via Twilio</li>
+          <li>Document tracker</li>
+          <li>Cognito Forms integration</li>
+          <li>Email templates</li>
+          <li>14-day free trial</li>
+        </ul>
+        <a href="#start-trial" class="btn btn-teal pricing-cta">Start Free Trial</a>
+      </div>
+    </div>
+    <div class="founding-banner">
+      <div class="founding-banner-text">
+        <div class="founding-banner-title">🏫 Founding School Rate — 50% off your first year</div>
+        <div class="founding-banner-sub">Pre-opening charter schools get half off for the first 12 months. Mention you're pre-opening when you apply.</div>
+      </div>
+      <a href="#start-trial" class="btn btn-white" style="background:#fff;color:var(--teal);font-weight:700;white-space:nowrap;">Claim Your Discount &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF -->
+<section class="proof-section">
+  <div class="proof-inner">
+    <div class="split-header">
+      <div class="label label--orange label--center">Results</div>
+      <h2 class="h2" style="text-align:center;margin-top:12px;">Built by people who have actually<br>done this work.</h2>
+    </div>
+    <div class="proof-stats">
+      <div class="proof-stat">
+        <div class="proof-stat-num"><em>400+</em></div>
+        <div class="proof-stat-label">Intent-to-enrolls generated in 30 days</div>
+      </div>
+      <div class="proof-stat">
+        <div class="proof-stat-num"><em>350+</em></div>
+        <div class="proof-stat-label">Family contacts built in 60 days pre-opening</div>
+      </div>
+      <div class="proof-stat">
+        <div class="proof-stat-num"><em>40%+</em></div>
+        <div class="proof-stat-label">Open house attendance increases</div>
+      </div>
+      <div class="proof-stat">
+        <div class="proof-stat-num"><em>$15M+</em></div>
+        <div class="proof-stat-label">In funding supported for client schools</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta" id="start-trial">
+  <div class="final-cta-inner">
+    <h2>Ready to build the enrollment system<br><em>your school actually needs?</em></h2>
+    <p>Start your 14-day free trial. No credit card required. Pre-opening schools get 50% off their first year.</p>
+    <form class="trial-form" onsubmit="handleTrialForm(event)">
+      <input type="text" class="trial-input" placeholder="School name" required>
+      <div class="trial-row">
+        <input type="text" class="trial-input" placeholder="Your name" required>
+        <input type="email" class="trial-input" placeholder="Email address" required>
+      </div>
+      <select class="trial-select" required>
+        <option value="" disabled selected>Select your plan</option>
+        <option value="suite">Full Suite — $197/mo (Best Value)</option>
+        <option value="hub">Hub Only — $127/mo</option>
+        <option value="enroll">Enroll Only — $97/mo</option>
+      </select>
+      <button type="submit" class="trial-submit">Start My Free Trial &rarr;</button>
+      <div class="trial-note">14-day free trial · No credit card required · Pre-opening schools get 50% off</div>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER (reuse from site) -->
+<footer class="site-footer">
+  <div class="footer-inner wrap">
+    <div class="footer-brand">
+      <img src="https://images.squarespace-cdn.com/content/v1/67843328034d591e0587586c/d6e31ea6-6f99-489b-886e-68f74b42c2a4/Final+KP+Charter+Kollective-02.png" alt="KP Charter Kollective" class="footer-logo-img" loading="lazy">
+      <p class="footer-tagline">Charter school launch, enrollment growth, and brand strategy for founders nationwide.</p>
+    </div>
+    <div class="footer-col"><div class="footer-col-title">How We Help</div><ul><li><a href="services.html">What We Do</a></li><li><a href="atl-advantage.html">ATL Advantage</a></li><li><a href="services.html#enrollment">Enrollment Strategy</a></li><li><a href="services.html#brand">Brand &amp; Messaging</a></li></ul></div>
+    <div class="footer-col"><div class="footer-col-title">KPCC Suite</div><ul><li><a href="suite.html">What It Does</a></li><li><a href="suite.html#pricing">Pricing</a></li><li><a href="suite.html#start-trial">Start Free Trial</a></li><li><a href="suite-login.html">Sign In</a></li></ul></div>
+    <div class="footer-col"><div class="footer-col-title">Company</div><ul><li><a href="about.html">About</a></li><li><a href="team.html">Team</a></li><li><a href="blog.html">Blog</a></li><li><a href="apply.html">Apply</a></li></ul></div>
+  </div>
+  <div class="footer-bottom wrap"><span>&copy; 2026 KP Charter Kollective. All rights reserved.</span></div>
+</footer>
+
+<script src="js/site.js"></script>
+<script>
+function handleTrialForm(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('.trial-submit');
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = '✓ Application received!';
+    btn.style.background = '#089494';
+    e.target.reset();
+    setTimeout(() => {
+      btn.textContent = 'Start My Free Trial →';
+      btn.style.background = '';
+      btn.disabled = false;
+    }, 4000);
+  }, 1200);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — KPCC Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0f2d5a;
+  --navy-dark: #091e3e;
+  --orange: #ff6015;
+  --orange-lt: #ff7633;
+  --teal: #089494;
+  --teal-lt: #0ab3b3;
+  --white: #ffffff;
+  --offwhite: #f7f8fa;
+  --border: #e0e4eb;
+  --muted: #5c6f85;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; height: 100%; }
+body {
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--offwhite);
+}
+
+/* ── LEFT PANEL ── */
+.left-panel {
+  background: var(--navy-dark);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 48px;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+}
+.left-panel::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+.left-panel::after {
+  content: '';
+  position: absolute;
+  bottom: -120px; right: -120px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(255,96,21,.12), transparent 70%);
+  pointer-events: none;
+}
+.left-top { position: relative; z-index: 2; }
+.left-logo {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 64px;
+}
+.left-logo-icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-lt));
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 20px; font-weight: 900; color: #fff;
+}
+.left-logo-text {}
+.left-logo-name { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -.01em; }
+.left-logo-sub { font-size: 11px; color: rgba(255,255,255,.35); font-family: var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+
+.left-headline {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+.left-headline em { color: var(--orange); font-style: normal; display: block; }
+.left-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,.45);
+  line-height: 1.7;
+  max-width: 380px;
+}
+
+/* PRODUCT CARDS */
+.product-cards { display: flex; flex-direction: column; gap: 12px; margin-top: 48px; position: relative; z-index: 2; }
+.product-card {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex; align-items: center; gap: 14px;
+}
+.product-card-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 18px; font-weight: 900; color: #fff;
+  flex-shrink: 0;
+}
+.product-card-icon.hub { background: linear-gradient(135deg, var(--orange), var(--orange-lt)); }
+.product-card-icon.enroll { background: linear-gradient(135deg, var(--teal), var(--teal-lt)); }
+.product-card-name { font-size: 14px; font-weight: 700; color: #fff; }
+.product-card-desc { font-size: 12px; color: rgba(255,255,255,.4); margin-top: 2px; }
+.product-card-tag {
+  margin-left: auto;
+  font-size: 10px; font-weight: 700;
+  padding: 3px 9px; border-radius: 20px;
+  font-family: var(--font-mono); letter-spacing: .05em;
+  flex-shrink: 0;
+}
+.product-card-tag.hub-tag { background: rgba(255,96,21,.2); color: var(--orange-lt); }
+.product-card-tag.enroll-tag { background: rgba(8,148,148,.2); color: var(--teal-lt); }
+.product-card-tag.suite-tag { background: rgba(255,255,255,.1); color: rgba(255,255,255,.6); }
+
+/* BOTTOM */
+.left-bottom {
+  position: relative; z-index: 2;
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding-top: 24px;
+}
+.left-stats { display: flex; gap: 32px; }
+.left-stat-value {
+  font-family: var(--font-serif);
+  font-size: 22px; font-weight: 900; color: #fff;
+}
+.left-stat-label { font-size: 11px; color: rgba(255,255,255,.35); margin-top: 2px; }
+
+/* ── RIGHT PANEL ── */
+.right-panel {
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 48px;
+  min-height: 100vh;
+}
+.login-box {
+  width: 100%; max-width: 400px;
+}
+.login-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--teal);
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px;
+}
+.login-eyebrow::before { content: ''; width: 22px; height: 1.5px; background: currentColor; }
+.login-title {
+  font-family: var(--font-serif);
+  font-size: 32px; font-weight: 900;
+  color: var(--navy); line-height: 1.1;
+  margin-bottom: 8px;
+}
+.login-sub {
+  font-size: 14px; color: var(--muted);
+  line-height: 1.6; margin-bottom: 36px;
+}
+
+/* FORM */
+.form-group { margin-bottom: 18px; }
+.form-label {
+  display: block; font-size: 13px; font-weight: 600;
+  color: var(--navy); margin-bottom: 6px;
+}
+.form-input {
+  width: 100%; padding: 12px 16px;
+  border: 1.5px solid var(--border); border-radius: 9px;
+  font-family: var(--font-sans); font-size: 14px; color: var(--navy);
+  background: var(--white); outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.form-input:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255,96,21,.1);
+}
+.form-input::placeholder { color: #b0bac5; }
+.form-input-wrap { position: relative; }
+.form-input-icon {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--muted); cursor: pointer;
+}
+.form-input-icon:hover { color: var(--navy); }
+
+.forgot-link {
+  font-size: 12.5px; color: var(--teal); font-weight: 600;
+  text-decoration: none; float: right; margin-top: -14px; margin-bottom: 18px;
+  display: block; text-align: right;
+}
+.forgot-link:hover { color: var(--teal-lt); }
+
+.login-btn {
+  width: 100%; padding: 13px;
+  background: var(--navy);
+  color: #fff; border: none; border-radius: 9px;
+  font-family: var(--font-sans); font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: background .15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 8px;
+}
+.login-btn:hover { background: #1a3a6e; }
+.login-btn.loading { opacity: .7; pointer-events: none; }
+
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 24px 0;
+  color: var(--muted); font-size: 12px;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* PLAN SELECT */
+.plan-select-title { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 12px; text-align: center; }
+.plan-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+.plan-card {
+  border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 12px 10px; text-align: center;
+  cursor: pointer; transition: all .15s;
+}
+.plan-card:hover { border-color: var(--navy); }
+.plan-card.selected { border-color: var(--orange); background: #fff8f5; }
+.plan-card-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 13px; font-weight: 900; color: #fff;
+  margin: 0 auto 8px;
+}
+.plan-card-icon.hub { background: linear-gradient(135deg, var(--orange), var(--orange-lt)); }
+.plan-card-icon.enroll { background: linear-gradient(135deg, var(--teal), var(--teal-lt)); }
+.plan-card-icon.suite { background: linear-gradient(135deg, var(--navy), #2255a0); font-size: 9px; font-family: var(--font-mono); }
+.plan-card-name { font-size: 12px; font-weight: 700; color: var(--navy); }
+.plan-card-price { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ERROR / SUCCESS */
+.alert {
+  padding: 12px 14px; border-radius: 8px;
+  font-size: 13px; font-weight: 500;
+  margin-bottom: 18px; display: none;
+}
+.alert.error { background: #fff0f0; border: 1px solid #fcc; color: #c0392b; }
+.alert.success { background: #f0fafa; border: 1px solid var(--teal); color: var(--teal); }
+.alert.show { display: block; }
+
+/* SIGNUP TOGGLE */
+.toggle-mode {
+  text-align: center; font-size: 13px; color: var(--muted);
+  margin-top: 24px;
+}
+.toggle-mode a { color: var(--orange); font-weight: 600; cursor: pointer; text-decoration: none; }
+.toggle-mode a:hover { color: var(--orange-lt); }
+
+/* POST-LOGIN: PRODUCT PICKER */
+.product-picker { display: none; }
+.product-picker.show { display: block; }
+.product-picker-title {
+  font-family: var(--font-serif); font-size: 26px; font-weight: 900;
+  color: var(--navy); margin-bottom: 6px;
+}
+.product-picker-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+.picker-cards { display: flex; flex-direction: column; gap: 12px; }
+.picker-card {
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px 20px;
+  border: 1.5px solid var(--border); border-radius: 12px;
+  cursor: pointer; transition: all .18s;
+  text-decoration: none;
+  background: var(--white);
+}
+.picker-card:hover { border-color: var(--orange); box-shadow: 0 4px 16px rgba(15,45,90,.08); transform: translateY(-1px); }
+.picker-card.locked { opacity: .55; cursor: pointer; }
+.picker-card.locked:hover { border-color: var(--muted); transform: none; box-shadow: none; }
+.picker-card-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 22px; font-weight: 900; color: #fff;
+  flex-shrink: 0;
+}
+.picker-card-icon.hub { background: linear-gradient(135deg, var(--orange), var(--orange-lt)); }
+.picker-card-icon.enroll { background: linear-gradient(135deg, var(--teal), var(--teal-lt)); }
+.picker-card-body { flex: 1; }
+.picker-card-name { font-size: 16px; font-weight: 700; color: var(--navy); }
+.picker-card-desc { font-size: 13px; color: var(--muted); margin-top: 3px; }
+.picker-card-arrow { color: var(--muted); font-size: 18px; }
+.picker-card:hover .picker-card-arrow { color: var(--orange); }
+.picker-lock { font-size: 16px; }
+.picker-upgrade-note {
+  text-align: center; font-size: 12.5px; color: var(--muted);
+  margin-top: 14px; line-height: 1.6;
+}
+.picker-upgrade-note a { color: var(--orange); font-weight: 600; cursor: pointer; }
+
+/* FORM VISIBILITY */
+.login-form { }
+.login-form.hidden { display: none; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  body { grid-template-columns: 1fr; }
+  .left-panel { display: none; }
+  .right-panel { padding: 32px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<div class="left-panel">
+  <div class="left-top">
+    <div class="left-logo">
+      <div class="left-logo-icon">K</div>
+      <div class="left-logo-text">
+        <div class="left-logo-name">KP Charter Kollective</div>
+        <div class="left-logo-sub">Product Suite</div>
+      </div>
+    </div>
+
+    <div class="left-headline">
+      One login.<br>
+      <em>Two platforms.</em>
+      Everything your school needs.
+    </div>
+    <div class="left-sub">
+      Hub manages your marketing. Enroll manages your families. Together they turn campaigns into enrolled students — automatically.
+    </div>
+
+    <div class="product-cards">
+      <div class="product-card">
+        <div class="product-card-icon hub">H</div>
+        <div>
+          <div class="product-card-name">Hub</div>
+          <div class="product-card-desc">Content calendar · Email campaigns · Template bank · Analytics</div>
+        </div>
+        <div class="product-card-tag hub-tag">$127/mo</div>
+      </div>
+      <div class="product-card">
+        <div class="product-card-icon enroll">E</div>
+        <div>
+          <div class="product-card-name">Enroll</div>
+          <div class="product-card-desc">Pipeline tracking · Lottery · Mass texting · Document manager</div>
+        </div>
+        <div class="product-card-tag enroll-tag">$97/mo</div>
+      </div>
+      <div class="product-card" style="background:rgba(255,255,255,.04);border-color:rgba(255,96,21,.25);">
+        <div class="product-card-icon" style="background:linear-gradient(135deg,var(--orange),var(--teal));font-family:var(--font-mono);font-size:10px;font-weight:700;">H+E</div>
+        <div>
+          <div class="product-card-name" style="color:rgba(255,255,255,.8);">Full Suite</div>
+          <div class="product-card-desc">Hub + Enroll · Save $27/month · Best value</div>
+        </div>
+        <div class="product-card-tag suite-tag">$197/mo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="left-bottom">
+    <div class="left-stats">
+      <div>
+        <div class="left-stat-value">400+</div>
+        <div class="left-stat-label">Intent-to-enrolls in 30 days</div>
+      </div>
+      <div>
+        <div class="left-stat-value">350+</div>
+        <div class="left-stat-label">Family contacts in 60 days</div>
+      </div>
+      <div>
+        <div class="left-stat-value">40%+</div>
+        <div class="left-stat-label">Open house boost</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-panel">
+  <div class="login-box">
+
+    <!-- SIGN IN FORM -->
+    <div class="login-form" id="login-form">
+      <div class="login-eyebrow">KPCC Suite</div>
+      <div class="login-title">Welcome back.</div>
+      <div class="login-sub">Sign in to access your school's Hub and Enroll platforms.</div>
+
+      <div class="alert error" id="error-alert">Invalid email or password. Please try again.</div>
+      <div class="alert success" id="success-alert">Signing you in...</div>
+
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" class="form-input" id="email-input" placeholder="you@yourschool.org" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="form-input-wrap">
+          <input type="password" class="form-input" id="password-input" placeholder="Enter your password" autocomplete="current-password" style="padding-right:44px;">
+          <span class="form-input-icon" onclick="togglePassword()" title="Show/hide password">
+            <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </span>
+        </div>
+        <a class="forgot-link" onclick="showForgot()">Forgot password?</a>
+      </div>
+
+      <button class="login-btn" id="login-btn" onclick="handleLogin()">
+        Sign In
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+
+      <div class="toggle-mode">
+        Don't have an account? <a onclick="showSignup()">Apply for access →</a>
+      </div>
+    </div>
+
+    <!-- SIGN UP / APPLY FORM -->
+    <div class="login-form hidden" id="signup-form">
+      <div class="login-eyebrow">Get Started</div>
+      <div class="login-title">Apply for access.</div>
+      <div class="login-sub">Choose your plan and we'll get you set up within 1 business day.</div>
+
+      <div class="form-group">
+        <label class="form-label">School name</label>
+        <input type="text" class="form-input" placeholder="The Meliora School">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your name</label>
+        <input type="text" class="form-input" placeholder="Kristina Nicotera">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" class="form-input" placeholder="you@yourschool.org">
+      </div>
+
+      <div class="form-group">
+        <div class="plan-select-title">Select your plan</div>
+        <div class="plan-cards">
+          <div class="plan-card" onclick="selectSignupPlan(this, 'hub')">
+            <div class="plan-card-icon hub">H</div>
+            <div class="plan-card-name">Hub</div>
+            <div class="plan-card-price">$127/mo</div>
+          </div>
+          <div class="plan-card" onclick="selectSignupPlan(this, 'enroll')">
+            <div class="plan-card-icon enroll">E</div>
+            <div class="plan-card-name">Enroll</div>
+            <div class="plan-card-price">$97/mo</div>
+          </div>
+          <div class="plan-card selected" onclick="selectSignupPlan(this, 'suite')">
+            <div class="plan-card-icon suite">H+E</div>
+            <div class="plan-card-name">Suite</div>
+            <div class="plan-card-price">$197/mo</div>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:11.5px;color:var(--teal);font-weight:600;margin-top:6px;">🏫 Pre-opening school? Get 50% off your first year.</div>
+      </div>
+
+      <button class="login-btn" onclick="handleSignup()" style="background:var(--orange);">
+        Request Access
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+
+      <div class="toggle-mode">
+        Already have an account? <a onclick="showLogin()">Sign in →</a>
+      </div>
+    </div>
+
+    <!-- POST-LOGIN: PRODUCT PICKER -->
+    <div class="product-picker" id="product-picker">
+      <div class="login-eyebrow">KPCC Suite</div>
+      <div class="product-picker-title" id="picker-greeting">Welcome back.</div>
+      <div class="product-picker-sub">Where do you want to go today?</div>
+
+      <div class="picker-cards" id="picker-cards">
+        <!-- populated by JS based on plan -->
+      </div>
+
+      <div class="picker-upgrade-note" id="picker-upgrade-note"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── SUPABASE CONFIG ──
+const SUPABASE_URL = 'https://cjkhkwuqxnlfgjpnknzq.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_o8myAu_-FwS-tfc0wYUENg_b69GnNR6';
+
+async function supabase(method, path, body) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    method,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  return res.json();
+}
+
+async function supabaseAuth(email, password) {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email, password })
+  });
+  return res.json();
+}
+
+let selectedPlan = 'suite';
+
+// ── LOGIN ──
+async function handleLogin() {
+  const email = document.getElementById('email-input').value.trim().toLowerCase();
+  const pass = document.getElementById('password-input').value;
+  const btn = document.getElementById('login-btn');
+
+  hideAlerts();
+
+  if (!email || !pass) {
+    showError('Please enter your email and password.');
+    return;
+  }
+
+  btn.classList.add('loading');
+  btn.innerHTML = 'Signing in...';
+
+  try {
+    // 1. Authenticate with Supabase Auth
+    const auth = await supabaseAuth(email, pass);
+
+    if (auth.error || !auth.access_token) {
+      btn.classList.remove('loading');
+      btn.innerHTML = 'Sign In <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+      showError('Invalid email or password. Please try again.');
+      return;
+    }
+
+    // 2. Fetch school record matched to this auth user
+    const userId = auth.user?.id;
+    const schools = await fetch(`${SUPABASE_URL}/rest/v1/schools?select=id,name,plan&auth_user_id=eq.${userId}&limit=1`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${auth.access_token}`,
+        'Accept': 'application/json'
+      }
+    }).then(r => r.json());
+
+    const school = Array.isArray(schools) && schools.length > 0 ? schools[0] : null;
+    const plan = school?.plan || 'enroll';
+    const name = school?.name || email;
+
+    btn.classList.remove('loading');
+    btn.innerHTML = 'Sign In <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+
+    // Store session
+    localStorage.setItem('kpcc_token', auth.access_token);
+    localStorage.setItem('kpcc_plan', plan);
+    localStorage.setItem('kpcc_school', name);
+
+    showSuccess('Signed in! Loading your dashboard...');
+    setTimeout(() => showProductPicker({ plan, name }), 900);
+
+  } catch(err) {
+    btn.classList.remove('loading');
+    btn.innerHTML = 'Sign In <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+    showError('Something went wrong. Please try again.');
+  }
+}
+
+// ── PRODUCT PICKER ──
+function showProductPicker(user) {
+  document.getElementById('login-form').classList.add('hidden');
+  document.getElementById('signup-form').classList.add('hidden');
+  const picker = document.getElementById('product-picker');
+  picker.classList.add('show');
+
+  document.getElementById('picker-greeting').textContent = `Welcome, ${user.name}.`;
+
+  const cards = document.getElementById('picker-cards');
+  const note = document.getElementById('picker-upgrade-note');
+
+  const hasHub = user.plan === 'hub' || user.plan === 'suite';
+  const hasEnroll = user.plan === 'enroll' || user.plan === 'suite';
+
+  cards.innerHTML = `
+    <div class="picker-card ${hasHub ? '' : 'locked'}" onclick="${hasHub ? "window.location='suite-hub.html'" : "showLockedMessage('Hub', '$127/mo')"}">
+      <div class="picker-card-icon hub">H</div>
+      <div class="picker-card-body">
+        <div class="picker-card-name">Hub</div>
+        <div class="picker-card-desc">${hasHub ? 'Content calendar · Email campaigns · Templates · Analytics' : 'Not included in your plan'}</div>
+      </div>
+      <div class="picker-card-arrow">${hasHub ? '→' : '<span class="picker-lock">🔒</span>'}</div>
+    </div>
+    <div class="picker-card ${hasEnroll ? '' : 'locked'}" onclick="${hasEnroll ? "window.location='suite-enroll.html'" : "showLockedMessage('Enroll', '$97/mo')"}">
+      <div class="picker-card-icon enroll">E</div>
+      <div class="picker-card-body">
+        <div class="picker-card-name">Enroll</div>
+        <div class="picker-card-desc">${hasEnroll ? 'Pipeline tracking · Lottery · Mass texting · Documents' : 'Not included in your plan'}</div>
+      </div>
+      <div class="picker-card-arrow">${hasEnroll ? '→' : '<span class="picker-lock">🔒</span>'}</div>
+    </div>
+  `;
+
+  // If only one product, auto-redirect after brief pause
+  if (hasHub && !hasEnroll) {
+    note.innerHTML = `Want Enroll too? <a onclick="showUpgradeFromPicker('Enroll', '$97/mo')">Upgrade for $97/mo →</a>`;
+  } else if (hasEnroll && !hasHub) {
+    note.innerHTML = `Want Hub too? <a onclick="showUpgradeFromPicker('Hub', '$127/mo')">Upgrade for $127/mo →</a>`;
+  } else {
+    note.innerHTML = '';
+  }
+}
+
+function showLockedMessage(product, price) {
+  alert(`${product} is not included in your current plan.\n\nUpgrade to add ${product} for ${price}/month, or get the Full Suite (Hub + Enroll) for $197/month.\n\nContact kristina@kpcharterkollective.com to upgrade.`);
+}
+function showUpgradeFromPicker(product, price) {
+  alert(`Upgrade to add ${product} for ${price}/month.\n\nContact kristina@kpcharterkollective.com to upgrade your plan.`);
+}
+
+// ── SIGNUP ──
+function selectSignupPlan(el, plan) {
+  document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPlan = plan;
+}
+async function handleSignup() {
+  const school = document.querySelector('#signup-form input[placeholder="The Meliora School"]').value.trim();
+  const name = document.querySelector('#signup-form input[placeholder="Kristina Nicotera"]').value.trim();
+  const email = document.querySelector('#signup-form input[placeholder="you@yourschool.org"]').value.trim();
+
+  if (!school || !name || !email) {
+    alert('Please fill in all fields.');
+    return;
+  }
+
+  // Send application email via Supabase or just notify
+  alert(`Application received for ${school}!\n\nWe'll review your request and get you set up within 1 business day.\n\nQuestions? Email kristina@kpcharterkollective.com`);
+}
+
+// ── UI HELPERS ──
+function showLogin() {
+  document.getElementById('signup-form').classList.add('hidden');
+  document.getElementById('login-form').classList.remove('hidden');
+}
+function showSignup() {
+  document.getElementById('login-form').classList.add('hidden');
+  document.getElementById('signup-form').classList.remove('hidden');
+}
+function showForgot() {
+  alert('Password reset instructions will be sent to your email address.');
+}
+function togglePassword() {
+  const input = document.getElementById('password-input');
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+function showError(msg) {
+  const el = document.getElementById('error-alert');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function showSuccess(msg) {
+  const el = document.getElementById('success-alert');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function hideAlerts() {
+  document.getElementById('error-alert').classList.remove('show');
+  document.getElementById('success-alert').classList.remove('show');
+}
+
+// Enter key to submit
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !document.getElementById('login-form').classList.contains('hidden')) {
+    handleLogin();
+  }
+});
+</script>
+</body>
+</html>

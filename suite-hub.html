@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub by KP Charter Kollective — Content Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0f2d5a;
+  --navy-dark: #091e3e;
+  --orange: #ff6015;
+  --orange-lt: #ff7633;
+  --teal: #089494;
+  --teal-lt: #0ab3b3;
+  --white: #ffffff;
+  --offwhite: #f7f8fa;
+  --border: #e0e4eb;
+  --muted: #5c6f85;
+  --text: #0f2d5a;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --shadow-sm: 0 2px 8px rgba(15,45,90,0.07);
+  --shadow-md: 0 8px 28px rgba(15,45,90,0.11);
+  --radius: 10px;
+
+  /* Platform colors */
+  --ig: #E1306C;
+  --fb: #1877F2;
+  --tw: #1DA1F2;
+  --email: var(--teal);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { font-family: var(--font-sans); color: var(--text); background: var(--offwhite); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 240px;
+  background: var(--navy-dark);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  padding: 0 0 24px;
+}
+.sidebar-logo {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  margin-bottom: 8px;
+}
+.sidebar-logo-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-lt));
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 18px; font-weight: 900;
+  color: #fff;
+  flex-shrink: 0;
+}
+.logo-text { line-height: 1.2; }
+.logo-name { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: -.01em; }
+.logo-sub { font-size: 10px; color: rgba(255,255,255,.35); font-family: var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+
+.school-selector {
+  margin: 0 12px 16px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.school-selector-name { font-size: 13px; font-weight: 600; color: #fff; }
+.school-selector-type { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 2px; }
+.school-selector svg { flex-shrink: 0; opacity: .4; }
+
+.nav-section { padding: 0 12px; margin-bottom: 4px; }
+.nav-label {
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(255,255,255,.25);
+  padding: 8px 8px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px;
+  border-radius: 7px;
+  font-size: 13.5px; font-weight: 500;
+  color: rgba(255,255,255,.55);
+  cursor: pointer;
+  transition: all .15s;
+  margin-bottom: 1px;
+  text-decoration: none;
+}
+.nav-item:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.85); }
+.nav-item.active { background: rgba(255,96,21,.15); color: var(--orange-lt); }
+.nav-item svg { flex-shrink: 0; width: 16px; height: 16px; }
+.nav-badge {
+  margin-left: auto;
+  background: var(--orange);
+  color: #fff;
+  font-size: 10px; font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 20px;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 12px 0;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.sidebar-user {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.sidebar-user:hover { background: rgba(255,255,255,.05); }
+.user-avatar {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--teal), var(--teal-lt));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+.user-name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,.75); }
+.user-role { font-size: 11px; color: rgba(255,255,255,.3); }
+
+/* ── MAIN ── */
+.main {
+  margin-left: 240px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+}
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.topbar-title { font-family: var(--font-serif); font-size: 22px; font-weight: 900; color: var(--navy); }
+.topbar-subtitle { font-size: 13px; color: var(--muted); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13.5px; font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all .15s;
+  font-family: var(--font-sans);
+}
+.btn-primary { background: var(--orange); color: #fff; }
+.btn-primary:hover { background: var(--orange-lt); }
+.btn-secondary { background: var(--offwhite); color: var(--navy); border: 1.5px solid var(--border); }
+.btn-secondary:hover { border-color: var(--navy); }
+.btn-ghost { background: transparent; color: var(--muted); }
+.btn-ghost:hover { background: var(--offwhite); color: var(--navy); }
+.btn-sm { padding: 6px 13px; font-size: 12.5px; }
+
+/* ── CONTENT ── */
+.content { padding: 28px 32px; flex: 1; }
+
+/* ── CALENDAR HEADER ── */
+.cal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.cal-nav { display: flex; align-items: center; gap: 12px; }
+.cal-month { font-family: var(--font-serif); font-size: 20px; font-weight: 900; color: var(--navy); }
+.cal-nav-btn {
+  width: 32px; height: 32px;
+  border-radius: 7px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all .15s;
+}
+.cal-nav-btn:hover { border-color: var(--navy); color: var(--navy); }
+.cal-filters { display: flex; align-items: center; gap: 8px; }
+.filter-chip {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all .15s;
+  background: var(--white);
+  border-color: var(--border);
+  color: var(--muted);
+}
+.filter-chip.active { border-color: currentColor; }
+.filter-chip.ig { color: var(--ig); }
+.filter-chip.ig.active { background: #fdf0f4; }
+.filter-chip.fb { color: var(--fb); }
+.filter-chip.fb.active { background: #f0f4fd; }
+.filter-chip.email { color: var(--teal); }
+.filter-chip.email.active { background: #f0fafa; }
+.filter-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+/* ── CALENDAR GRID ── */
+.cal-grid-wrap {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.cal-days-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+.cal-day-label {
+  padding: 10px 16px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  border-right: 1px solid var(--border);
+}
+.cal-day-label:last-child { border-right: none; }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.cal-cell {
+  min-height: 110px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 8px;
+  position: relative;
+  cursor: pointer;
+  transition: background .12s;
+}
+.cal-cell:hover { background: #fafbfc; }
+.cal-cell:nth-child(7n) { border-right: none; }
+.cal-cell.other-month .cal-date { color: #c5cdd8; }
+.cal-cell.today { background: #fffaf7; }
+.cal-cell.today .cal-date {
+  background: var(--orange);
+  color: #fff;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+}
+.cal-date { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+.cal-add-btn {
+  position: absolute; top: 6px; right: 6px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: #fff;
+  display: none; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: transform .12s;
+}
+.cal-cell:hover .cal-add-btn { display: flex; }
+.cal-add-btn:hover { transform: scale(1.1); }
+
+/* ── POST CHIPS ── */
+.post-chip {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 11px; font-weight: 600;
+  margin-bottom: 3px;
+  cursor: pointer;
+  transition: opacity .12s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.post-chip:hover { opacity: .8; }
+.post-chip.ig { background: #fce4ed; color: #b5234f; }
+.post-chip.fb { background: #deeafc; color: #1555c4; }
+.post-chip.email { background: #d6f0f0; color: #056565; }
+.post-chip.draft { opacity: .6; border: 1.5px dashed currentColor; background: transparent; }
+.post-chip-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.post-chip-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.more-posts { font-size: 11px; color: var(--muted); padding: 2px 4px; font-weight: 500; }
+
+/* ── SIDE PANEL ── */
+.side-panel {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── LAYOUT ROW ── */
+.cal-layout { display: flex; gap: 24px; align-items: flex-start; }
+.cal-main { flex: 1; min-width: 0; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title { font-size: 14px; font-weight: 700; color: var(--navy); }
+.card-body { padding: 16px 20px; }
+
+/* ── TEMPLATE BANK ── */
+.template-list { display: flex; flex-direction: column; gap: 8px; }
+.template-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: all .15s;
+}
+.template-item:hover { border-color: var(--orange); background: #fffaf7; }
+.template-thumb {
+  width: 40px; height: 40px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.template-info { flex: 1; min-width: 0; }
+.template-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+.template-tags { display: flex; gap: 4px; margin-top: 3px; flex-wrap: wrap; }
+.template-tag {
+  font-size: 10px; font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--offwhite);
+  color: var(--muted);
+}
+.template-use {
+  font-size: 11px; font-weight: 700;
+  color: var(--orange);
+  opacity: 0;
+  transition: opacity .15s;
+  white-space: nowrap;
+}
+.template-item:hover .template-use { opacity: 1; }
+
+/* ── UPCOMING QUEUE ── */
+.queue-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.queue-item:last-child { border-bottom: none; padding-bottom: 0; }
+.queue-platform {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: 13px;
+}
+.queue-platform.ig { background: #fce4ed; }
+.queue-platform.fb { background: #deeafc; }
+.queue-platform.email { background: #d6f0f0; }
+.queue-content { flex: 1; min-width: 0; }
+.queue-text { font-size: 13px; color: var(--navy); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.queue-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.queue-status {
+  font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  flex-shrink: 0;
+}
+.queue-status.scheduled { background: #d6f0f0; color: #056565; }
+.queue-status.draft { background: var(--offwhite); color: var(--muted); }
+
+/* ── STATS ROW ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+}
+.stat-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-family: var(--font-mono); margin-bottom: 8px; }
+.stat-value { font-family: var(--font-serif); font-size: 28px; font-weight: 900; color: var(--navy); line-height: 1; }
+.stat-delta { font-size: 12px; color: var(--teal); font-weight: 600; margin-top: 4px; }
+.stat-delta.down { color: #e05050; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(9,30,62,.45);
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--white);
+  border-radius: 14px;
+  width: 100%; max-width: 560px;
+  box-shadow: 0 24px 80px rgba(9,30,62,.25);
+  transform: translateY(12px);
+  transition: transform .2s;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-header {
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-title { font-family: var(--font-serif); font-size: 20px; font-weight: 900; color: var(--navy); }
+.modal-close {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--offwhite);
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted);
+  font-size: 18px;
+  transition: all .12s;
+}
+.modal-close:hover { background: var(--border); color: var(--navy); }
+.modal-body { padding: 24px 28px; }
+.modal-footer { padding: 16px 28px 24px; display: flex; gap: 10px; justify-content: flex-end; }
+
+/* ── FORM ── */
+.form-group { margin-bottom: 18px; }
+.form-label { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; display: block; }
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--white);
+  transition: border-color .15s;
+  outline: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--orange); }
+.form-textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.platform-picker { display: flex; gap: 8px; flex-wrap: wrap; }
+.platform-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 13px; font-weight: 600;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s;
+}
+.platform-btn.selected.ig { border-color: var(--ig); background: #fce4ed; color: #b5234f; }
+.platform-btn.selected.fb { border-color: var(--fb); background: #deeafc; color: #1555c4; }
+.platform-btn.selected.email { border-color: var(--teal); background: #d6f0f0; color: #056565; }
+.canva-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  border: 1.5px dashed var(--border);
+  border-radius: 8px;
+  background: var(--offwhite);
+  color: var(--muted);
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  width: 100%;
+}
+.canva-btn:hover { border-color: #7d2ae8; background: #f8f0ff; color: #7d2ae8; }
+.canva-logo { font-size: 16px; }
+
+/* ── ENROLL CONNECT BANNER ── */
+.enroll-banner {
+  background: linear-gradient(135deg, var(--navy), #1a3a6e);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 24px;
+}
+.enroll-banner-icon {
+  width: 40px; height: 40px;
+  background: rgba(255,96,21,.2);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.enroll-banner-text { flex: 1; }
+.enroll-banner-title { font-size: 14px; font-weight: 700; color: #fff; }
+.enroll-banner-sub { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 2px; }
+.enroll-banner-btn {
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 7px;
+  font-size: 12.5px; font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+/* ── TOGGLE SWITCH ── */
+.toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; cursor: pointer; inset: 0;
+  background: var(--border); border-radius: 24px;
+  transition: .2s;
+}
+.toggle-slider:before {
+  content: ""; position: absolute;
+  width: 18px; height: 18px; left: 3px; bottom: 3px;
+  background: white; border-radius: 50%;
+  transition: .2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+input:checked + .toggle-slider { background: var(--teal); }
+input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+/* ── CONNECTED CHIPS ── */
+.connected-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 20px;
+  font-size: 11.5px; font-weight: 600;
+}
+.ig-chip { background: #fce4ed; color: #b5234f; }
+.fb-chip { background: #deeafc; color: #1555c4; }
+.connect-btn-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 20px;
+  font-size: 11.5px; font-weight: 600;
+  background: var(--white); border: 1.5px dashed var(--border);
+  color: var(--muted); cursor: pointer;
+  transition: all .15s;
+}
+.connect-btn-chip:hover { border-color: var(--orange); color: var(--orange); }
+
+/* ── PRODUCT SWITCHER ── */
+.product-switcher { position: relative; }
+.switcher-btn {
+  display: flex; align-items: center; gap: 9px;
+  cursor: pointer; padding: 4px 8px 4px 4px;
+  border-radius: 10px;
+  transition: background .15s;
+}
+.switcher-btn:hover { background: rgba(255,255,255,.07); }
+.switcher-arrow { color: rgba(255,255,255,.35); transition: transform .2s; }
+.product-switcher.open .switcher-arrow { transform: rotate(180deg); }
+.switcher-dropdown {
+  position: absolute; top: calc(100% + 8px); left: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(9,30,62,.18);
+  width: 240px;
+  padding: 8px;
+  z-index: 300;
+  display: none;
+}
+.product-switcher.open .switcher-dropdown { display: block; }
+.switcher-header {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); padding: 6px 10px 8px;
+}
+.switcher-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 8px;
+  cursor: pointer; transition: background .12s;
+  text-decoration: none;
+}
+.switcher-item:hover { background: var(--offwhite); }
+.switcher-item.active { background: #fff8f5; }
+.switcher-item.locked { opacity: .6; cursor: pointer; }
+.switcher-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 17px; font-weight: 900;
+  color: #fff; flex-shrink: 0;
+}
+.switcher-icon.hub { background: linear-gradient(135deg, #ff6015, #ff7633); }
+.switcher-icon.enroll { background: linear-gradient(135deg, #089494, #0ab3b3); }
+.switcher-item-text { flex: 1; }
+.switcher-item-name { font-size: 13.5px; font-weight: 700; color: var(--navy); }
+.switcher-item-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.switcher-lock {
+  width: 20px; height: 20px; border-radius: 6px;
+  background: var(--offwhite); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+}
+.switcher-check { color: var(--orange); font-size: 14px; font-weight: 700; }
+.switcher-divider { height: 1px; background: var(--border); margin: 6px 0; }
+
+/* ── UPGRADE MODAL ── */
+.upgrade-overlay {
+  position: fixed; inset: 0;
+  background: rgba(9,30,62,.55);
+  z-index: 400;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s;
+}
+.upgrade-overlay.open { opacity: 1; pointer-events: all; }
+.upgrade-modal {
+  background: var(--white);
+  border-radius: 16px;
+  width: 100%; max-width: 540px;
+  box-shadow: 0 32px 80px rgba(9,30,62,.28);
+  transform: translateY(14px);
+  transition: transform .2s;
+  overflow: hidden;
+}
+.upgrade-overlay.open .upgrade-modal { transform: translateY(0); }
+.upgrade-modal-hero {
+  background: linear-gradient(135deg, var(--navy-dark), #1a3a6e);
+  padding: 32px 32px 28px;
+  position: relative;
+  overflow: hidden;
+}
+.upgrade-modal-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.upgrade-lock-icon {
+  width: 52px; height: 52px;
+  background: rgba(255,96,21,.15);
+  border: 1px solid rgba(255,96,21,.3);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  margin-bottom: 16px;
+  position: relative; z-index: 1;
+}
+.upgrade-modal-title {
+  font-family: var(--font-serif); font-size: 24px; font-weight: 900;
+  color: #fff; line-height: 1.2;
+  position: relative; z-index: 1;
+  margin-bottom: 8px;
+}
+.upgrade-modal-sub {
+  font-size: 14px; color: rgba(255,255,255,.55);
+  position: relative; z-index: 1;
+  line-height: 1.6;
+}
+.upgrade-modal-body { padding: 28px 32px; }
+.upgrade-plans { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.upgrade-plan {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 16px;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+}
+.upgrade-plan:hover { border-color: var(--orange); }
+.upgrade-plan.featured {
+  border-color: var(--orange);
+  background: #fff8f5;
+}
+.upgrade-plan-badge {
+  position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+  background: var(--orange); color: #fff;
+  font-size: 10px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+  white-space: nowrap;
+  font-family: var(--font-mono); letter-spacing: .06em;
+}
+.upgrade-plan-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 15px; font-weight: 900;
+  color: #fff; margin-bottom: 10px;
+}
+.upgrade-plan-icon.hub { background: linear-gradient(135deg, #ff6015, #ff7633); }
+.upgrade-plan-icon.enroll { background: linear-gradient(135deg, #089494, #0ab3b3); }
+.upgrade-plan-icon.suite { background: linear-gradient(135deg, var(--navy), #2255a0); font-size:12px; }
+.upgrade-plan-name { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+.upgrade-plan-price {
+  font-family: var(--font-serif); font-size: 24px; font-weight: 900;
+  color: var(--navy); line-height: 1;
+}
+.upgrade-plan-price span { font-size: 13px; font-weight: 500; color: var(--muted); font-family: var(--font-sans); }
+.upgrade-plan-desc { font-size: 11.5px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+.upgrade-founding {
+  background: linear-gradient(135deg, #f0fafa, #e6f7f7);
+  border: 1.5px solid var(--teal);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+}
+.upgrade-founding-icon { font-size: 22px; flex-shrink: 0; }
+.upgrade-founding-text {}
+.upgrade-founding-title { font-size: 13px; font-weight: 700; color: var(--navy); }
+.upgrade-founding-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.upgrade-founding-badge {
+  background: var(--teal); color: #fff;
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+  white-space: nowrap; margin-left: auto; flex-shrink: 0;
+}
+.upgrade-cta { width: 100%; padding: 14px; border-radius: 10px; background: var(--orange); color: #fff; font-size: 15px; font-weight: 700; border: none; cursor: pointer; font-family: var(--font-sans); transition: background .15s; }
+.upgrade-cta:hover { background: var(--orange-lt); }
+.upgrade-dismiss { display: block; text-align: center; margin-top: 12px; font-size: 13px; color: var(--muted); cursor: pointer; }
+.upgrade-dismiss:hover { color: var(--navy); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <!-- PRODUCT SWITCHER (replaces static logo) -->
+<div class="product-switcher" id="product-switcher">
+  <div class="switcher-btn" onclick="toggleSwitcher()">
+    <div class="logo-icon">H</div>
+    <div class="logo-text">
+      <div class="logo-name">Hub</div>
+      <div class="logo-sub">by KP Charter Kollective</div>
+    </div>
+    <svg class="switcher-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="switcher-dropdown">
+    <div class="switcher-header">KPCC Suite</div>
+    <div class="switcher-item active" onclick="closeSwitcher()">
+      <div class="switcher-icon hub">H</div>
+      <div class="switcher-item-text">
+        <div class="switcher-item-name">Hub</div>
+        <div class="switcher-item-sub">Marketing Platform</div>
+      </div>
+      <div class="switcher-check">✓</div>
+    </div>
+    <div class="switcher-item locked" onclick="showUpgradeModal('enroll')">
+      <div class="switcher-icon enroll">E</div>
+      <div class="switcher-item-text">
+        <div class="switcher-item-name">Enroll</div>
+        <div class="switcher-item-sub">Enrollment Management</div>
+      </div>
+      <div class="switcher-lock">🔒</div>
+    </div>
+    <div class="switcher-divider"></div>
+    <div class="switcher-item" onclick="showUpgradeModal('suite')">
+      <div class="switcher-icon suite" style="font-size:10px;font-family:var(--font-mono);">SUITE</div>
+      <div class="switcher-item-text">
+        <div class="switcher-item-name">Get the Full Suite</div>
+        <div class="switcher-item-sub">Hub + Enroll · Save $27/mo</div>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+
+  <div class="school-selector">
+    <div>
+      <div class="school-selector-name">The Meliora School</div>
+      <div class="school-selector-type">Opening Fall 2026 · Atlanta, GA</div>
+    </div>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Marketing</div>
+    <a class="nav-item active" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Content Calendar
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Email Campaigns
+      <span class="nav-badge">3</span>
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Template Bank
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Analytics
+    </a>
+  </div>
+
+  <div class="nav-section" style="margin-top:8px;">
+    <div class="nav-label">Enrollment</div>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Family Pipeline
+      <span class="nav-badge" style="background:var(--teal);">47</span>
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Lottery
+    </a>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="user-avatar">K</div>
+      <div>
+        <div class="user-name">Kristina</div>
+        <div class="user-role">KP Charter Kollective</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="topbar-title">Content Calendar</div>
+        <div class="topbar-subtitle">The Meliora School · February 2026</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-secondary btn-sm" onclick="openModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Schedule Post
+      </button>
+      <button class="btn btn-primary btn-sm" onclick="openModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Use Template
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ENROLL CONNECT BANNER -->
+    <div class="enroll-banner">
+      <div class="enroll-banner-icon">🔗</div>
+      <div class="enroll-banner-text">
+        <div class="enroll-banner-title">Connected to Enroll — families from campaigns go directly into your pipeline</div>
+        <div class="enroll-banner-sub">47 families tracked · 12 added from Hub campaigns this month · Last sync 2 min ago</div>
+      </div>
+      <button class="enroll-banner-btn">View Pipeline →</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Posts This Month</div>
+        <div class="stat-value">14</div>
+        <div class="stat-delta">↑ 3 vs last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Families From Hub</div>
+        <div class="stat-value">12</div>
+        <div class="stat-delta">↑ New this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Email Open Rate</div>
+        <div class="stat-value">41%</div>
+        <div class="stat-delta">↑ 6% vs last send</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Scheduled Ahead</div>
+        <div class="stat-value">7</div>
+        <div class="stat-delta">Next 14 days</div>
+      </div>
+    </div>
+
+    <!-- CALENDAR + SIDEBAR LAYOUT -->
+    <div class="cal-layout">
+      <div class="cal-main">
+
+        <!-- CAL HEADER -->
+        <div class="cal-header">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" onclick="prevMonth()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="cal-month" id="cal-month-label">February 2026</div>
+            <button class="cal-nav-btn" onclick="nextMonth()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+          <div class="cal-filters">
+            <span style="font-size:12px;color:var(--muted);font-weight:600;margin-right:4px;">Filter:</span>
+            <div class="filter-chip ig active" onclick="toggleFilter(this)"><div class="filter-dot"></div> Instagram</div>
+            <div class="filter-chip fb active" onclick="toggleFilter(this)"><div class="filter-dot"></div> Facebook</div>
+            <div class="filter-chip email active" onclick="toggleFilter(this)"><div class="filter-dot"></div> Email</div>
+          </div>
+        </div>
+
+        <!-- CALENDAR -->
+        <div class="cal-grid-wrap">
+          <div class="cal-days-header">
+            <div class="cal-day-label">Sun</div>
+            <div class="cal-day-label">Mon</div>
+            <div class="cal-day-label">Tue</div>
+            <div class="cal-day-label">Wed</div>
+            <div class="cal-day-label">Thu</div>
+            <div class="cal-day-label">Fri</div>
+            <div class="cal-day-label">Sat</div>
+          </div>
+          <div class="cal-grid" id="cal-grid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SIDE PANEL -->
+      <div class="side-panel">
+
+        <!-- UPCOMING -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Upcoming Posts</div>
+            <button class="btn btn-ghost btn-sm">See all</button>
+          </div>
+          <div class="card-body" style="padding-top:8px;">
+            <div class="queue-item">
+              <div class="queue-platform ig">📷</div>
+              <div class="queue-content">
+                <div class="queue-text">Meliora Monday: Why we chose personalized learning...</div>
+                <div class="queue-meta">Tomorrow · 9:00 AM · Instagram</div>
+              </div>
+              <div class="queue-status scheduled">Scheduled</div>
+            </div>
+            <div class="queue-item">
+              <div class="queue-platform email">✉️</div>
+              <div class="queue-content">
+                <div class="queue-text">Open House Reminder — Feb 28 · Register Now</div>
+                <div class="queue-meta">Feb 27 · 10:00 AM · Email</div>
+              </div>
+              <div class="queue-status scheduled">Scheduled</div>
+            </div>
+            <div class="queue-item">
+              <div class="queue-platform fb">👍</div>
+              <div class="queue-content">
+                <div class="queue-text">Open House this Saturday — bring your family!</div>
+                <div class="queue-meta">Feb 27 · 12:00 PM · Facebook</div>
+              </div>
+              <div class="queue-status scheduled">Scheduled</div>
+            </div>
+            <div class="queue-item">
+              <div class="queue-platform ig">📷</div>
+              <div class="queue-content">
+                <div class="queue-text">Founding Family Spotlight: Meet the Washingtons</div>
+                <div class="queue-meta">Mar 2 · 9:00 AM · Draft</div>
+              </div>
+              <div class="queue-status draft">Draft</div>
+            </div>
+            <div class="queue-item">
+              <div class="queue-platform email">✉️</div>
+              <div class="queue-content">
+                <div class="queue-text">Lottery Opens March 15 — Here's What to Know</div>
+                <div class="queue-meta">Mar 10 · 8:00 AM · Draft</div>
+              </div>
+              <div class="queue-status draft">Draft</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEMPLATE BANK PREVIEW -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Template Bank</div>
+            <button class="btn btn-ghost btn-sm">View all</button>
+          </div>
+          <div class="card-body" style="padding-top:8px;">
+            <div class="template-list">
+              <div class="template-item" onclick="openModal()">
+                <div class="template-thumb" style="background:#fff3ee;">📣</div>
+                <div class="template-info">
+                  <div class="template-name">Open House Announcement</div>
+                  <div class="template-tags">
+                    <span class="template-tag">Instagram</span>
+                    <span class="template-tag">Facebook</span>
+                    <span class="template-tag">Email</span>
+                  </div>
+                </div>
+                <div class="template-use">Use →</div>
+              </div>
+              <div class="template-item" onclick="openModal()">
+                <div class="template-thumb" style="background:#f0fafa;">🗓️</div>
+                <div class="template-info">
+                  <div class="template-name">Meliora Monday</div>
+                  <div class="template-tags">
+                    <span class="template-tag">Instagram</span>
+                    <span class="template-tag">Recurring</span>
+                  </div>
+                </div>
+                <div class="template-use">Use →</div>
+              </div>
+              <div class="template-item" onclick="openModal()">
+                <div class="template-thumb" style="background:#fff0f5;">🎉</div>
+                <div class="template-info">
+                  <div class="template-name">Lottery Hype Campaign</div>
+                  <div class="template-tags">
+                    <span class="template-tag">Email</span>
+                    <span class="template-tag">Instagram</span>
+                  </div>
+                </div>
+                <div class="template-use">Use →</div>
+              </div>
+              <div class="template-item" onclick="openModal()">
+                <div class="template-thumb" style="background:#f0f4fd;">👨‍👩‍👧</div>
+                <div class="template-info">
+                  <div class="template-name">Founding Family Spotlight</div>
+                  <div class="template-tags">
+                    <span class="template-tag">Instagram</span>
+                    <span class="template-tag">Facebook</span>
+                  </div>
+                </div>
+                <div class="template-use">Use →</div>
+              </div>
+              <div class="template-item" onclick="openModal()">
+                <div class="template-thumb" style="background:#f3fff0;">📋</div>
+                <div class="template-info">
+                  <div class="template-name">Intent-to-Enroll Drive</div>
+                  <div class="template-tags">
+                    <span class="template-tag">Email</span>
+                    <span class="template-tag">SMS</span>
+                  </div>
+                </div>
+                <div class="template-use">Use →</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- NEW POST MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Schedule a Post</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Platform</label>
+        <div class="platform-picker">
+          <button class="platform-btn ig selected" onclick="togglePlatform(this, 'ig')">📷 Instagram</button>
+          <button class="platform-btn fb" onclick="togglePlatform(this, 'fb')">👍 Facebook</button>
+          <button class="platform-btn email" onclick="togglePlatform(this, 'email')">✉️ Email</button>
+        </div>
+        <div id="account-status" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Post Caption / Content</label>
+        <textarea class="form-textarea" placeholder="Write your post or paste from a template..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Canva Graphic</label>
+        <button class="canva-btn" onclick="openCanvaTemplate()">
+          <span class="canva-logo">🎨</span>
+          Open Canva template → customize → paste link below
+        </button>
+        <input type="url" class="form-input" id="canva-link-input" placeholder="Paste your Canva graphic link here..." style="margin-top:8px;">
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-input" value="2026-02-26">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Time</label>
+          <input type="time" class="form-input" value="09:00">
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:18px;">
+        <label class="form-label">Template</label>
+        <select class="form-select">
+          <option value="">— No template —</option>
+          <option>Open House Announcement</option>
+          <option>Meliora Monday</option>
+          <option>Lottery Hype Campaign</option>
+          <option>Founding Family Spotlight</option>
+          <option>Intent-to-Enroll Drive</option>
+          <option>Yard Sign Drop Reminder</option>
+          <option>Countdown to Opening Day</option>
+        </select>
+      </div>
+
+      <!-- AUTOPOST TOGGLE -->
+      <div style="background:var(--offwhite);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-top:4px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div>
+            <div style="font-size:13.5px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Auto-publish
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px;" id="autopost-sub">Post will publish automatically at the scheduled time</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="autopost-toggle" checked onchange="updateAutopostState()">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div id="autopost-accounts" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+          <div class="connected-chip ig-chip">
+            <span>📷</span> Instagram Connected
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="connected-chip fb-chip">
+            <span>👍</span> Facebook Connected
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="connect-btn-chip" onclick="showConnectFlow()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Connect account
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Save as Draft</button>
+      <button class="btn btn-primary" onclick="schedulePost()">Schedule Post →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CALENDAR DATA ──
+const posts = {
+  '2026-02-03': [{type:'ig', text:'Why Meliora? Our founder story'}, {type:'email', text:'February newsletter'}],
+  '2026-02-09': [{type:'ig', text:'Meliora Monday: Personalized learning'}, {type:'fb', text:'Meliora Monday: Personalized learning'}],
+  '2026-02-11': [{type:'email', text:'Open House invite — Feb 28'}],
+  '2026-02-14': [{type:'ig', text:'Happy Valentine\'s Day from Meliora 💛'}, {type:'fb', text:'Valentine\'s Day post'}],
+  '2026-02-16': [{type:'ig', text:'Meliora Monday: What is mastery?'}],
+  '2026-02-18': [{type:'email', text:'Open House reminder #2'}],
+  '2026-02-23': [{type:'ig', text:'Meliora Monday: Meet our team'}, {type:'fb', text:'Meet our team'}],
+  '2026-02-25': [{type:'ig', text:'Open House this Saturday — RSVP now!'}, {type:'email', text:'Final Open House reminder'}, {type:'fb', text:'Open House this Saturday!'}],
+  '2026-02-26': [{type:'ig', text:'Founding family spotlight: The Williams family'}],
+  '2026-02-27': [{type:'email', text:'Open House reminder — tomorrow!'}],
+  '2026-02-28': [{type:'ig', text:'See you at Open House TODAY! 🎉'}, {type:'fb', text:'Open House Day!'}],
+  '2026-03-02': [{type:'ig', text:'Founding Family Spotlight', draft:true}],
+  '2026-03-09': [{type:'ig', text:'Meliora Monday: Character + academics', draft:true}],
+  '2026-03-10': [{type:'email', text:'Lottery Opens March 15', draft:true}],
+};
+
+let currentDate = new Date(2026, 1, 1); // Feb 2026
+
+function renderCalendar() {
+  const grid = document.getElementById('cal-grid');
+  const label = document.getElementById('cal-month-label');
+  
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  label.textContent = `${monthNames[month]} ${year}`;
+  
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrev = new Date(year, month, 0).getDate();
+  
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  
+  let cells = '';
+  
+  // Prev month days
+  for (let i = firstDay - 1; i >= 0; i--) {
+    cells += `<div class="cal-cell other-month"><div class="cal-date">${daysInPrev - i}</div></div>`;
+  }
+  
+  // Current month
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = dateStr === todayStr;
+    const dayPosts = posts[dateStr] || [];
+    
+    let postHTML = '';
+    const max = 2;
+    dayPosts.slice(0, max).forEach(p => {
+      const draft = p.draft ? ' draft' : '';
+      postHTML += `<div class="post-chip ${p.type}${draft}" title="${p.text}">
+        <div class="post-chip-dot"></div>
+        <div class="post-chip-text">${p.text}</div>
+      </div>`;
+    });
+    if (dayPosts.length > max) {
+      postHTML += `<div class="more-posts">+${dayPosts.length - max} more</div>`;
+    }
+    
+    cells += `<div class="cal-cell${isToday ? ' today' : ''}" onclick="openModal()">
+      <div class="cal-date">${d}</div>
+      ${postHTML}
+      <button class="cal-add-btn" title="Add post">+</button>
+    </div>`;
+  }
+  
+  // Next month fill
+  const total = firstDay + daysInMonth;
+  const remaining = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for (let d = 1; d <= remaining; d++) {
+    cells += `<div class="cal-cell other-month"><div class="cal-date">${d}</div></div>`;
+  }
+  
+  grid.innerHTML = cells;
+}
+
+function prevMonth() {
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  renderCalendar();
+}
+function nextMonth() {
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  renderCalendar();
+}
+
+// ── MODAL ──
+function openModal() {
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+function schedulePost() {
+  closeModal();
+  alert('Post scheduled! It will appear on your calendar.');
+}
+
+// ── PLATFORM TOGGLE ──
+function togglePlatform(btn, cls) {
+  btn.classList.toggle('selected');
+  if (btn.classList.contains('selected')) btn.classList.add(cls);
+  else btn.classList.remove(cls);
+}
+
+// ── FILTER ──
+function toggleFilter(chip) {
+  chip.classList.toggle('active');
+}
+
+
+function updateAutopostState() {
+  const on = document.getElementById('autopost-toggle').checked;
+  const sub = document.getElementById('autopost-sub');
+  const accounts = document.getElementById('autopost-accounts');
+  if (on) {
+    sub.textContent = 'Post will publish automatically at the scheduled time';
+    sub.style.color = 'var(--muted)';
+    accounts.style.display = 'flex';
+  } else {
+    sub.textContent = 'Post will be saved as a scheduled draft — publish manually when ready';
+    sub.style.color = 'var(--orange)';
+    accounts.style.display = 'none';
+  }
+}
+function openCanvaTemplate() {
+  window.open('https://canva.com/templates', '_blank');
+}
+function showConnectFlow() {
+  alert('Connect your Instagram or Facebook Business account to enable auto-publishing. You\'ll only need to do this once per school.');
+}
+
+// ── INIT ──
+renderCalendar();
+
+// ── PRODUCT SWITCHER ──
+function toggleSwitcher() {
+  document.getElementById('product-switcher').classList.toggle('open');
+}
+function closeSwitcher() {
+  document.getElementById('product-switcher').classList.remove('open');
+}
+document.addEventListener('click', function(e) {
+  const sw = document.getElementById('product-switcher');
+  if (sw && !sw.contains(e.target)) sw.classList.remove('open');
+});
+
+// ── UPGRADE MODAL ──
+let upgradeTarget = 'enroll';
+function showUpgradeModal(target) {
+  upgradeTarget = target;
+  closeSwitcher();
+  const titles = {
+    enroll: 'Unlock Enroll',
+    hub: 'Unlock Hub',
+    suite: 'Upgrade to the Full Suite',
+  };
+  const subs = {
+    enroll: 'Your Hub subscription doesn\'t include Enroll. Upgrade to connect your marketing directly to your enrollment pipeline.',
+    hub: 'Your Enroll subscription doesn\'t include Hub. Upgrade to add a full marketing platform to your enrollment system.',
+    suite: 'Get Hub + Enroll together and save $27/month. One login. One system. Full enrollment and marketing in one place.',
+  };
+  document.getElementById('upgrade-title').textContent = titles[target] || 'Upgrade Your Plan';
+  document.getElementById('upgrade-sub').textContent = subs[target] || '';
+  document.getElementById('upgrade-overlay').classList.add('open');
+}
+function closeUpgradeModal() {
+  document.getElementById('upgrade-overlay').classList.remove('open');
+}
+function closeUpgradeOutside(e) {
+  if (e.target === document.getElementById('upgrade-overlay')) closeUpgradeModal();
+}
+function selectPlan(el) {
+  el.closest('.upgrade-plans').querySelectorAll('.upgrade-plan').forEach(p => p.classList.remove('featured'));
+  el.classList.add('featured');
+}
+function goToUpgrade() {
+  window.open('https://kpcharterkollective.com/apply.html', '_blank');
+  closeUpgradeModal();
+}
+
+</script>
+
+<!-- UPGRADE MODAL -->
+<div class="upgrade-overlay" id="upgrade-overlay" onclick="closeUpgradeOutside(event)">
+  <div class="upgrade-modal">
+    <div class="upgrade-modal-hero">
+      <div class="upgrade-lock-icon">🔒</div>
+      <div class="upgrade-modal-title" id="upgrade-title">Unlock Enroll</div>
+      <div class="upgrade-modal-sub" id="upgrade-sub">Your Hub subscription doesn't include Enroll. Upgrade to connect your marketing directly to your enrollment pipeline.</div>
+    </div>
+    <div class="upgrade-modal-body">
+      <div class="upgrade-plans" id="upgrade-plans">
+        <div class="upgrade-plan" onclick="selectPlan(this)">
+          <div class="upgrade-plan-icon enroll">E</div>
+          <div class="upgrade-plan-name">Enroll Only</div>
+          <div class="upgrade-plan-price">$97<span>/mo</span></div>
+          <div class="upgrade-plan-desc">Enrollment management, pipeline tracking, lottery, SMS</div>
+        </div>
+        <div class="upgrade-plan featured" onclick="selectPlan(this)">
+          <div class="upgrade-plan-badge">BEST VALUE</div>
+          <div class="upgrade-plan-icon suite">H+E</div>
+          <div class="upgrade-plan-name">Full Suite</div>
+          <div class="upgrade-plan-price">$197<span>/mo</span></div>
+          <div class="upgrade-plan-desc">Hub + Enroll together. Save $27/month vs buying separately.</div>
+        </div>
+      </div>
+      <div class="upgrade-founding">
+        <div class="upgrade-founding-icon">🏫</div>
+        <div class="upgrade-founding-text">
+          <div class="upgrade-founding-title">Founding School Rate</div>
+          <div class="upgrade-founding-sub">Pre-opening schools get 50% off for your first year</div>
+        </div>
+        <div class="upgrade-founding-badge">50% OFF</div>
+      </div>
+      <button class="upgrade-cta" onclick="goToUpgrade()">Start Your Free 14-Day Trial →</button>
+      <div class="upgrade-dismiss" onclick="closeUpgradeModal()">Not right now</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
