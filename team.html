@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Meet Kristina — Founder and CEO of KP Charter Kollective. Charter school launch strategist, enrollment growth architect, and brand builder serving NC, Texas, Georgia, and nationwide.">
+<meta name="keywords" content="charter school consultant, Kristina KP Charter Kollective, charter school strategist, enrollment growth architect, charter school brand builder">
+<title>Meet Kristina — Charter School Consultant | KP Charter Kollective</title>
+<link rel="canonical" href="https://www.kpcharterkollective.com/team.html">
+<meta property="og:title" content="Meet Kristina — KP Charter Kollective Founder">
+<meta property="og:description" content="School founder, enrollment strategist, and brand builder for charter schools across North Carolina, Texas, Georgia, and nationwide.">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://www.kpcharterkollective.com/team.html">
+<meta property="og:site_name" content="KP Charter Kollective">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Meet Kristina — KP Charter Kollective">
+<meta name="twitter:description" content="Charter school strategist, enrollment architect, and brand builder.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+.founder-hero { display:grid; grid-template-columns:1fr 1fr; gap:0; min-height:600px; margin-top:70px; }
+.founder-hero-photo { position:relative; overflow:hidden; }
+.founder-hero-photo img { width:100%; height:100%; min-height:600px; object-fit:cover; object-position:center top; display:block; }
+.founder-hero-content { background:var(--navy); padding:72px 64px; display:flex; flex-direction:column; justify-content:center; position:relative; overflow:hidden; }
+.founder-hero-content::before { content:''; position:absolute; inset:0; background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px); background-size:36px 36px; pointer-events:none; }
+.founder-hero-content::after { content:''; position:absolute; bottom:-60px; right:-60px; width:320px; height:320px; background:radial-gradient(circle,rgba(255,96,21,0.12) 0%,transparent 70%); pointer-events:none; }
+.founder-inner { position:relative; z-index:2; }
+.founder-eyebrow { display:inline-flex; align-items:center; gap:10px; font-family:var(--font-mono); font-size:11px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:var(--teal); margin-bottom:20px; }
+.founder-eyebrow::before { content:''; width:22px; height:1.5px; background:var(--teal); }
+.founder-name { font-family:var(--font-serif); font-size:54px; font-weight:900; color:var(--white); line-height:1.0; margin-bottom:6px; letter-spacing:-0.02em; }
+.founder-role { font-size:13px; font-weight:600; color:var(--orange); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:26px; }
+.founder-bio-short { font-size:17px; font-weight:300; color:rgba(255,255,255,0.65); line-height:1.75; margin-bottom:32px; max-width:420px; }
+.founder-tags { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:36px; }
+.founder-tag { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.7); font-size:12px; font-weight:500; padding:5px 14px; border-radius:20px; }
+
+.story-block { display:grid; grid-template-columns:120px 1fr; gap:40px; align-items:start; padding:52px 0; border-bottom:1px solid var(--border); }
+.story-block:last-child { border-bottom:none; }
+.story-num { font-family:var(--font-serif); font-size:64px; font-weight:900; color:var(--light); line-height:1; text-align:right; padding-right:20px; border-right:2px solid var(--border); margin-top:4px; }
+.story-content h3 { font-family:var(--font-serif); font-size:24px; font-weight:700; color:var(--navy); margin-bottom:14px; }
+.story-content p { font-size:15.5px; color:var(--muted); line-height:1.82; margin-bottom:14px; }
+.story-pull { font-family:var(--font-serif); font-size:20px; font-style:italic; color:var(--navy); border-left:3px solid var(--orange); padding-left:20px; margin:22px 0; line-height:1.5; }
+
+.expertise-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:40px; }
+.expertise-item { background:var(--white); border:1px solid var(--border); border-top:3px solid var(--teal); border-radius:var(--radius); padding:20px 18px; }
+.expertise-icon { width:38px; height:38px; background:linear-gradient(135deg,#e0f4f4,#c4e8e8); border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+.expertise-title { font-size:14px; font-weight:600; color:var(--navy); margin-bottom:5px; }
+.expertise-desc { font-size:12.5px; color:var(--muted); line-height:1.6; }
+
+.founder-photos { display:grid; grid-template-columns:2fr 1fr 1fr; gap:12px; margin-top:52px; }
+.founder-photos img { width:100%; height:280px; object-fit:cover; object-position:center top; border-radius:var(--radius); display:block; }
+
+@media(max-width:1024px){
+  .founder-hero{grid-template-columns:1fr;}
+  .founder-hero-photo img{min-height:420px;}
+  .founder-hero-content{padding:52px 40px;}
+  .founder-name{font-size:40px;}
+  .story-block{grid-template-columns:1fr;gap:16px;}
+  .story-num{text-align:left;padding-right:0;border-right:none;font-size:42px;}
+  .expertise-grid{grid-template-columns:repeat(2,1fr);}
+  .founder-photos{grid-template-columns:1fr 1fr;}
+  .founder-photos img:last-child{display:none;}
+}
+@media(max-width:768px){
+  .founder-hero-content{padding:40px 24px;}
+  .expertise-grid{grid-template-columns:1fr;}
+  .founder-photos{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header class="site-nav" id="site-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><img src="https://images.squarespace-cdn.com/content/v1/67843328034d591e0587586c/7e9c3fdc-d61e-4c4c-9932-b357cc6bdd78/KP+Charter.png?format=400w" alt="KP Charter Kollective"></a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li class="nav-dd"><a href="about.html">Our Work</a><ul class="nav-drop"><li><a href="about.html">About Us</a></li><li><a href="team.html">Meet the Founder</a></li><li><a href="faq.html">FAQ</a></li><li><a href="portfolio.html">Portfolio</a></li></ul></li>
+      <li class="nav-dd"><a href="services.html">How We Help</a><ul class="nav-drop"><li><a href="services.html">What We Do</a></li><li><a href="atl-advantage.html">ATL Advantage</a></li><li><a href="services.html#enrollment">Enrollment Strategy</a></li><li><a href="services.html#brand">Brand &amp; Messaging</a></li></ul></li>
+      <li><a href="blog.html">Blog</a></li><li><a href="apply.html">Apply</a></li><li><a href="enroll.html" style="color:var(--orange);font-weight:600;">Enroll Platform</a></li>
+    </ul>
+    <a href="apply.html" class="nav-cta">Apply to Work With Us</a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="founder-hero">
+  <div class="founder-hero-photo">
+    <img src="kristina-headshot.webp" alt="Kristina — Founder &amp; CEO, KP Charter Kollective">
+  </div>
+  <div class="founder-hero-content">
+    <div class="founder-inner">
+      <div class="founder-eyebrow">Founder &amp; CEO</div>
+      <div class="founder-name">Kristina</div>
+      <div class="founder-role">Charter Launch Strategist &middot; Enrollment Growth Architect &middot; Brand Builder</div>
+      <p class="founder-bio-short">I founded KP Charter Kollective because I kept watching brilliant educators build incredible schools that families couldn&rsquo;t find, didn&rsquo;t understand, or didn&rsquo;t trust yet. I knew how to fix that.</p>
+      <div class="founder-tags">
+        <span class="founder-tag">Charter Approval Strategy</span>
+        <span class="founder-tag">Enrollment Growth Systems</span>
+        <span class="founder-tag">Institutional Brand Building</span>
+        <span class="founder-tag">Georgia DOE Navigation</span>
+        <span class="founder-tag">Founder Advisory</span>
+      </div>
+      <a href="https://calendly.com/kristina-kpcharterkollective/30min" class="btn btn-orange" target="_blank" rel="noopener">Book a Call With Me &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- STORY -->
+<section class="section section--white">
+  <div class="wrap">
+    <div style="max-width:820px;margin:0 auto;">
+
+      <div class="story-block reveal">
+        <div class="story-num">01</div>
+        <div class="story-content">
+          <h3>Why I Started This</h3>
+          <p>I&rsquo;ve spent years inside charter schools &mdash; as a founder, as an advisor, as someone who has watched schools with transformative academic visions struggle not because their mission was weak, but because families couldn&rsquo;t find them.</p>
+          <p>The application was strong. The model was solid. The educators were passionate. But the school sat half-full while the families who needed exactly what it offered were somewhere else &mdash; unaware it even existed.</p>
+          <div class="story-pull">&ldquo;A school that families can&rsquo;t find can&rsquo;t fulfill its mission. That gap became my purpose.&rdquo;</div>
+          <p>I founded KP Charter Kollective to close that gap. To be the strategic partner that founders and school leaders actually need &mdash; not a generic marketing agency, not a logo shop. A growth architect who understands the charter landscape from the inside out.</p>
+        </div>
+      </div>
+
+      <div class="story-block reveal">
+        <div class="story-num">02</div>
+        <div class="story-content">
+          <h3>What I Bring to This Work</h3>
+          <p>My background sits at the intersection of education, marketing strategy, and systems design. I understand what Georgia&rsquo;s Board of Education looks for in a petition &mdash; because I&rsquo;ve navigated that process. I understand what families need to hear before they say yes &mdash; because I&rsquo;ve built the messaging that made it happen. I understand what enrollment systems need to look like to produce steady, predictable results &mdash; because I&rsquo;ve built them from scratch.</p>
+          <p>I&rsquo;ve worked with schools across Georgia and the Southeast to secure funding, build brands families trust, design STREAM and personalized learning models, and create enrollment infrastructure that fills classrooms. Over $15M in funding supported. 300+ new students added. 96% client satisfaction.</p>
+          <div class="story-pull">&ldquo;I don&rsquo;t offer theory. I offer the same systems and strategy I would build if it were my own school on the line.&rdquo;</div>
+        </div>
+      </div>
+
+      <div class="story-block reveal">
+        <div class="story-num">03</div>
+        <div class="story-content">
+          <h3>What I Believe About Charter Schools</h3>
+          <p>Charter schools exist because communities needed something different. They are built by people who refused to accept that the status quo was good enough for the families they serve. That mission matters &mdash; deeply.</p>
+          <p>But mission without visibility is just a private conviction. The families who need your school most are often the hardest to reach. They&rsquo;re busy. They&rsquo;re skeptical of institutions. They&rsquo;ve been promised things before. You have to earn their trust &mdash; and that starts long before they walk through your door.</p>
+          <p>My work is about making sure the schools that deserve to grow actually do. Every seat that goes unfilled is a family that didn&rsquo;t get access to something that could have changed their child&rsquo;s life. I take that seriously.</p>
+        </div>
+      </div>
+
+      <div class="story-block reveal">
+        <div class="story-num">04</div>
+        <div class="story-content">
+          <h3>How I Work</h3>
+          <p>I take on a limited number of engagements at a time &mdash; not because I&rsquo;m exclusive, but because every school I work with gets the strategic depth it deserves. I don&rsquo;t hand your project off to a junior team member. When you work with KP Charter Kollective, you work with me.</p>
+          <p>I start every engagement with a diagnostic before I build anything. I need to understand your school&rsquo;s story, your community, your academic model, and where families are currently disconnecting. Strategy built without that foundation isn&rsquo;t strategy &mdash; it&rsquo;s guesswork.</p>
+          <p>I communicate directly. I tell you what I actually think, not what you want to hear. And I hold the work to the same standard I&rsquo;d hold it to if it were my name on the door.</p>
+          <div class="story-pull">&ldquo;You deserve a partner who is as invested in your school&rsquo;s growth as you are. That&rsquo;s not a pitch. That&rsquo;s how I operate.&rdquo;</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Expertise -->
+    <div style="max-width:820px;margin:0 auto;">
+      <div class="label" style="margin-top:12px;">Core Expertise</div>
+      <div class="expertise-grid">
+        <div class="expertise-item reveal"><div class="expertise-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="expertise-title">Charter Launch &amp; Approval</div><div class="expertise-desc">Georgia DOE navigation, petition strategy, board interview prep, governance clarity.</div></div>
+        <div class="expertise-item reveal"><div class="expertise-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="expertise-title">Enrollment Growth Systems</div><div class="expertise-desc">Pre-opening campaigns, intent-to-enroll funnels, waitlist strategy, open house conversion.</div></div>
+        <div class="expertise-item reveal"><div class="expertise-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div><div class="expertise-title">Brand Strategy</div><div class="expertise-desc">Institutional brand ecosystems, visual identity systems, messaging frameworks that convert.</div></div>
+        <div class="expertise-item reveal"><div class="expertise-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="expertise-title">Family Messaging</div><div class="expertise-desc">STREAM, SEL, mastery learning translated into language parents understand and trust.</div></div>
+        <div class="expertise-item reveal"><div class="expertise-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><div class="expertise-title">Academic Positioning</div><div class="expertise-desc">STREAM model design, industry partnerships, grant alignment, board-level narrative.</div></div>
+        <div class="expertise-item reveal"><div class="expertise-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="expertise-title">Founder Advisory</div><div class="expertise-desc">1:1 strategic counsel, governance alignment, founder identity and communication coaching.</div></div>
+      </div>
+    </div>
+
+    <!-- Photo strip -->
+    <div class="founder-photos reveal" style="max-width:820px;margin:0 auto;">
+      <img src="https://images.squarespace-cdn.com/content/v1/67843328034d591e0587586c/3ae16933-d3a2-44c4-8bae-6d1134cfd8a0/IMG_2028.webp" alt="Kristina at a community enrollment event" loading="lazy">
+      <img src="https://images.squarespace-cdn.com/content/v1/67843328034d591e0587586c/80481cb4-18a5-4d20-834e-92b9820b74ca/DSC_7497+%281%29+%281%29+%281%29.jpg" alt="KP Charter Kollective work" loading="lazy">
+      <img src="https://images.squarespace-cdn.com/content/v1/67843328034d591e0587586c/6ea074aa-545f-4ea2-86cb-0fb3522680de/P1677787.jpg" alt="Charter school work" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section section--light">
+  <div class="wrap">
+    <div style="text-align:center;max-width:500px;margin:0 auto 44px;" class="reveal">
+      <div class="label label--center">What Founders Say</div>
+      <h2 class="h2 h2--center">From the Schools I&rsquo;ve Worked With</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="tcard reveal"><div class="tcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tcard-quote">&ldquo;Kristina&rsquo;s ability to translate our mission into a powerful, unified brand was unmatched. Every word, every design choice reflected the love and liberation at the heart of our school. We felt championed, not just served.&rdquo;</p><div class="tcard-attr"><div class="tcard-init">LL</div><div><div class="tcard-name">Love &amp; Liberation Academy</div><div class="tcard-school">Founder</div></div></div></div>
+      <div class="tcard reveal"><div class="tcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tcard-quote">&ldquo;Working with Kristina was one of the best decisions we made during our launch year. We didn&rsquo;t just get a logo &mdash; we got a brand that families connect with and trust. She&rsquo;s a true partner in the charter space.&rdquo;</p><div class="tcard-attr"><div class="tcard-init">CK</div><div><div class="tcard-name">Christine Keck</div><div class="tcard-school">Founding Leader</div></div></div></div>
+      <div class="tcard reveal"><div class="tcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tcard-quote">&ldquo;We were approved but had no idea what came next. Kristina gave us the clarity, confidence, and community we needed to get off the ground and into families&rsquo; hands.&rdquo;</p><div class="tcard-attr"><div class="tcard-init">SV</div><div><div class="tcard-name">The Simple Vue Academy</div><div class="tcard-school">Founder</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="wrap"><div class="cta-inner">
+    <div class="label label--center" style="color:rgba(255,255,255,0.45);">Work With Me</div>
+    <h2 class="cta-headline">Let&rsquo;s Talk About Your School and <em>What It Needs.</em></h2>
+    <p class="cta-sub">I review every application personally. Book a free call or apply and we&rsquo;ll figure out exactly where to start.</p>
+    <div class="cta-btns">
+      <a href="https://calendly.com/kristina-kpcharterkollective/30min" class="btn btn-orange" target="_blank" rel="noopener">Book a Free Call With Me &rarr;</a>
+      <a href="apply.html" class="btn btn-outline-white">Apply to Work Together</a>
+    </div>
+  </div></div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><img src="https://images.squarespace-cdn.com/content/v1/67843328034d591e0587586c/d6e31ea6-6f99-489b-886e-68f74b42c2a4/Final+KP+Charter+Kollective-02.png" alt="KP Charter Kollective" class="footer-logo-img" loading="lazy"><p class="footer-tagline">Turning strong ideas into clear strategy, powerful messaging, and steady enrollment.</p><div class="footer-contact"><a href="tel:3152817417"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.1a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>315-281-7417</a><a href="mailto:kristina@kpcharterkollective.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>kristina@kpcharterkollective.com</a></div></div>
+    <div class="footer-col"><div class="footer-col-title">Our Work</div><ul><li><a href="about.html">About Us</a></li><li><a href="team.html">Meet the Founder</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="faq.html">FAQ</a></li></ul></div>
+    <div class="footer-col"><div class="footer-col-title">How We Help</div><ul><li><a href="services.html">What We Do</a></li><li><a href="atl-advantage.html">ATL Advantage</a></li><li><a href="services.html#enrollment">Enrollment Strategy</a></li></ul></div>
+    <div class="footer-col"><div class="footer-col-title">Get Started</div><ul><li><a href="apply.html">Apply to Work With Us</a></li><li><a href="https://calendly.com/kristina-kpcharterkollective/30min" target="_blank">Book a Strategy Call</a></li></ul></div>
+    <div class="footer-col"><div class="footer-col-title">Service Areas</div><ul><li><a href="atl-advantage.html">Georgia</a></li><li><a href="north-carolina-charter-school-consulting.html">North Carolina</a></li><li><a href="texas-charter-school-consulting.html">Texas</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><span>The KP Charter Kollective &copy; 2026</span><span>Built for founders who are serious about growth.</span></div>
+</footer>
+<script src="js/site.js"></script>
+</body>
+</html>

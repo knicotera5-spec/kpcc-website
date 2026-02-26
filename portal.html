@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Portal — KP Charter Kollective</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f2d5a;--navy-dark:#091e3e;--navy-light:#1a3d6e;
+  --orange:#ff6015;--orange-lt:#ff7633;
+  --teal:#089494;--teal-lt:#0ab3b3;
+  --white:#fff;--offwhite:#f7f8fa;--light:#e9e9e9;
+  --text:#0f2d5a;--muted:#5c6f85;--border:#e0e4eb;
+  --success:#16a34a;--danger:#dc2626;--warning:#d97706;
+  --font-serif:'Playfair Display',Georgia,serif;
+  --font-sans:'DM Sans',system-ui,sans-serif;
+  --font-mono:'DM Mono',monospace;
+  --ease:0.22s ease;--radius:8px;
+  --shadow-sm:0 2px 8px rgba(15,45,90,0.07);
+  --shadow-md:0 8px 28px rgba(15,45,90,0.11);
+  --shadow-lg:0 16px 48px rgba(15,45,90,0.15);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-sans);color:var(--text);background:var(--offwhite);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font:inherit}
+input,select,textarea{font:inherit}
+
+/* ── SCREENS ── */
+.screen{display:none}
+.screen.active{display:block}
+
+/* ── LOGIN ── */
+.login-wrap{min-height:100vh;background:var(--navy);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.login-wrap::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:52px 52px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black,transparent)}
+.login-glow{position:absolute;top:-10%;right:-10%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(255,96,21,.1),transparent 65%);pointer-events:none}
+.login-box{background:#fff;border-radius:16px;width:440px;max-width:96vw;padding:48px;position:relative;z-index:1;box-shadow:var(--shadow-lg)}
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+.login-logo-icon{width:44px;height:44px;background:var(--navy);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;flex-shrink:0}
+.login-logo-bar{height:3px;border-radius:99px;background:rgba(255,255,255,.85)}
+.login-logo-bar.acc{background:var(--orange);width:14px}
+.login-logo-bar:not(.acc){width:20px}
+.login-logo-text{font-family:var(--font-serif);font-size:22px;font-weight:900;color:var(--navy)}
+.login-logo-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.login-title{font-family:var(--font-serif);font-size:26px;font-weight:900;color:var(--navy);margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+.fgrp{display:flex;flex-direction:column;gap:5px;margin-bottom:16px}
+.flbl{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.03em}
+.finp{padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;color:var(--text);outline:none;transition:border-color var(--ease),box-shadow var(--ease);background:#fff}
+.finp:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(8,148,148,.12)}
+.finp::placeholder{color:var(--muted);opacity:.6}
+.ferr{font-size:12px;color:var(--danger);margin-top:8px;display:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border-radius:var(--radius);font-size:13px;font-weight:600;transition:all var(--ease);cursor:pointer;border:none;font-family:var(--font-sans)}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-lt);box-shadow:0 4px 14px rgba(255,96,21,.28);transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-secondary{background:var(--offwhite);color:var(--navy);border:1.5px solid var(--border)}
+.btn-secondary:hover{border-color:var(--navy);background:#fff}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy-light);transform:translateY(-1px)}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:var(--teal-lt);transform:translateY(-1px)}
+.btn-danger{background:#fef2f2;color:var(--danger);border:1.5px solid #fecaca}
+.btn-danger:hover{background:#fee2e2}
+.btn-sm{padding:6px 14px;font-size:12px}
+.btn-full{width:100%;padding:13px}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── LAYOUT ── */
+.portal-wrap{display:flex;min-height:100vh}
+.sidebar{width:260px;background:var(--navy-dark);flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200}
+.sb-brand{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-logo{display:flex;align-items:center;gap:10px}
+.sb-logo-icon{width:36px;height:36px;background:rgba(255,255,255,.08);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex-shrink:0}
+.sb-logo-bar{height:2.5px;border-radius:99px;background:rgba(255,255,255,.8)}
+.sb-logo-bar.acc{background:var(--orange);width:12px}
+.sb-logo-bar:not(.acc){width:18px}
+.sb-logo-name{font-family:var(--font-serif);font-size:16px;font-weight:900;color:#fff}
+.sb-logo-tag{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px}
+.sb-mode{margin:12px 16px;background:rgba(255,255,255,.05);border-radius:var(--radius);padding:3px;display:flex;gap:2px}
+.sb-mode-btn{flex:1;padding:7px;border-radius:6px;font-size:11px;font-weight:600;color:rgba(255,255,255,.4);transition:all var(--ease);text-align:center;cursor:pointer}
+.sb-mode-btn.active{background:var(--orange);color:#fff}
+.sb-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.sb-grp{font-size:10px;font-weight:700;color:rgba(255,255,255,.2);letter-spacing:.12em;text-transform:uppercase;padding:14px 10px 6px}
+.sb-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius);font-size:13px;font-weight:500;color:rgba(255,255,255,.5);width:100%;transition:all var(--ease);cursor:pointer;border:none;background:none;font-family:var(--font-sans)}
+.sb-btn:hover{color:#fff;background:rgba(255,255,255,.06)}
+.sb-btn.active{color:#fff;background:rgba(255,255,255,.1)}
+.sb-btn svg{width:16px;height:16px;flex-shrink:0;opacity:.7}
+.sb-btn.active svg{opacity:1}
+.sb-badge{margin-left:auto;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:99px}
+.sb-client-sel{margin:0 10px 8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:10px 12px;color:rgba(255,255,255,.7);font-size:12px;width:calc(100% - 20px);outline:none;font-family:var(--font-sans)}
+.sb-client-sel option{background:var(--navy-dark);color:#fff}
+.sb-footer{padding:16px;border-top:1px solid rgba(255,255,255,.07)}
+.sb-user{display:flex;align-items:center;gap:10px}
+.sb-av{width:32px;height:32px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:rgba(255,255,255,.8)}
+.sb-urole{font-size:11px;color:rgba(255,255,255,.3)}
+.sb-logout{margin-left:auto;font-size:11px;color:rgba(255,255,255,.3);cursor:pointer;transition:color var(--ease)}
+.sb-logout:hover{color:#fff}
+
+.main-area{margin-left:260px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 36px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm)}
+.topbar-left h1{font-family:var(--font-serif);font-size:20px;font-weight:900;color:var(--navy)}
+.topbar-left p{font-size:12px;color:var(--muted)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.content{padding:32px 36px;flex:1}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow-sm)}
+.card-title{font-family:var(--font-serif);font-size:17px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.card-sub{font-size:12px;color:var(--muted);margin-bottom:20px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+
+/* ── STATS ── */
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px 24px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
+.stat-card.sc-navy::before{background:var(--navy)}
+.stat-card.sc-orange::before{background:var(--orange)}
+.stat-card.sc-teal::before{background:var(--teal)}
+.stat-card.sc-green::before{background:#22c55e}
+.stat-lbl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.stat-num{font-family:var(--font-serif);font-size:32px;font-weight:900;color:var(--navy);line-height:1}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:6px}
+
+/* ── PILLS / BADGES ── */
+.pill{font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;display:inline-flex;align-items:center;gap:4px}
+.pill-active{background:#dcfce7;color:var(--success)}
+.pill-paused{background:#fef3c7;color:var(--warning)}
+.pill-complete{background:#dbeafe;color:#1d4ed8}
+.pill-draft{background:var(--offwhite);color:var(--muted);border:1px solid var(--border)}
+.pill-sent{background:#fef3c7;color:var(--warning)}
+.pill-paid{background:#dcfce7;color:var(--success)}
+.pill-overdue{background:#fee2e2;color:var(--danger)}
+.pill-pending{background:var(--offwhite);color:var(--muted)}
+.pill-progress{background:#dbeafe;color:#1d4ed8}
+.pill-done{background:#dcfce7;color:var(--success)}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;border-bottom:2px solid var(--border)}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--offwhite)}
+.tbl-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+
+/* ── PROGRESS BAR ── */
+.prog-wrap{background:var(--light);border-radius:99px;height:6px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--teal),var(--teal-lt));transition:width .4s ease}
+
+/* ── MILESTONE ITEM ── */
+.milestone-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.milestone-item:last-child{border-bottom:none}
+.ms-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all var(--ease);margin-top:2px}
+.ms-check.done{background:var(--success);border-color:var(--success)}
+.ms-check.in-progress{background:var(--teal);border-color:var(--teal)}
+.ms-check svg{width:12px;height:12px;stroke:#fff;display:none}
+.ms-check.done svg,.ms-check.in-progress svg{display:block}
+.ms-title{font-size:14px;font-weight:600;color:var(--navy)}
+.ms-title.done{text-decoration:line-through;color:var(--muted)}
+.ms-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.ms-due{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ── FILE ITEM ── */
+.file-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--offwhite);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;transition:all var(--ease)}
+.file-item:hover{border-color:var(--navy);box-shadow:var(--shadow-sm)}
+.file-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.file-name{font-size:13px;font-weight:600;color:var(--navy);flex:1}
+.file-meta{font-size:11px;color:var(--muted)}
+.file-cat{font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--light);color:var(--muted)}
+
+/* ── MESSAGE ── */
+.msg-item{display:flex;gap:12px;margin-bottom:16px}
+.msg-item.from-client{flex-direction:row-reverse}
+.msg-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.msg-bubble{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 16px;max-width:72%;font-size:13px;color:var(--text);line-height:1.6;box-shadow:var(--shadow-sm)}
+.msg-item.from-client .msg-bubble{background:var(--navy);color:#fff;border-color:var(--navy)}
+.msg-time{font-size:10px;color:var(--muted);margin-top:4px}
+
+/* ── INVOICE ── */
+.invoice-card{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px}
+.invoice-hdr{padding:16px 20px;background:var(--offwhite);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.invoice-body{padding:16px 20px}
+.invoice-num{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em}
+.invoice-title{font-size:15px;font-weight:700;color:var(--navy)}
+.invoice-amount{font-family:var(--font-serif);font-size:24px;font-weight:900;color:var(--navy)}
+
+/* ── QUESTIONNAIRE ── */
+.q-item{margin-bottom:20px}
+.q-text{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:8px}
+.q-text .req{color:var(--orange)}
+.q-input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:var(--font-sans);color:var(--text);outline:none;transition:border-color var(--ease)}
+.q-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(8,148,148,.1)}
+.q-textarea{min-height:90px;resize:vertical}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,45,90,.55);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px}
+.modal-overlay.hidden{display:none}
+.modal{background:#fff;border-radius:16px;width:560px;max-width:100%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
+.modal-hdr{padding:24px 28px 0;display:flex;align-items:flex-start;justify-content:space-between}
+.modal-title{font-family:var(--font-serif);font-size:20px;font-weight:900;color:var(--navy)}
+.modal-close{width:28px;height:28px;border-radius:50%;background:var(--offwhite);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);transition:all var(--ease)}
+.modal-close:hover{background:var(--light);color:var(--navy)}
+.modal-body{padding:20px 28px;overflow-y:auto;flex:1}
+.modal-foot{padding:16px 28px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+.fsel{padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;color:var(--text);outline:none;background:#fff;width:100%;font-family:var(--font-sans)}
+.fsel:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(8,148,148,.1)}
+.ftxt{padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;color:var(--text);outline:none;resize:vertical;min-height:80px;width:100%;font-family:var(--font-sans)}
+.ftxt:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(8,148,148,.1)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-md)}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0}
+
+/* ── CLIENT PORTAL VIEW ── */
+.client-hero{background:var(--navy);padding:40px 36px;position:relative;overflow:hidden}
+.client-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 80% 60% at 80% 40%,black,transparent)}
+.client-hero-glow{position:absolute;top:-30%;right:-5%;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(255,96,21,.12),transparent 65%);pointer-events:none}
+.client-hero-content{position:relative;z-index:1}
+.client-greeting{font-size:12px;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.client-school{font-family:var(--font-serif);font-size:28px;font-weight:900;color:#fff;margin-bottom:4px}
+.client-project-name{font-size:14px;color:rgba(255,255,255,.5)}
+
+/* ── UPLOAD ZONE ── */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:32px;text-align:center;transition:all var(--ease);cursor:pointer;background:var(--offwhite)}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--teal);background:rgba(8,148,148,.04)}
+.upload-zone-icon{font-size:32px;margin-bottom:12px}
+.upload-zone-text{font-size:14px;font-weight:600;color:var(--navy)}
+.upload-zone-sub{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:48px 24px}
+.empty-icon{font-size:36px;margin-bottom:12px}
+.empty-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.empty-sub{font-size:13px;color:var(--muted)}
+
+/* ── QBO BANNER ── */
+.qbo-banner{background:linear-gradient(135deg,#2ca01c,#1d7a14);border-radius:12px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.qbo-banner-text h4{font-size:15px;font-weight:700;color:#fff;margin-bottom:3px}
+.qbo-banner-text p{font-size:12px;color:rgba(255,255,255,.7)}
+.qbo-btn{background:#fff;color:#2ca01c;padding:10px 20px;border-radius:var(--radius);font-size:13px;font-weight:700;white-space:nowrap;flex-shrink:0;transition:all var(--ease)}
+.qbo-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.2)}
+
+/* ── VIEW TABS ── */
+.view-tabs{display:flex;gap:4px;background:var(--offwhite);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:24px;width:fit-content}
+.view-tab{padding:8px 18px;border-radius:7px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--ease)}
+.view-tab.active{background:#fff;color:var(--navy);box-shadow:var(--shadow-sm)}
+
+/* ── CLIENT LIST ── */
+.client-row{display:flex;align-items:center;gap:14px;padding:16px 20px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all var(--ease)}
+.client-row:hover{border-color:var(--navy);box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.client-info{flex:1}
+.client-name{font-size:15px;font-weight:700;color:var(--navy)}
+.client-school{font-size:12px;color:var(--muted)}
+.client-meta{display:flex;align-items:center;gap:12px;margin-left:auto}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOAST ════════════════════════════════════════════════════ -->
+<div class="toast" id="toast"><div class="toast-dot"></div><span id="toast-msg">Saved</span></div>
+
+<!-- ═══ MODAL ════════════════════════════════════════════════════ -->
+<div class="modal-overlay hidden" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-hdr">
+      <div class="modal-title" id="modal-title">Modal</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot" id="modal-foot"></div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN: ADMIN LOGIN ═════════════════════════════════════ -->
+<div class="screen active" id="screen-login">
+  <div class="login-wrap">
+    <div class="login-glow"></div>
+    <div class="login-box">
+      <div class="login-logo">
+        <div class="login-logo-icon">
+          <div class="login-logo-bar"></div>
+          <div class="login-logo-bar acc"></div>
+          <div class="login-logo-bar"></div>
+        </div>
+        <div>
+          <div class="login-logo-text">Client Portal</div>
+          <div class="login-logo-sub">KP Charter Kollective</div>
+        </div>
+      </div>
+      <div class="login-title">Welcome back</div>
+      <div class="login-sub">Sign in to your admin portal or enter your client access token.</div>
+      <div id="login-mode-toggle" style="display:flex;gap:8px;margin-bottom:20px;">
+        <button class="btn btn-navy btn-sm" id="lm-admin" onclick="setLoginMode('admin')" style="flex:1;">Admin Login</button>
+        <button class="btn btn-secondary btn-sm" id="lm-client" onclick="setLoginMode('client')" style="flex:1;">Client Access</button>
+      </div>
+      <div id="admin-login-fields">
+        <div class="fgrp">
+          <label class="flbl">Admin Password</label>
+          <input class="finp" type="password" id="admin-pass" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doAdminLogin()">
+        </div>
+        <button class="btn btn-primary btn-full" id="admin-login-btn" onclick="doAdminLogin()">Sign In →</button>
+      </div>
+      <div id="client-login-fields" style="display:none;">
+        <div class="fgrp">
+          <label class="flbl">Your Access Token</label>
+          <input class="finp" type="text" id="client-token" placeholder="Paste your access token" onkeydown="if(event.key==='Enter')doClientLogin()">
+        </div>
+        <button class="btn btn-primary btn-full" id="client-login-btn" onclick="doClientLogin()">Access My Portal →</button>
+      </div>
+      <div class="ferr" id="login-err">Incorrect credentials. Please try again.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN: ADMIN PORTAL ════════════════════════════════════ -->
+<div class="screen" id="screen-admin">
+  <div class="portal-wrap">
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="sb-brand">
+        <div class="sb-logo">
+          <div class="sb-logo-icon">
+            <div class="sb-logo-bar"></div>
+            <div class="sb-logo-bar acc"></div>
+            <div class="sb-logo-bar"></div>
+          </div>
+          <div>
+            <div class="sb-logo-name">Client Portal</div>
+            <div class="sb-logo-tag">Admin View</div>
+          </div>
+        </div>
+      </div>
+      <div class="sb-nav">
+        <div class="sb-grp">Overview</div>
+        <button class="sb-btn active" onclick="adminNav('dashboard',this)" id="admin-nav-dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </button>
+        <button class="sb-btn" onclick="adminNav('clients',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Clients
+          <span class="sb-badge" id="clients-badge">0</span>
+        </button>
+        <div class="sb-grp">Work</div>
+        <button class="sb-btn" onclick="adminNav('projects',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          Projects
+        </button>
+        <button class="sb-btn" onclick="adminNav('files',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+          Files
+        </button>
+        <button class="sb-btn" onclick="adminNav('questionnaires',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Questionnaires
+        </button>
+        <button class="sb-btn" onclick="adminNav('invoices',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Invoices
+          <span class="sb-badge" id="invoices-badge" style="display:none">!</span>
+        </button>
+        <button class="sb-btn" onclick="adminNav('messages',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Messages
+          <span class="sb-badge" id="messages-badge" style="display:none">!</span>
+        </button>
+      </div>
+      <div class="sb-footer">
+        <div class="sb-user">
+          <div class="sb-av">K</div>
+          <div><div class="sb-uname">Kristina</div><div class="sb-urole">Admin</div></div>
+          <span class="sb-logout" onclick="doLogout()">Sign out</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MAIN -->
+    <div class="main-area">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1 id="admin-page-title">Dashboard</h1>
+          <p id="admin-page-sub">KP Charter Kollective Client Portal</p>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-primary btn-sm" id="topbar-action-btn" onclick="topbarAction()">+ New Client</button>
+        </div>
+      </div>
+      <div class="content" id="admin-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN: CLIENT PORTAL ════════════════════════════════════ -->
+<div class="screen" id="screen-client">
+  <div class="portal-wrap">
+    <nav class="sidebar">
+      <div class="sb-brand">
+        <div class="sb-logo">
+          <div class="sb-logo-icon">
+            <div class="sb-logo-bar"></div>
+            <div class="sb-logo-bar acc"></div>
+            <div class="sb-logo-bar"></div>
+          </div>
+          <div>
+            <div class="sb-logo-name">My Portal</div>
+            <div class="sb-logo-tag" id="client-sb-tag">KP Charter Kollective</div>
+          </div>
+        </div>
+      </div>
+      <div class="sb-nav">
+        <div class="sb-grp">My Project</div>
+        <button class="sb-btn active" onclick="clientNav('overview',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Overview
+        </button>
+        <button class="sb-btn" onclick="clientNav('progress',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Progress
+        </button>
+        <button class="sb-btn" onclick="clientNav('files',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+          Files
+        </button>
+        <button class="sb-btn" onclick="clientNav('questionnaires',this)" id="client-nav-q">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Questionnaires
+        </button>
+        <button class="sb-btn" onclick="clientNav('invoices',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Invoices
+        </button>
+        <button class="sb-btn" onclick="clientNav('messages',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Messages
+        </button>
+      </div>
+      <div class="sb-footer">
+        <div class="sb-user">
+          <div class="sb-av" id="client-sb-av">M</div>
+          <div><div class="sb-uname" id="client-sb-name">Client</div><div class="sb-urole">Client</div></div>
+          <span class="sb-logout" onclick="doLogout()">Sign out</span>
+        </div>
+      </div>
+    </nav>
+    <div class="main-area">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1 id="client-page-title">Overview</h1>
+          <p id="client-page-sub">Your project at a glance</p>
+        </div>
+      </div>
+      <div class="content" id="client-content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════
+const SUPA_URL = 'https://cjkhkwuqxnlfgjpnknzq.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqa2hrd3VxeG5sZmdqcG5rbnpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NTE3NDYsImV4cCI6MjA4NzUyNzc0Nn0.y5Z8C1MatHsgylhqwGkKF2gRsKKhSNrAp9_f5YZHVcw';
+const ADMIN_PASSWORD = 'kpcc2026admin';
+const sb = (window.supabase || supabase).createClient(SUPA_URL, SUPA_KEY);
+
+const SERVICE_TYPES = [
+  'Charter Launch & Approval','Enrollment Growth Systems','Brand Strategy & Identity',
+  'ATL Advantage','Charter Clarity Intensive','Curriculum & Grant Support','Founder Advisory'
+];
+const AVATAR_COLORS = ['#0f2d5a','#089494','#ff6015','#7c3aed','#0369a1','#be185d','#065f46'];
+
+let currentClient = null;
+let allClients = [];
+let allProjects = [];
+let allInvoices = [];
+let allMessages = [];
+let currentAdminView = 'dashboard';
+
+// ══════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+function fmt(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+}
+function fmtMoney(n) {
+  return '$' + parseFloat(n || 0).toLocaleString('en-US', {minimumFractionDigits:2});
+}
+function pill(status) {
+  const map = {
+    active:'pill-active',paused:'pill-paused',complete:'pill-complete',
+    draft:'pill-draft',sent:'pill-sent',paid:'pill-paid',overdue:'pill-overdue',
+    pending:'pill-pending',in_progress:'pill-progress',done:'pill-done'
+  };
+  const label = status.replace(/_/g,' ');
+  return `<span class="pill ${map[status]||'pill-draft'}">${label}</span>`;
+}
+function fileIcon(type) {
+  if (!type) return '📄';
+  if (type.includes('pdf')) return '📕';
+  if (type.includes('image')) return '🖼️';
+  if (type.includes('word') || type.includes('doc')) return '📝';
+  if (type.includes('sheet') || type.includes('excel') || type.includes('csv')) return '📊';
+  if (type.includes('zip')) return '📦';
+  return '📄';
+}
+function openModal(title, bodyHTML, footHTML) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = bodyHTML;
+  document.getElementById('modal-foot').innerHTML = footHTML || '<button class="btn btn-secondary" onclick="closeModal()">Cancel</button>';
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+}
+
+// ══════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════
+let loginMode = 'admin';
+function setLoginMode(mode) {
+  loginMode = mode;
+  document.getElementById('admin-login-fields').style.display = mode === 'admin' ? 'block' : 'none';
+  document.getElementById('client-login-fields').style.display = mode === 'client' ? 'block' : 'none';
+  document.getElementById('lm-admin').className = 'btn btn-sm ' + (mode === 'admin' ? 'btn-navy' : 'btn-secondary');
+  document.getElementById('lm-client').className = 'btn btn-sm ' + (mode === 'client' ? 'btn-navy' : 'btn-secondary');
+  document.getElementById('login-err').style.display = 'none';
+}
+
+function doAdminLogin() {
+  const pass = document.getElementById('admin-pass').value;
+  const err = document.getElementById('login-err');
+  if (pass === ADMIN_PASSWORD) {
+    sessionStorage.setItem('kpcc_portal_admin', '1');
+    err.style.display = 'none';
+    loadAdminPortal();
+  } else {
+    err.textContent = 'Incorrect password.';
+    err.style.display = 'block';
+  }
+}
+
+async function doClientLogin() {
+  const token = document.getElementById('client-token').value.trim();
+  const err = document.getElementById('login-err');
+  const btn = document.getElementById('client-login-btn');
+  if (!token) return;
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div>';
+  const { data, error } = await sb.from('portal_clients').select('*').eq('access_token', token).single();
+  btn.disabled = false; btn.textContent = 'Access My Portal →';
+  if (error || !data) {
+    err.textContent = 'Token not found. Please check your access link.';
+    err.style.display = 'block';
+    return;
+  }
+  sessionStorage.setItem('kpcc_client_token', token);
+  currentClient = data;
+  err.style.display = 'none';
+  loadClientPortal(data);
+}
+
+function doLogout() {
+  sessionStorage.removeItem('kpcc_portal_admin');
+  sessionStorage.removeItem('kpcc_client_token');
+  currentClient = null;
+  showScreen('login');
+  document.getElementById('admin-pass').value = '';
+  document.getElementById('client-token').value = '';
+  document.getElementById('login-err').style.display = 'none';
+}
+
+// ══════════════════════════════════════════════════
+// ADMIN PORTAL
+// ══════════════════════════════════════════════════
+async function loadAdminPortal() {
+  showScreen('admin');
+  await Promise.all([fetchClients(), fetchProjects(), fetchInvoices(), fetchMessages()]);
+  renderAdminView('dashboard');
+}
+
+async function fetchClients() {
+  const { data } = await sb.from('portal_clients').select('*').order('created_at', { ascending: false });
+  allClients = data || [];
+  document.getElementById('clients-badge').textContent = allClients.length;
+}
+async function fetchProjects() {
+  const { data } = await sb.from('portal_projects').select('*,portal_milestones(*)').order('created_at', { ascending: false });
+  allProjects = data || [];
+}
+async function fetchInvoices() {
+  const { data } = await sb.from('portal_invoices').select('*,portal_clients(name,school_name)').order('created_at', { ascending: false });
+  allInvoices = data || [];
+  const unpaid = allInvoices.filter(i => i.status === 'sent' || i.status === 'overdue').length;
+  const badge = document.getElementById('invoices-badge');
+  badge.style.display = unpaid > 0 ? 'inline' : 'none';
+  badge.textContent = unpaid;
+}
+async function fetchMessages() {
+  const { data } = await sb.from('portal_messages').select('*,portal_clients(name)').order('created_at', { ascending: false });
+  allMessages = data || [];
+  const unread = allMessages.filter(m => !m.is_read && m.sent_by === 'client').length;
+  const badge = document.getElementById('messages-badge');
+  badge.style.display = unread > 0 ? 'inline' : 'none';
+  badge.textContent = unread;
+}
+
+function adminNav(view, btn) {
+  document.querySelectorAll('#screen-admin .sb-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAdminView(view);
+}
+
+const TOPBAR_CONFIG = {
+  dashboard: { title:'Dashboard', sub:'KP Charter Kollective Client Portal', action:'+ New Client', fn:'openNewClientModal' },
+  clients:   { title:'Clients', sub:'Manage your consulting clients', action:'+ New Client', fn:'openNewClientModal' },
+  projects:  { title:'Projects', sub:'All active work', action:'+ New Project', fn:'openNewProjectModal' },
+  files:     { title:'Files', sub:'All shared files', action:'Upload File', fn:'openUploadModal' },
+  questionnaires: { title:'Questionnaires', sub:'Intake forms and data collection', action:'+ New Questionnaire', fn:'openNewQuestionnaireModal' },
+  invoices:  { title:'Invoices', sub:'Billing and payments', action:'+ New Invoice', fn:'openNewInvoiceModal' },
+  messages:  { title:'Messages', sub:'Client communications', action:null },
+};
+
+function topbarAction() {
+  const cfg = TOPBAR_CONFIG[currentAdminView];
+  if (cfg?.fn) window[cfg.fn]();
+}
+
+function renderAdminView(view) {
+  currentAdminView = view;
+  const cfg = TOPBAR_CONFIG[view] || { title: view, sub: '' };
+  document.getElementById('admin-page-title').textContent = cfg.title;
+  document.getElementById('admin-page-sub').textContent = cfg.sub;
+  const btn = document.getElementById('topbar-action-btn');
+  if (cfg.action) { btn.textContent = cfg.action; btn.style.display = 'inline-flex'; }
+  else btn.style.display = 'none';
+
+  const c = document.getElementById('admin-content');
+  if (view === 'dashboard') c.innerHTML = renderAdminDashboard();
+  else if (view === 'clients') c.innerHTML = renderAdminClients();
+  else if (view === 'projects') c.innerHTML = renderAdminProjects();
+  else if (view === 'invoices') c.innerHTML = renderAdminInvoices();
+  else if (view === 'messages') c.innerHTML = renderAdminMessages();
+  else if (view === 'questionnaires') c.innerHTML = renderAdminQuestionnaires();
+  else if (view === 'files') c.innerHTML = renderAdminFiles();
+}
+
+function renderAdminDashboard() {
+  const totalRevenue = allInvoices.filter(i => i.status === 'paid').reduce((s, i) => s + parseFloat(i.amount || 0), 0);
+  const pending = allInvoices.filter(i => i.status === 'sent' || i.status === 'overdue').reduce((s, i) => s + parseFloat(i.amount || 0), 0);
+  const activeProjects = allProjects.filter(p => p.status === 'active').length;
+  const unread = allMessages.filter(m => !m.is_read && m.sent_by === 'client').length;
+
+  return `
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="stat-card sc-navy"><div class="stat-lbl">Active Clients</div><div class="stat-num">${allClients.filter(c=>c.is_active).length}</div><div class="stat-sub">of ${allClients.length} total</div></div>
+    <div class="stat-card sc-orange"><div class="stat-lbl">Active Projects</div><div class="stat-num">${activeProjects}</div><div class="stat-sub">in progress</div></div>
+    <div class="stat-card sc-teal"><div class="stat-lbl">Revenue Collected</div><div class="stat-num" style="font-size:22px;">${fmtMoney(totalRevenue)}</div><div class="stat-sub">${fmtMoney(pending)} pending</div></div>
+    <div class="stat-card sc-green"><div class="stat-lbl">Unread Messages</div><div class="stat-num">${unread}</div><div class="stat-sub">from clients</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Recent Clients</div>
+      <div class="card-sub">Your active consulting clients</div>
+      ${allClients.slice(0,5).map(c => `
+        <div class="client-row" onclick="openClientDetail('${c.id}')">
+          <div class="tbl-av" style="background:${c.avatar_color || '#0f2d5a'}">${c.name[0]}</div>
+          <div class="client-info"><div class="client-name">${c.school_name}</div><div class="client-school">${c.name} · ${c.email}</div></div>
+          <span class="pill ${c.is_active ? 'pill-active' : 'pill-draft'}">${c.is_active ? 'Active' : 'Inactive'}</span>
+        </div>`).join('') || '<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">No clients yet</div><div class="empty-sub">Add your first client to get started</div></div>'}
+    </div>
+    <div class="card">
+      <div class="card-title">Recent Invoices</div>
+      <div class="card-sub">Billing status at a glance</div>
+      ${allInvoices.slice(0,5).map(i => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div><div style="font-size:13px;font-weight:600;color:var(--navy);">${i.title}</div><div style="font-size:11px;color:var(--muted);">${i.portal_clients?.school_name || ''} · Due ${fmt(i.due_date)}</div></div>
+          <div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:var(--navy);">${fmtMoney(i.amount)}</div>${pill(i.status)}</div>
+        </div>`).join('') || '<div class="empty"><div class="empty-icon">💳</div><div class="empty-title">No invoices yet</div></div>'}
+    </div>
+  </div>`;
+}
+
+function renderAdminClients() {
+  if (!allClients.length) return `<div class="card"><div class="empty"><div class="empty-icon">👥</div><div class="empty-title">No clients yet</div><div class="empty-sub">Click "+ New Client" to add your first consulting client</div></div></div>`;
+  return `
+  <div class="card">
+    ${allClients.map(c => {
+      const projects = allProjects.filter(p => p.client_id === c.id);
+      return `
+      <div class="client-row" onclick="openClientDetail('${c.id}')">
+        <div class="tbl-av" style="background:${c.avatar_color || '#0f2d5a'};width:44px;height:44px;font-size:16px;">${c.name[0]}</div>
+        <div class="client-info">
+          <div class="client-name">${c.school_name}</div>
+          <div class="client-school">${c.name} · ${c.email} · ${c.state || ''}</div>
+        </div>
+        <div class="client-meta">
+          <div style="font-size:12px;color:var(--muted);text-align:right;">${projects.length} project${projects.length!==1?'s':''}</div>
+          <span class="pill ${c.is_active ? 'pill-active' : 'pill-draft'}">${c.is_active ? 'Active' : 'Inactive'}</span>
+          <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();copyAccessLink('${c.access_token}')">Copy Portal Link</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderAdminProjects() {
+  if (!allProjects.length) return `<div class="card"><div class="empty"><div class="empty-icon">📁</div><div class="empty-title">No projects yet</div><div class="empty-sub">Add a project to start tracking work</div></div></div>`;
+  return `<div style="display:flex;flex-direction:column;gap:12px;">` + allProjects.map(p => {
+    const client = allClients.find(c => c.id === p.client_id);
+    const milestones = p.portal_milestones || [];
+    const done = milestones.filter(m => m.status === 'complete').length;
+    const pct = milestones.length ? Math.round((done / milestones.length) * 100) : 0;
+    return `
+    <div class="card" style="cursor:pointer;" onclick="openProjectDetail('${p.id}')">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+            <div style="font-family:var(--font-serif);font-size:17px;font-weight:700;color:var(--navy);">${p.title}</div>
+            ${pill(p.status)}
+          </div>
+          <div style="font-size:12px;color:var(--muted);">${client?.school_name || ''} · ${p.service_type}</div>
+          ${p.target_date ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;">Target: ${fmt(p.target_date)}</div>` : ''}
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:12px;font-weight:700;color:var(--navy);">${done}/${milestones.length} milestones</div>
+          <div class="prog-wrap" style="width:120px;margin-top:6px;"><div class="prog-fill" style="width:${pct}%"></div></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">${pct}% complete</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+function renderAdminInvoices() {
+  return `
+  <div class="qbo-banner">
+    <div class="qbo-banner-text"><h4>Connected to QuickBooks Online</h4><p>Create invoices here and send payment links directly from your QBO account. All payments sync automatically.</p></div>
+    <button class="qbo-btn" onclick="window.open('https://qbo.intuit.com','_blank')">Open QuickBooks →</button>
+  </div>
+  ${!allInvoices.length ? `<div class="card"><div class="empty"><div class="empty-icon">💳</div><div class="empty-title">No invoices yet</div><div class="empty-sub">Click "+ New Invoice" to create your first invoice</div></div></div>` :
+  `<div class="card"><table class="tbl">
+    <thead><tr><th>Invoice</th><th>Client</th><th>Amount</th><th>Due Date</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>${allInvoices.map(i => `
+      <tr>
+        <td><div style="font-weight:700;">${i.title}</div><div style="font-size:11px;color:var(--muted);">${i.invoice_number}</div></td>
+        <td>${i.portal_clients?.school_name || '—'}</td>
+        <td style="font-weight:700;font-size:15px;">${fmtMoney(i.amount)}</td>
+        <td>${fmt(i.due_date)}</td>
+        <td>${pill(i.status)}</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            ${i.qbo_payment_url ? `<button class="btn btn-teal btn-sm" onclick="window.open('${i.qbo_payment_url}','_blank')">Pay Link</button>` : `<button class="btn btn-secondary btn-sm" onclick="addQBOLink('${i.id}')">Add QBO Link</button>`}
+            ${i.status !== 'paid' ? `<button class="btn btn-secondary btn-sm" onclick="markPaid('${i.id}')">Mark Paid</button>` : ''}
+          </div>
+        </td>
+      </tr>`).join('')}
+    </tbody>
+  </table></div>`}`;
+}
+
+function renderAdminMessages() {
+  const grouped = {};
+  allMessages.forEach(m => {
+    const key = m.client_id;
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(m);
+  });
+
+  if (!Object.keys(grouped).length) return `<div class="card"><div class="empty"><div class="empty-icon">💬</div><div class="empty-title">No messages yet</div></div></div>`;
+
+  return Object.entries(grouped).map(([clientId, msgs]) => {
+    const client = allClients.find(c => c.id === clientId);
+    return `
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-title">${client?.school_name || 'Unknown Client'}</div>
+      <div class="card-sub">Click send to add a message to this thread</div>
+      <div style="max-height:360px;overflow-y:auto;margin-bottom:16px;">
+        ${msgs.slice(-20).map(m => `
+          <div class="msg-item ${m.sent_by === 'client' ? 'from-client' : ''}">
+            <div class="msg-av" style="background:${m.sent_by==='admin'?'#ff6015':client?.avatar_color||'#0f2d5a'}">${m.sent_by==='admin'?'K':client?.name[0]||'C'}</div>
+            <div><div class="msg-bubble">${m.content}</div><div class="msg-time">${fmt(m.created_at)}</div></div>
+          </div>`).join('')}
+      </div>
+      <div style="display:flex;gap:8px;">
+        <input class="finp" style="flex:1;" id="msg-input-${clientId}" placeholder="Write a message..." onkeydown="if(event.key==='Enter')sendMessage('${clientId}')">
+        <button class="btn btn-primary btn-sm" onclick="sendMessage('${clientId}')">Send</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAdminQuestionnaires() {
+  return `<div class="card"><div class="empty"><div class="empty-icon">📋</div><div class="empty-title">Questionnaires coming in next update</div><div class="empty-sub">You'll be able to build intake forms and send them to specific clients. Responses will appear here.</div></div></div>`;
+}
+
+function renderAdminFiles() {
+  return `<div class="card"><div class="empty"><div class="empty-icon">📁</div><div class="empty-title">Open a project to manage files</div><div class="empty-sub">Files are organized per project. Click any project to upload and share files with that client.</div></div></div>`;
+}
+
+// ── CLIENT DETAIL ──
+function openClientDetail(clientId) {
+  const client = allClients.find(c => c.id === clientId);
+  if (!client) return;
+  const projects = allProjects.filter(p => p.client_id === clientId);
+  const invoices = allInvoices.filter(i => i.client_id === clientId);
+  const totalPaid = invoices.filter(i => i.status === 'paid').reduce((s,i) => s + parseFloat(i.amount||0), 0);
+
+  openModal(`${client.school_name}`,
+    `<div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:16px;background:var(--offwhite);border-radius:var(--radius);">
+      <div class="tbl-av" style="background:${client.avatar_color};width:52px;height:52px;font-size:20px;border-radius:50%;">${client.name[0]}</div>
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--navy);">${client.name}</div>
+        <div style="font-size:13px;color:var(--muted);">${client.email} · ${client.phone||''}</div>
+        <div style="font-size:12px;color:var(--muted);">${client.state||''}</div>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-bottom:20px;">
+      <div class="stat-card sc-navy"><div class="stat-lbl">Projects</div><div class="stat-num">${projects.length}</div></div>
+      <div class="stat-card sc-teal"><div class="stat-lbl">Total Paid</div><div class="stat-num" style="font-size:20px;">${fmtMoney(totalPaid)}</div></div>
+    </div>
+    <div style="margin-bottom:16px;"><div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;">Portal Access Link</div>
+      <div style="display:flex;gap:8px;"><input class="finp" style="flex:1;font-family:var(--font-mono);font-size:11px;" readonly value="${window.location.href.split('?')[0]}?token=${client.access_token}">
+      <button class="btn btn-navy btn-sm" onclick="copyAccessLink('${client.access_token}')">Copy</button></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;">Send this link to ${client.name} for their portal access. No password needed.</div>
+    </div>
+    <div><div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;">Projects</div>
+      ${projects.map(p => `<div style="padding:10px 14px;background:var(--offwhite);border-radius:var(--radius);margin-bottom:8px;cursor:pointer;" onclick="closeModal();openProjectDetail('${p.id}')"><div style="font-weight:600;">${p.title}</div><div style="font-size:12px;color:var(--muted);">${p.service_type} · ${pill(p.status)}</div></div>`).join('') || '<div style="font-size:13px;color:var(--muted);">No projects yet</div>'}
+    </div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Close</button>
+     <button class="btn btn-primary" onclick="closeModal();openNewProjectModal('${clientId}')">+ Add Project</button>`
+  );
+}
+
+// ── PROJECT DETAIL ──
+async function openProjectDetail(projectId) {
+  const p = allProjects.find(x => x.id === projectId);
+  if (!p) return;
+  const client = allClients.find(c => c.id === p.client_id);
+  const { data: milestones } = await sb.from('portal_milestones').select('*').eq('project_id', projectId).order('sort_order');
+  const { data: files } = await sb.from('portal_files').select('*').eq('project_id', projectId).order('created_at', {ascending:false});
+  const done = (milestones||[]).filter(m => m.status === 'complete').length;
+  const pct = milestones?.length ? Math.round((done / milestones.length) * 100) : 0;
+
+  openModal(p.title,
+    `<div style="margin-bottom:16px;"><span style="font-size:12px;color:var(--muted);">${client?.school_name||''} · ${p.service_type}</span> ${pill(p.status)}</div>
+    <div style="margin-bottom:20px;"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;"><span>Progress</span><span>${pct}%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:${pct}%"></div></div></div>
+    <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px;">Milestones</div>
+    <div style="margin-bottom:16px;">
+      ${(milestones||[]).map(m => `
+        <div class="milestone-item">
+          <div class="ms-check ${m.status==='complete'?'done':m.status==='in_progress'?'in-progress':''}" onclick="toggleMilestone('${m.id}','${projectId}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div style="flex:1;">
+            <div class="ms-title ${m.status==='complete'?'done':''}">${m.title}</div>
+            ${m.description ? `<div class="ms-desc">${m.description}</div>` : ''}
+            ${m.due_date ? `<div class="ms-due">Due: ${fmt(m.due_date)}</div>` : ''}
+          </div>
+          ${pill(m.status)}
+        </div>`).join('') || '<div style="font-size:13px;color:var(--muted);">No milestones yet</div>'}
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="addMilestoneForm('${projectId}')">+ Add Milestone</button>
+    <div style="font-size:13px;font-weight:700;color:var(--navy);margin:20px 0 12px;">Files (${(files||[]).length})</div>
+    ${(files||[]).map(f => `
+      <div class="file-item">
+        <div class="file-icon" style="background:var(--offwhite)">${fileIcon(f.file_type)}</div>
+        <div style="flex:1;"><div class="file-name">${f.name}</div><div class="file-meta">${f.uploaded_by==='admin'?'From KPCC':'From client'} · ${fmt(f.created_at)}</div></div>
+        <span class="file-cat">${f.category}</span>
+        <a href="${f.file_url}" target="_blank" class="btn btn-secondary btn-sm">Download</a>
+      </div>`).join('') || '<div style="font-size:13px;color:var(--muted);margin-bottom:12px;">No files yet</div>'}
+    <button class="btn btn-secondary btn-sm" onclick="addFileForm('${projectId}')">+ Add File Link</button>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Close</button>`
+  );
+}
+
+async function toggleMilestone(msId, projectId) {
+  const { data: ms } = await sb.from('portal_milestones').select('status').eq('id', msId).single();
+  const next = ms.status === 'pending' ? 'in_progress' : ms.status === 'in_progress' ? 'complete' : 'pending';
+  await sb.from('portal_milestones').update({ status: next, completed_at: next === 'complete' ? new Date().toISOString() : null }).eq('id', msId);
+  await fetchProjects();
+  openProjectDetail(projectId);
+  showToast('Milestone updated ✓');
+}
+
+function addMilestoneForm(projectId) {
+  const body = document.getElementById('modal-body');
+  const form = document.createElement('div');
+  form.style.cssText = 'background:var(--offwhite);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:16px;';
+  form.innerHTML = `<div class="fgrp" style="margin-bottom:10px;"><label class="flbl">Milestone Title</label><input class="finp" id="new-ms-title" placeholder="e.g. Submit petition draft"></div>
+    <div class="fgrp" style="margin-bottom:10px;"><label class="flbl">Description</label><input class="finp" id="new-ms-desc" placeholder="Optional detail"></div>
+    <div class="fgrp" style="margin-bottom:12px;"><label class="flbl">Due Date</label><input class="finp" id="new-ms-due" type="date"></div>
+    <button class="btn btn-primary btn-sm" onclick="saveMilestone('${projectId}')">Save Milestone</button>`;
+  body.appendChild(form);
+}
+
+async function saveMilestone(projectId) {
+  const title = document.getElementById('new-ms-title')?.value.trim();
+  if (!title) { showToast('Title is required'); return; }
+  const { data: existing } = await sb.from('portal_milestones').select('sort_order').eq('project_id', projectId).order('sort_order', {ascending:false}).limit(1);
+  const sort_order = ((existing?.[0]?.sort_order) || 0) + 1;
+  await sb.from('portal_milestones').insert({ project_id: projectId, title, description: document.getElementById('new-ms-desc')?.value.trim() || null, due_date: document.getElementById('new-ms-due')?.value || null, sort_order });
+  await fetchProjects();
+  openProjectDetail(projectId);
+  showToast('Milestone added ✓');
+}
+
+function addFileForm(projectId) {
+  const body = document.getElementById('modal-body');
+  const form = document.createElement('div');
+  form.style.cssText = 'background:var(--offwhite);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:16px;';
+  form.innerHTML = `<div class="fgrp" style="margin-bottom:10px;"><label class="flbl">File Name</label><input class="finp" id="new-f-name" placeholder="e.g. Brand Guide v2.pdf"></div>
+    <div class="fgrp" style="margin-bottom:10px;"><label class="flbl">File URL (Google Drive, Dropbox, etc.)</label><input class="finp" id="new-f-url" placeholder="https://drive.google.com/..."></div>
+    <div class="fgrp" style="margin-bottom:12px;"><label class="flbl">Category</label>
+      <select class="fsel" id="new-f-cat"><option value="general">General</option><option value="deliverable">Deliverable</option><option value="contract">Contract</option><option value="resource">Resource</option></select>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="saveFile('${projectId}')">Save File</button>`;
+  body.appendChild(form);
+}
+
+async function saveFile(projectId) {
+  const name = document.getElementById('new-f-name')?.value.trim();
+  const url = document.getElementById('new-f-url')?.value.trim();
+  if (!name || !url) { showToast('Name and URL required'); return; }
+  const project = allProjects.find(p => p.id === projectId);
+  await sb.from('portal_files').insert({ project_id: projectId, client_id: project?.client_id, name, file_url: url, category: document.getElementById('new-f-cat')?.value, uploaded_by: 'admin' });
+  openProjectDetail(projectId);
+  showToast('File added ✓');
+}
+
+// ── NEW CLIENT MODAL ──
+function openNewClientModal() {
+  const colors = AVATAR_COLORS;
+  openModal('New Client',
+    `<div class="form-row">
+      <div class="fgrp"><label class="flbl">Contact Name *</label><input class="finp" id="nc-name" placeholder="Kristina Patterson"></div>
+      <div class="fgrp"><label class="flbl">School Name *</label><input class="finp" id="nc-school" placeholder="The Meliora School"></div>
+    </div>
+    <div class="form-row">
+      <div class="fgrp"><label class="flbl">Email *</label><input class="finp" id="nc-email" type="email" placeholder="email@school.org"></div>
+      <div class="fgrp"><label class="flbl">Phone</label><input class="finp" id="nc-phone" placeholder="404-555-0100"></div>
+    </div>
+    <div class="form-row">
+      <div class="fgrp"><label class="flbl">State</label><select class="fsel" id="nc-state"><option value="">Select state</option><option>Georgia</option><option>North Carolina</option><option>Texas</option><option>Other</option></select></div>
+      <div class="fgrp"><label class="flbl">Avatar Color</label><div style="display:flex;gap:8px;margin-top:6px;">${colors.map(col=>`<div onclick="document.querySelectorAll('.av-color-opt').forEach(x=>x.style.outline='none');this.style.outline='3px solid var(--orange)';document.getElementById('nc-color').value='${col}'" class="av-color-opt" style="width:28px;height:28px;border-radius:50%;background:${col};cursor:pointer;transition:all .2s;"></div>`).join('')}<input type="hidden" id="nc-color" value="${colors[0]}"></div></div>
+    </div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="saveNewClient()">Create Client</button>`
+  );
+}
+
+async function saveNewClient() {
+  const name = document.getElementById('nc-name')?.value.trim();
+  const school = document.getElementById('nc-school')?.value.trim();
+  const email = document.getElementById('nc-email')?.value.trim();
+  if (!name || !school || !email) { showToast('Name, school, and email required'); return; }
+  const { data, error } = await sb.from('portal_clients').insert({ name, school_name: school, email, phone: document.getElementById('nc-phone')?.value.trim()||null, state: document.getElementById('nc-state')?.value||null, avatar_color: document.getElementById('nc-color')?.value||'#0f2d5a' }).select().single();
+  if (error) { showToast('Error: ' + error.message); return; }
+  await fetchClients();
+  closeModal();
+  showToast(`${school} added ✓`);
+  renderAdminView('clients');
+}
+
+// ── NEW PROJECT MODAL ──
+function openNewProjectModal(presetClientId) {
+  openModal('New Project',
+    `<div class="fgrp"><label class="flbl">Client *</label><select class="fsel" id="np-client">${allClients.map(c=>`<option value="${c.id}" ${c.id===presetClientId?'selected':''}>${c.school_name}</option>`).join('')}</select></div>
+    <div class="fgrp"><label class="flbl">Project Title *</label><input class="finp" id="np-title" placeholder="e.g. 2026 Enrollment Campaign"></div>
+    <div class="fgrp"><label class="flbl">Service Type *</label><select class="fsel" id="np-type">${SERVICE_TYPES.map(s=>`<option>${s}</option>`).join('')}</select></div>
+    <div class="form-row">
+      <div class="fgrp"><label class="flbl">Start Date</label><input class="finp" id="np-start" type="date"></div>
+      <div class="fgrp"><label class="flbl">Target Completion</label><input class="finp" id="np-target" type="date"></div>
+    </div>
+    <div class="fgrp"><label class="flbl">Description</label><textarea class="ftxt" id="np-desc" placeholder="What does this project cover?"></textarea></div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="saveNewProject()">Create Project</button>`
+  );
+}
+
+async function saveNewProject() {
+  const client_id = document.getElementById('np-client')?.value;
+  const title = document.getElementById('np-title')?.value.trim();
+  const service_type = document.getElementById('np-type')?.value;
+  if (!client_id || !title) { showToast('Client and title required'); return; }
+  await sb.from('portal_projects').insert({ client_id, title, service_type, start_date: document.getElementById('np-start')?.value||null, target_date: document.getElementById('np-target')?.value||null, description: document.getElementById('np-desc')?.value.trim()||null });
+  await fetchProjects();
+  closeModal();
+  showToast(`Project "${title}" created ✓`);
+  renderAdminView('projects');
+}
+
+// ── NEW INVOICE MODAL ──
+function openNewInvoiceModal() {
+  const invNum = 'KPCC-' + String(allInvoices.length + 1).padStart(3, '0');
+  openModal('New Invoice',
+    `<div class="qbo-banner" style="margin-bottom:16px;border-radius:var(--radius);">
+      <div class="qbo-banner-text"><h4 style="font-size:13px;">QuickBooks Online</h4><p>After saving, add your QBO payment link so clients can pay directly.</p></div>
+      <button class="qbo-btn" style="font-size:12px;padding:8px 14px;" onclick="window.open('https://qbo.intuit.com','_blank')">Open QBO →</button>
+    </div>
+    <div class="form-row">
+      <div class="fgrp"><label class="flbl">Client *</label><select class="fsel" id="ni-client">${allClients.map(c=>`<option value="${c.id}">${c.school_name}</option>`).join('')}</select></div>
+      <div class="fgrp"><label class="flbl">Invoice Number</label><input class="finp" id="ni-num" value="${invNum}"></div>
+    </div>
+    <div class="fgrp"><label class="flbl">Invoice Title *</label><input class="finp" id="ni-title" placeholder="e.g. Enrollment Growth Systems — Q1"></div>
+    <div class="form-row">
+      <div class="fgrp"><label class="flbl">Amount *</label><input class="finp" id="ni-amount" type="number" placeholder="2500.00"></div>
+      <div class="fgrp"><label class="flbl">Due Date</label><input class="finp" id="ni-due" type="date"></div>
+    </div>
+    <div class="fgrp"><label class="flbl">QBO Payment URL (paste after creating in QuickBooks)</label><input class="finp" id="ni-qbo" placeholder="https://app.qbo.intuit.com/..."></div>
+    <div class="fgrp"><label class="flbl">Notes</label><textarea class="ftxt" id="ni-notes" placeholder="Optional notes for the client"></textarea></div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-primary" onclick="saveNewInvoice()">Create Invoice</button>`
+  );
+}
+
+async function saveNewInvoice() {
+  const client_id = document.getElementById('ni-client')?.value;
+  const title = document.getElementById('ni-title')?.value.trim();
+  const amount = parseFloat(document.getElementById('ni-amount')?.value);
+  if (!client_id || !title || !amount) { showToast('Client, title, and amount required'); return; }
+  await sb.from('portal_invoices').insert({ client_id, title, invoice_number: document.getElementById('ni-num')?.value, amount, due_date: document.getElementById('ni-due')?.value||null, qbo_payment_url: document.getElementById('ni-qbo')?.value.trim()||null, notes: document.getElementById('ni-notes')?.value.trim()||null, status:'sent' });
+  await fetchInvoices();
+  closeModal();
+  showToast('Invoice created ✓');
+  renderAdminView('invoices');
+}
+
+async function markPaid(invoiceId) {
+  await sb.from('portal_invoices').update({ status: 'paid', paid_date: new Date().toISOString().split('T')[0] }).eq('id', invoiceId);
+  await fetchInvoices();
+  renderAdminView('invoices');
+  showToast('Invoice marked paid ✓');
+}
+
+async function addQBOLink(invoiceId) {
+  const url = prompt('Paste your QuickBooks payment URL:');
+  if (!url) return;
+  await sb.from('portal_invoices').update({ qbo_payment_url: url }).eq('id', invoiceId);
+  await fetchInvoices();
+  renderAdminView('invoices');
+  showToast('Payment link saved ✓');
+}
+
+async function sendMessage(clientId) {
+  const input = document.getElementById('msg-input-' + clientId);
+  const content = input?.value.trim();
+  if (!content) return;
+  const project = allProjects.find(p => p.client_id === clientId);
+  await sb.from('portal_messages').insert({ client_id: clientId, project_id: project?.id || null, content, sent_by: 'admin' });
+  input.value = '';
+  await fetchMessages();
+  renderAdminView('messages');
+  showToast('Message sent ✓');
+}
+
+function copyAccessLink(token) {
+  const url = `${window.location.href.split('?')[0]}?token=${token}`;
+  navigator.clipboard.writeText(url).then(() => showToast('Portal link copied ✓'));
+}
+
+// ══════════════════════════════════════════════════
+// CLIENT PORTAL
+// ══════════════════════════════════════════════════
+async function loadClientPortal(client) {
+  showScreen('client');
+  document.getElementById('client-sb-tag').textContent = client.school_name;
+  document.getElementById('client-sb-name').textContent = client.name.split(' ')[0];
+  document.getElementById('client-sb-av').textContent = client.name[0];
+  document.getElementById('client-sb-av').style.background = client.avatar_color || '#0f2d5a';
+  await renderClientView('overview');
+}
+
+function clientNav(view, btn) {
+  document.querySelectorAll('#screen-client .sb-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderClientView(view);
+}
+
+async function renderClientView(view) {
+  const { data: projects } = await sb.from('portal_projects').select('*,portal_milestones(*)').eq('client_id', currentClient.id).order('created_at');
+  const project = projects?.[0];
+  const titles = { overview:'Overview', progress:'Project Progress', files:'Files & Deliverables', questionnaires:'Questionnaires', invoices:'Invoices', messages:'Messages' };
+  const subs = { overview:'Your project at a glance', progress:'Milestones and timeline', files:'Shared documents', questionnaires:'Forms to complete', invoices:'Billing and payments', messages:'Notes from your team' };
+  document.getElementById('client-page-title').textContent = titles[view] || view;
+  document.getElementById('client-page-sub').textContent = subs[view] || '';
+
+  const c = document.getElementById('client-content');
+  if (view === 'overview') c.innerHTML = await renderClientOverview(project, projects);
+  else if (view === 'progress') c.innerHTML = await renderClientProgress(project);
+  else if (view === 'files') c.innerHTML = await renderClientFiles(project);
+  else if (view === 'invoices') c.innerHTML = await renderClientInvoices();
+  else if (view === 'messages') c.innerHTML = await renderClientMessages(project);
+  else if (view === 'questionnaires') c.innerHTML = renderClientQuestionnaires();
+}
+
+async function renderClientOverview(project, projects) {
+  if (!project) return `<div class="card"><div class="empty"><div class="empty-icon">🏫</div><div class="empty-title">Welcome to your portal</div><div class="empty-sub">Your consultant will set up your project soon. Check back shortly!</div></div></div>`;
+  const milestones = project.portal_milestones || [];
+  const done = milestones.filter(m => m.status === 'complete').length;
+  const pct = milestones.length ? Math.round((done / milestones.length) * 100) : 0;
+  const { data: files } = await sb.from('portal_files').select('*').eq('project_id', project.id).order('created_at',{ascending:false}).limit(3);
+  const { data: invoices } = await sb.from('portal_invoices').select('*').eq('client_id', currentClient.id);
+  const unpaidInvoices = (invoices||[]).filter(i => i.status === 'sent' || i.status === 'overdue');
+
+  return `
+  <div class="client-hero" style="border-radius:14px;margin-bottom:24px;">
+    <div class="client-hero-glow"></div>
+    <div class="client-hero-content">
+      <div class="client-greeting">Welcome back</div>
+      <div class="client-school">${currentClient.school_name}</div>
+      <div class="client-project-name">${project.title} · ${project.service_type}</div>
+    </div>
+  </div>
+  ${unpaidInvoices.length ? `<div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;"><div style="font-size:13px;font-weight:600;color:var(--warning);">💳 You have ${unpaidInvoices.length} outstanding invoice${unpaidInvoices.length>1?'s':''}</div><button class="btn btn-sm" style="background:#d97706;color:#fff;" onclick="clientNav('invoices',document.querySelector('[onclick*=invoices]'))">View Invoices</button></div>` : ''}
+  <div class="grid-3" style="margin-bottom:24px;">
+    <div class="stat-card sc-navy"><div class="stat-lbl">Project Status</div><div style="margin-top:8px;">${pill(project.status)}</div></div>
+    <div class="stat-card sc-teal"><div class="stat-lbl">Progress</div><div class="stat-num">${pct}%</div><div class="prog-wrap"><div class="prog-fill" style="width:${pct}%"></div></div></div>
+    <div class="stat-card sc-orange"><div class="stat-lbl">Milestones</div><div class="stat-num">${done}<span style="font-size:14px;font-weight:400;color:var(--muted);">/${milestones.length}</span></div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Next Milestones</div>
+      ${milestones.filter(m=>m.status!=='complete').slice(0,3).map(m=>`
+        <div class="milestone-item" style="padding:10px 0;">
+          <div class="ms-check ${m.status==='in_progress'?'in-progress':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="ms-title">${m.title}</div>${m.due_date?`<div class="ms-due">Due ${fmt(m.due_date)}</div>`:''}</div>
+        </div>`).join('') || '<div style="font-size:13px;color:var(--muted);">All milestones complete 🎉</div>'}
+    </div>
+    <div class="card">
+      <div class="card-title">Recent Files</div>
+      ${(files||[]).map(f=>`<div class="file-item"><div class="file-icon" style="background:var(--offwhite)">${fileIcon(f.file_type)}</div><div style="flex:1;"><div class="file-name">${f.name}</div><div class="file-meta">${fmt(f.created_at)}</div></div><a href="${f.file_url}" target="_blank" class="btn btn-secondary btn-sm">Open</a></div>`).join('') || '<div style="font-size:13px;color:var(--muted);">No files yet</div>'}
+    </div>
+  </div>`;
+}
+
+async function renderClientProgress(project) {
+  if (!project) return `<div class="card"><div class="empty"><div class="empty-icon">📈</div><div class="empty-title">No project yet</div></div></div>`;
+  const { data: milestones } = await sb.from('portal_milestones').select('*').eq('project_id', project.id).order('sort_order');
+  const done = (milestones||[]).filter(m=>m.status==='complete').length;
+  const pct = milestones?.length ? Math.round((done/milestones.length)*100) : 0;
+  return `
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-title">${project.title}</div>
+    <div class="card-sub">${project.service_type}${project.target_date ? ' · Target: ' + fmt(project.target_date) : ''}</div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:8px;"><span>Overall Progress</span><span style="font-weight:700;color:var(--navy)">${pct}%</span></div>
+    <div class="prog-wrap" style="height:10px;"><div class="prog-fill" style="width:${pct}%"></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">All Milestones</div>
+    ${(milestones||[]).map(m=>`
+      <div class="milestone-item">
+        <div class="ms-check ${m.status==='complete'?'done':m.status==='in_progress'?'in-progress':''}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div class="ms-title ${m.status==='complete'?'done':''}">${m.title}</div>
+          ${m.description?`<div class="ms-desc">${m.description}</div>`:''}
+          ${m.due_date?`<div class="ms-due">Due: ${fmt(m.due_date)}</div>`:''}
+        </div>
+        ${pill(m.status)}
+      </div>`).join('') || '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-title">No milestones added yet</div></div>'}
+  </div>`;
+}
+
+async function renderClientFiles(project) {
+  if (!project) return `<div class="card"><div class="empty"><div class="empty-icon">📁</div><div class="empty-title">No project yet</div></div></div>`;
+  const { data: files } = await sb.from('portal_files').select('*').eq('project_id', project.id).order('created_at',{ascending:false});
+  const categories = ['deliverable','contract','resource','general'];
+  return categories.map(cat => {
+    const catFiles = (files||[]).filter(f=>f.category===cat);
+    if (!catFiles.length) return '';
+    return `<div class="card" style="margin-bottom:16px;"><div class="card-title" style="text-transform:capitalize;">${cat}s</div>${catFiles.map(f=>`<div class="file-item"><div class="file-icon" style="background:var(--offwhite)">${fileIcon(f.file_type)}</div><div style="flex:1;"><div class="file-name">${f.name}</div><div class="file-meta">${fmt(f.created_at)}</div></div><a href="${f.file_url}" target="_blank" class="btn btn-primary btn-sm">Open</a></div>`).join('')}</div>`;
+  }).join('') || `<div class="card"><div class="empty"><div class="empty-icon">📁</div><div class="empty-title">No files yet</div><div class="empty-sub">Your consultant will upload files here as your project progresses</div></div></div>`;
+}
+
+async function renderClientInvoices() {
+  const { data: invoices } = await sb.from('portal_invoices').select('*').eq('client_id', currentClient.id).order('created_at',{ascending:false});
+  if (!invoices?.length) return `<div class="card"><div class="empty"><div class="empty-icon">💳</div><div class="empty-title">No invoices yet</div></div></div>`;
+  return invoices.map(i => `
+    <div class="invoice-card" style="margin-bottom:16px;">
+      <div class="invoice-hdr">
+        <div><div class="invoice-num">${i.invoice_number}</div><div class="invoice-title">${i.title}</div></div>
+        ${pill(i.status)}
+      </div>
+      <div class="invoice-body">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;">
+          <div><div class="invoice-amount">${fmtMoney(i.amount)}</div><div style="font-size:12px;color:var(--muted);">Due ${fmt(i.due_date)}</div>${i.notes?`<div style="font-size:12px;color:var(--muted);margin-top:8px;">${i.notes}</div>`:''}</div>
+          <div style="display:flex;gap:8px;">
+            ${i.qbo_payment_url && i.status!=='paid' ? `<a href="${i.qbo_payment_url}" target="_blank" class="btn btn-primary">Pay Now →</a>` : ''}
+            ${i.status==='paid' ? `<div style="font-size:13px;font-weight:600;color:var(--success);">✓ Paid ${fmt(i.paid_date)}</div>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+async function renderClientMessages(project) {
+  const { data: messages } = await sb.from('portal_messages').select('*').eq('client_id', currentClient.id).order('created_at');
+  return `
+  <div class="card">
+    <div class="card-title">Messages</div>
+    <div class="card-sub">Direct communication with your KP Charter Kollective team</div>
+    <div style="max-height:480px;overflow-y:auto;margin-bottom:20px;padding-bottom:8px;">
+      ${(messages||[]).map(m=>`
+        <div class="msg-item ${m.sent_by==='client'?'from-client':''}">
+          <div class="msg-av" style="background:${m.sent_by==='admin'?'#ff6015':currentClient.avatar_color||'#0f2d5a'}">${m.sent_by==='admin'?'K':currentClient.name[0]}</div>
+          <div><div class="msg-bubble">${m.content}</div><div class="msg-time">${fmt(m.created_at)}</div></div>
+        </div>`).join('') || '<div style="font-size:13px;color:var(--muted);text-align:center;padding:24px 0;">No messages yet. Start the conversation below.</div>'}
+    </div>
+    <div style="display:flex;gap:8px;">
+      <input class="finp" style="flex:1;" id="client-msg-input" placeholder="Write a message to your KPCC team..." onkeydown="if(event.key==='Enter')sendClientMessage('${project?.id||''}')">
+      <button class="btn btn-primary" onclick="sendClientMessage('${project?.id||''}')">Send</button>
+    </div>
+  </div>`;
+}
+
+async function sendClientMessage(projectId) {
+  const input = document.getElementById('client-msg-input');
+  const content = input?.value.trim();
+  if (!content) return;
+  await sb.from('portal_messages').insert({ client_id: currentClient.id, project_id: projectId||null, content, sent_by:'client', is_read:false });
+  input.value = '';
+  const { data: projects } = await sb.from('portal_projects').select('*').eq('client_id', currentClient.id).limit(1);
+  await renderClientView('messages');
+  showToast('Message sent ✓');
+}
+
+function renderClientQuestionnaires() {
+  return `<div class="card"><div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No questionnaires yet</div><div class="empty-sub">Your consultant will send intake forms and questionnaires here when they're ready for you.</div></div></div>`;
+}
+
+// ══════════════════════════════════════════════════
+// INIT — check for token in URL or session
+// ══════════════════════════════════════════════════
+(async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  if (token) {
+    setLoginMode('client');
+    document.getElementById('client-token').value = token;
+    await doClientLogin();
+    return;
+  }
+  if (sessionStorage.getItem('kpcc_portal_admin')) { loadAdminPortal(); return; }
+  const savedToken = sessionStorage.getItem('kpcc_client_token');
+  if (savedToken) {
+    const { data } = await sb.from('portal_clients').select('*').eq('access_token', savedToken).single();
+    if (data) { currentClient = data; loadClientPortal(data); return; }
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="The Board Communication Problem That Kills Enrollment Before It Starts — KP Charter Kollective Blog">
+<title>The Board Communication Problem That Kills Enrollment Before It Starts &mdash; KP Charter Kollective</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+.post-hero{background:var(--navy);padding:130px 0 0;position:relative;overflow:hidden;margin-top:70px;}
+.post-hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:36px 36px;pointer-events:none;}
+.post-hero-inner{position:relative;z-index:2;max-width:780px;margin:0 auto;padding:0 48px 52px;}
+.post-tag{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--teal);margin-bottom:18px;}
+.post-tag::before{content:'';width:22px;height:1.5px;background:var(--teal);}
+.post-title{font-family:var(--font-serif);font-size:clamp(26px,4vw,46px);font-weight:900;line-height:1.08;letter-spacing:-0.02em;color:var(--white);margin-bottom:18px;}
+.post-meta{font-size:13px;color:rgba(255,255,255,0.45);display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+.post-hero-img{width:100%;height:460px;object-fit:cover;object-position:center top;display:block;}
+.post-body{max-width:780px;margin:0 auto;padding:64px 48px 88px;}
+.post-body h2{font-family:var(--font-serif);font-size:28px;font-weight:700;color:var(--navy);margin:48px 0 14px;line-height:1.2;}
+.post-body h3{font-family:var(--font-serif);font-size:21px;font-weight:700;color:var(--navy);margin:34px 0 10px;}
+.post-body p{font-size:16px;color:var(--muted);line-height:1.88;margin-bottom:22px;}
+.post-body ul{margin:0 0 22px 22px;}
+.post-body li{font-size:16px;color:var(--muted);line-height:1.82;margin-bottom:9px;}
+.post-body blockquote{border-left:3px solid var(--orange);padding:6px 0 6px 24px;margin:32px 0;font-family:var(--font-serif);font-size:21px;font-style:italic;color:var(--navy);line-height:1.55;}
+.post-divider{border:none;border-top:1px solid var(--border);margin:48px 0;}
+.post-cta{background:var(--navy);border-radius:var(--radius);padding:44px;text-align:center;margin-top:56px;position:relative;overflow:hidden;}
+.post-cta::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:36px 36px;pointer-events:none;}
+.post-cta-inner{position:relative;z-index:2;}
+.post-cta h3{font-family:var(--font-serif);font-size:24px;font-weight:700;color:var(--white);margin-bottom:8px;}
+.post-cta p{font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:22px;line-height:1.65;}
+.back-link{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--teal);font-weight:600;margin-bottom:32px;transition:gap var(--ease);text-decoration:none;}
+.back-link:hover{gap:14px;color:var(--teal);}
+.back-link svg{width:16px;height:16px;flex-shrink:0;}
+@media(max-width:768px){.post-hero-inner{padding:0 20px 44px;}.post-body{padding:44px 20px 64px;}.post-hero-img{height:280px;}}
+</style>
+</head>
+<body>
+<header class="site-nav" id="site-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><img src="https://images.squarespace-cdn.com/content/v1/67843328034d591e0587586c/7e9c3fdc-d61e-4c4c-9932-b357cc6bdd78/KP+Charter.png?format=400w" alt="KP Charter Kollective"></a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li class="nav-dd"><a href="about.html">Our Work</a><ul class="nav-drop"><li><a href="about.html">About Us</a></li><li><a href="team.html">Meet the Founder</a></li><li><a href="faq.html">FAQ</a></li><li><a href="portfolio.html">Portfolio</a></li></ul></li>
+      <li class="nav-dd"><a href="services.html">How We Help</a><ul class="nav-drop"><li><a href="services.html">What We Do</a></li><li><a href="atl-advantage.html">ATL Advantage</a></li><li><a href="services.html#enrollment">Enrollment Strategy</a></li><li><a href="services.html#brand">Brand &amp; Messaging</a></li></ul></li>
+      <li><a href="blog.html">Blog</a></li><li><a href="apply.html">Apply</a></li><li><a href="enroll.html" style="color:var(--orange);font-weight:600;">Enroll Platform</a></li>
+    </ul>
+    <a href="apply.html" class="nav-cta">Apply to Work With Us</a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<section class="post-hero">
+  <div class="post-hero-inner">
+    <a href="blog.html" class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to All Posts</a>
+    <div class="post-tag">Governance</div>
+    <h1 class="post-title">The Board Communication Problem That Kills Enrollment Before It Starts</h1>
+    <div class="post-meta"><span>October 2025</span><span>6 min read</span><span>By Kristina &mdash; KP Charter Kollective</span></div>
+  </div>
+  <img src="https://images.squarespace-cdn.com/content/v1/67843328034d591e0587586c/cd88fa98-500e-4b45-a143-eb863a63d5dd/Screen+Shot+2024-10-10+at+6.52.23+PM.png" alt="The Board Communication Problem That Kills Enrollment Before It Starts" class="post-hero-img">
+</section>
+<div class="post-body">
+  <p>Most conversations about charter school enrollment focus on marketing—social media, open houses, yard signs, email campaigns. These matter. But there’s a category of enrollment problems that no amount of marketing can fix, because the damage happens at the governance level before a family ever sees your Instagram.</p>
+  <p>I call it the board communication problem. And it kills more enrollment potential than most founders realize.</p>
+
+  <blockquote>“Families don’t just choose schools. They choose organizations. If your organization looks unstable, unclear, or uncommitted—families choose somewhere else.”</blockquote>
+
+  <h2>What the Board Communication Problem Looks Like</h2>
+  <p>It usually shows up in one of four ways:</p>
+  <ul>
+    <li><strong>Inconsistent messaging between the founder and the board.</strong> The founder says the school will open in August. A board member tells a community contact it might be September. A family hears both versions. Doubt is planted. They put the school on a backup list.</li>
+    <li><strong>Public board meeting dysfunction.</strong> In Georgia, board meetings are public. If your board meetings are contentious, disorganized, or reveal significant internal disagreement about direction—families who attend (and some do) take that home with them.</li>
+    <li><strong>Gaps between what’s promised publicly and what governance documents actually say.</strong> A founder promises a specific academic model publicly. The charter application has different language. A family who reads both—or a journalist who does—flags the discrepancy. The school’s credibility takes a hit.</li>
+    <li><strong>Board members who aren’t aligned on the school’s story.</strong> Board members talk to people in the community. If your board members can’t tell the school’s story—or worse, tell it differently from each other—every conversation they have in the community is eroding trust rather than building it.</li>
+  </ul>
+
+  <h2>Why This Matters More for Charter Schools Than Traditional Schools</h2>
+  <p>Traditional public schools have built-in credibility from the system they’re part of. Families may not love the district, but they know what they’re getting. A charter school is asking families to take a bet on something new—on an institution that doesn’t have years of track record to point to.</p>
+  <p>This means the governance signals you send—intentionally or not—carry enormous weight. A family evaluating a charter school is watching for signs that the organization behind it is stable, aligned, and competent. Your board communication is part of that signal.</p>
+
+  <h2>The Fix: Governance Alignment Before Outreach Begins</h2>
+  <p>Before you launch any enrollment campaign, your governance layer needs to be aligned on three things:</p>
+  <h3>1. The School’s Story</h3>
+  <p>Every board member should be able to answer, in one or two sentences: what is this school, who is it for, and why does it exist? If different board members give different answers, your messaging infrastructure is already compromised. Run a board alignment session. Get agreement on the core narrative. Write it down. Share it.</p>
+  <h3>2. What’s Public and What’s Internal</h3>
+  <p>Board members need to understand what’s appropriate to share publicly and what stays in the governance room. Not because you’re hiding things—but because premature information about hiring decisions, lease negotiations, or curriculum changes creates confusion in the community and makes the school look unstable.</p>
+  <h3>3. The Enrollment Goals and Timeline</h3>
+  <p>Every board member should know: what is our enrollment target, when is our application window, and what are we asking community members to do right now? Board members who are aligned on this become passive enrollment ambassadors. Board members who don’t know the answer to these questions become a source of conflicting information.</p>
+
+  <hr class="post-divider">
+  <p><em>Governance alignment is not glamorous work. It doesn’t show up in enrollment dashboards or social media metrics. But it creates the foundation that everything else is built on. Schools that get this right before they launch their enrollment campaigns consistently outperform schools that try to outmarket their way past internal misalignment.</em></p>
+  <div class="post-cta">
+    <div class="post-cta-inner">
+      <h3>Ready to Apply This to Your School?</h3>
+      <p>Every post I write comes from work I&rsquo;ve done with real schools. If you&rsquo;re ready to build systems that actually fill classrooms, let&rsquo;s talk.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="https://calendly.com/kristina-kpcharterkollective/30min" class="btn btn-orange" target="_blank">Book a Free Strategy Call &rarr;</a>
+        <a href="apply.html" class="btn btn-outline-navy">Apply to Work With Us</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><img src="https://images.squarespace-cdn.com/content/v1/67843328034d591e0587586c/d6e31ea6-6f99-489b-886e-68f74b42c2a4/Final+KP+Charter+Kollective-02.png" alt="KP Charter Kollective" class="footer-logo-img" loading="lazy"><p class="footer-tagline">Turning strong ideas into clear strategy, powerful messaging, and steady enrollment.</p><div class="footer-contact"><a href="tel:3152817417">315-281-7417</a><a href="mailto:kristina@kpcharterkollective.com">kristina@kpcharterkollective.com</a></div></div>
+    <div class="footer-col"><div class="footer-col-title">Our Work</div><ul><li><a href="about.html">About Us</a></li><li><a href="team.html">Meet the Founder</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="faq.html">FAQ</a></li></ul></div>
+    <div class="footer-col"><div class="footer-col-title">How We Help</div><ul><li><a href="services.html">What We Do</a></li><li><a href="atl-advantage.html">ATL Advantage</a></li></ul></div>
+    <div class="footer-col"><div class="footer-col-title">Get Started</div><ul><li><a href="apply.html">Apply to Work With Us</a></li><li><a href="https://calendly.com/kristina-kpcharterkollective/30min" target="_blank">Book a Strategy Call</a></li><li><a href="blog.html">Blog</a></li></ul></div>
+    <div class="footer-col"><div class="footer-col-title">Service Areas</div><ul><li><a href="atl-advantage.html">Georgia</a></li><li><a href="north-carolina-charter-school-consulting.html">North Carolina</a></li><li><a href="texas-charter-school-consulting.html">Texas</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><span>The KP Charter Kollective &copy; 2026</span><span>Built for founders who are serious about growth.</span></div>
+</footer>
+<script src="js/site.js"></script></body></html>
