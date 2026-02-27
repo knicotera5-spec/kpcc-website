@@ -583,10 +583,10 @@
     <h2>Ready to build the enrollment system<br><em>your school actually needs?</em></h2>
     <p>Start your 14-day free trial. No credit card required. Pre-opening schools get 50% off their first year.</p>
     <form class="trial-form" onsubmit="handleTrialForm(event)" action="https://formspree.io/f/xaqdvgbp" method="POST">
-      <input type="text" class="trial-input" placeholder="School name" required>
+      <input type="text" class="trial-input" placeholder="School name" name="school" required>
       <div class="trial-row">
-        <input type="text" class="trial-input" placeholder="Your name" required>
-        <input type="email" class="trial-input" placeholder="Email address" required>
+        <input type="text" class="trial-input" placeholder="Your name" name="name" required>
+        <input type="email" class="trial-input" placeholder="Email address" name="email" required>
       </div>
       <select class="trial-select" required>
         <option value="" disabled selected>Select your plan</option>
