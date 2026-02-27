@@ -1524,6 +1524,19 @@ function goToUpgrade() {
   closeUpgradeModal();
 }
 
+
+function showSection(name, el) {
+  event.preventDefault();
+  var sections = ['calendar','templates','email','analytics'];
+  sections.forEach(function(s) {
+    var sec = document.getElementById('section-' + s);
+    if (sec) sec.style.display = 'none';
+  });
+  var target = document.getElementById('section-' + name);
+  if (target) target.style.display = 'block';
+  document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('active'); });
+  if (el) el.classList.add('active');
+}
 </script>
 
 <!-- UPGRADE MODAL -->
