@@ -1164,6 +1164,30 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
     </div>
   </div>
 
+
+  <div class="content" id="section-templates" style="display:none;padding:24px;">
+    <h2 style="font-family:var(--font-serif);font-size:22px;color:var(--navy);margin-bottom:8px;">Template Bank</h2>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:20px;">16 charter-specific templates. Pick one, customize in Canva, schedule it.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;" id="tpl-grid"></div>
+  </div>
+
+  <div class="content" id="section-email" style="display:none;padding:24px;">
+    <h2 style="font-family:var(--font-serif);font-size:22px;color:var(--navy);margin-bottom:8px;">Email Campaigns</h2>
+    <div style="background:#fff8f5;border:1.5px solid var(--orange);border-radius:12px;padding:32px;text-align:center;margin-top:20px;">
+      <div style="font-size:40px;margin-bottom:12px;">✉️</div>
+      <div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;">Email Campaigns Coming Soon</div>
+      <div style="font-size:13px;color:var(--muted);max-width:380px;margin:0 auto;">Build and schedule email campaigns to your Enroll pipeline. Open rate tracking included.</div>
+    </div>
+  </div>
+
+  <div class="content" id="section-analytics" style="display:none;padding:24px;">
+    <h2 style="font-family:var(--font-serif);font-size:22px;color:var(--navy);margin-bottom:8px;">Analytics</h2>
+    <div style="background:#fff8f5;border:1.5px solid var(--orange);border-radius:12px;padding:32px;text-align:center;margin-top:20px;">
+      <div style="font-size:40px;margin-bottom:12px;">📊</div>
+      <div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;">Analytics Coming Soon</div>
+      <div style="font-size:13px;color:var(--muted);max-width:380px;margin:0 auto;">Track reach, clicks, and which campaigns drive families into your enrollment pipeline.</div>
+    </div>
+  </div>
 </main>
 
 <!-- NEW POST MODAL -->
@@ -1537,6 +1561,55 @@ function showSection(name, el) {
   document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('active'); });
   if (el) el.classList.add('active');
 }
+
+function showSection(name, el) {
+  ['calendar','templates','email','analytics'].forEach(function(s){
+    var sec = document.getElementById('section-'+s);
+    if(sec) sec.style.display='none';
+  });
+  var t = document.getElementById('section-'+name);
+  if(t) t.style.display='block';
+  document.querySelectorAll('.nav-item').forEach(function(i){i.classList.remove('active');});
+  if(el) el.classList.add('active');
+  if(name==='templates') renderTemplates();
+}
+
+var templates = [
+  {name:'Open House Announcement',emoji:'🏫',tags:'Instagram, Facebook'},
+  {name:'Lottery Now Open',emoji:'🎰',tags:'Instagram, Facebook'},
+  {name:'Meliora Monday',emoji:'⭐',tags:'Instagram, Facebook'},
+  {name:'Founding Family Spotlight',emoji:'👨‍👩‍👧',tags:'Instagram, Facebook'},
+  {name:'Enrollment Deadline Reminder',emoji:'⏰',tags:'Instagram, Facebook, Email'},
+  {name:'Why We Started This School',emoji:'💡',tags:'Instagram, Facebook'},
+  {name:'Waitlist Announcement',emoji:'📋',tags:'Instagram, Facebook'},
+  {name:'Save the Date — Open House',emoji:'📅',tags:'Instagram, Facebook, Email'},
+  {name:'Student Learning Moment',emoji:'📚',tags:'Instagram, Facebook'},
+  {name:'Email: Open House Invite',emoji:'✉️',tags:'Email'},
+  {name:'Email: Lottery Reminder',emoji:'✉️',tags:'Email'},
+  {name:'Founding Scholar Welcome',emoji:'🎉',tags:'Instagram, Facebook'},
+  {name:'Mission Statement Post',emoji:'🎯',tags:'Instagram, Facebook'},
+  {name:'Community Partner Spotlight',emoji:'🤝',tags:'Instagram, Facebook'},
+  {name:'Countdown to Opening',emoji:'🚀',tags:'Instagram, Facebook'},
+  {name:'Email: Welcome to the Family',emoji:'✉️',tags:'Email'},
+];
+
+function renderTemplates() {
+  var grid = document.getElementById('tpl-grid');
+  if(!grid) return;
+  grid.innerHTML = templates.map(function(t){
+    return '<div style="background:#fff;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;">' +
+      '<div style="background:#fff3ee;padding:20px;text-align:center;font-size:36px;">' + t.emoji + '</div>' +
+      '<div style="padding:14px 16px;">' +
+        '<div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px;">' + t.name + '</div>' +
+        '<div style="font-size:11px;color:var(--muted);">' + t.tags + '</div>' +
+      '</div>' +
+      '<div style="padding:0 16px 14px;">' +
+        '<button class="btn btn-orange btn-sm" style="width:100%;" onclick="openModal()">Use Template →</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
 </script>
 
 <!-- UPGRADE MODAL -->
