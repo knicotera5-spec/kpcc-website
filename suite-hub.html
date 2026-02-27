@@ -1279,13 +1279,11 @@ const posts = {
 
 let currentDate = new Date(2026, 1, 1); // Feb 2026
 
-// ── SECTION SWITCHING ──
 function showSection(name, el) {
-  event.preventDefault();
-  // Hide all sections
+  if(event) event.preventDefault();
   ['calendar','templates','email','analytics'].forEach(s => {
-    const el = document.getElementById('section-' + s);
-    if (el) el.style.display = 'none';
+    const sec = document.getElementById('section-' + s);
+    if (sec) sec.style.display = 'none';
   });
   // Show selected
   const target = document.getElementById('section-' + name);
@@ -1357,7 +1355,7 @@ function openTemplateModal(id) {
   openModal();
 }
 
-
+function renderCalendar() {
   const grid = document.getElementById('cal-grid');
   const label = document.getElementById('cal-month-label');
   
