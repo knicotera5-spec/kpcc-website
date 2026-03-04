@@ -990,6 +990,37 @@ tbody td{padding:11px 16px;font-size:13px}
       <div class="fgrp" style="margin:0;"><label class="flbl">In Geographic Zone?</label><select class="fsel" id="a-zone"><option value="false">No / Unknown</option><option value="true">Yes — confirmed zone resident</option></select></div>
     </div>
     <div class="fgrp"><label class="flbl">Notes</label><input class="finp" id="a-notes" placeholder="How they heard about you, special notes..."></div>
+    <div id="prek-add-block" style="display:none;border-top:1px solid var(--border);padding-top:14px;margin-top:4px;">
+      <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;">Pre-K Eligibility</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div class="fgrp"><label class="flbl">Date of Birth</label><input class="finp" type="date" id="a-prek-dob"></div>
+        <div class="fgrp"><label class="flbl">Program Interest</label>
+          <select class="finp" id="a-prek-program">
+            <option value="">Select program</option>
+            <option value="head_start">Head Start (Free)</option>
+            <option value="vpk">Full Day VPK</option>
+            <option value="half_day_vpk">Half Day VPK</option>
+            <option value="vpk_parent_pay">VPK Parent Pay</option>
+            <option value="summer_vpk">Summer VPK</option>
+          </select>
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:8px;">Eligibility Factors</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;"><input type="checkbox" id="a-prek-disability"> IEP / Disability</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;"><input type="checkbox" id="a-prek-foster"> Foster Care</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;"><input type="checkbox" id="a-prek-homeless"> Homeless / Housing Instability</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;"><input type="checkbox" id="a-prek-assistance"> TANF / SSI / SNAP</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;"><input type="checkbox" id="a-prek-poverty"> Below Federal Poverty Line</label>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:8px;">School Preferences</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;color:var(--orange);width:24px;">1st</span><select class="finp" id="a-prek-school1" style="font-size:12px;"></select></div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;color:var(--muted);width:24px;">2nd</span><select class="finp" id="a-prek-school2" style="font-size:12px;"></select></div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;color:var(--muted);width:24px;">3rd</span><select class="finp" id="a-prek-school3" style="font-size:12px;"></select></div>
+      </div>
+    </div>
+
     <div class="modal-foot"><button class="btn btn-secondary" onclick="closeModal('add-modal')">Cancel</button><button class="btn btn-primary" id="add-btn" onclick="addFamily()">Add to Pipeline →</button></div>
   </div>
 </div>
@@ -2006,6 +2037,53 @@ function showToast(msg){
   const t=document.getElementById('toast');document.getElementById('toast-msg').textContent=msg;
   t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);
 }
+
+// ── PRE-K CONFIGURATION (CCPS only) ──
+const PREK_SCHOOLS = [
+  'Avalon Elementary School','Ave Maria Elementary School','Bear Creek Elementary School',
+  'Calusa Park Elementary School','Corkscrew Elementary School','Eden Park Elementary School',
+  'Everglades City School','Fun Time Academy (Head Start only)','Golden Gate Elementary School',
+  'Golden Terrace Elementary School','Lake Trafford Elementary School','Lely Elementary School',
+  'Manatee Elementary School','Mike Davis Elementary School','Naples Park Elementary School',
+  'Osceola Elementary School','Palmetto Elementary School','Parkside Elementary School',
+  'Pelican Marsh Elementary School','Pinecrest Elementary School','Poinciana Elementary School',
+  'Sabal Palm Elementary School','Shadowlawn Elementary School','Vineyards Elementary School',
+  'Village Oaks Elementary School'
+];
+
+const PRIORITY_LABELS = {
+  1:{label:'P1 - Disability',color:'#7c3aed',bg:'#f3e8ff'},
+  2:{label:'P2 - Foster Care',color:'#dc2626',bg:'#fef2f2'},
+  3:{label:'P3 - Homeless',color:'#d97706',bg:'#fffbeb'},
+  4:{label:'P4 - Public Assistance',color:'#0369a1',bg:'#e0f2fe'},
+  5:{label:'P5 - Below Poverty',color:'#059669',bg:'#ecfdf5'},
+  6:{label:'P6 - First Come First Served',color:'#6b7280',bg:'#f9fafb'}
+};
+
+let isPreK = false;
+
+function getPreKPriority(f) {
+  if (f.prek_disability) return 1;
+  if (f.prek_foster) return 2;
+  if (f.prek_homeless) return 3;
+  if (f.prek_public_assistance) return 4;
+  if (f.prek_below_poverty) return 5;
+  return 6;
+}
+
+function initPreKFields() {
+  if (!isPreK) return;
+  const block = document.getElementById('prek-add-block');
+  if (block) block.style.display = 'block';
+  ['a-prek-school1','a-prek-school2','a-prek-school3'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (sel) {
+      sel.innerHTML = '<option value="">No preference</option>' +
+        PREK_SCHOOLS.map(s => '<option value="' + s + '">' + s + '</option>').join('');
+    }
+  });
+}
+
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDetail();document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));}});
 
 // ── PRODUCT SWITCHER ──
