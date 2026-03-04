@@ -733,9 +733,109 @@ tbody td{padding:11px 16px;font-size:13px}
           <h2 style="font-family:var(--font-serif);font-size:26px;font-weight:700;color:var(--navy);margin-bottom:6px;">Priority View</h2>
           <p style="font-size:14px;color:var(--muted);">Applications sorted by eligibility priority. Highest need families appear first.</p>
         </div>
-        <div id="priority-list" style="display:flex;flex-direction:column;gap:10px;">
-          <div style="font-size:13px;color:var(--muted);">Loading...</div>
+
+        <!-- HOW TO CONNECT -->
+        <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg,#eff6ff,#f0fdf4);border:1px solid #bfdbfe;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div style="font-size:22px;">📋</div>
+            <div>
+              <div style="font-size:15px;font-weight:700;color:var(--navy);">How to Connect Your Google Form</div>
+              <div style="font-size:12px;color:var(--muted);">Follow these steps to pull applications directly into Priority View</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:26px;height:26px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+              <div style="font-size:13px;color:var(--muted);padding-top:3px;">Open your Google Form and click the <strong>Responses</strong> tab. Click the green <strong>Google Sheets icon</strong> to open or create your response spreadsheet.</div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:26px;height:26px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+              <div style="font-size:13px;color:var(--muted);padding-top:3px;">In your Google Sheet, click <strong>Share</strong> in the top right. Change access to <strong>Anyone with the link can view</strong>. Copy the link.</div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:26px;height:26px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+              <div style="font-size:13px;color:var(--muted);padding-top:3px;">Go to <strong>Integrations</strong> in the left sidebar. Find the <strong>Google Forms</strong> card. Paste your sheet URL and click <strong>Connect</strong>.</div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:26px;height:26px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div>
+              <div style="font-size:13px;color:var(--muted);padding-top:3px;">Match your form columns to Enroll fields: <strong>Parent Name, Student Name, Grade, Email, Phone</strong>. Click <strong>Import Families</strong>.</div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:26px;height:26px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">5</div>
+              <div style="font-size:13px;color:var(--muted);padding-top:3px;">Return to <strong>Priority View</strong>. Your families will appear sorted by eligibility — highest need first. Add eligibility details to each family by clicking their name in <strong>Applications</strong>.</div>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding:10px 14px;background:#fff;border-radius:8px;border:1px solid #bfdbfe;">
+            <div style="font-size:12px;color:#1e40af;"><strong>Tip:</strong> Make sure your Google Form includes fields for eligibility factors (foster care, homeless status, TANF/SSI/SNAP, disability) and top 3 school choices. The more data collected on the form, the more accurate your priority sorting will be.</div>
+          </div>
         </div>
+
+        <!-- PRIORITY KEY -->
+        <div class="card" style="margin-bottom:20px;">
+          <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px;">Priority Key</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;"><span style="width:10px;height:10px;border-radius:50%;background:#7c3aed;display:inline-block;flex-shrink:0;"></span><span style="font-size:12px;font-weight:700;color:#7c3aed;width:180px;">P1 - Disability</span><span style="font-size:12px;color:var(--muted);">Child has an IEP or documented disability — qualifies for Head Start regardless of income</span></div>
+            <div style="display:flex;align-items:center;gap:10px;"><span style="width:10px;height:10px;border-radius:50%;background:#dc2626;display:inline-block;flex-shrink:0;"></span><span style="font-size:12px;font-weight:700;color:#dc2626;width:180px;">P2 - Foster Care</span><span style="font-size:12px;color:var(--muted);">Child is in foster care — automatic Head Start eligibility</span></div>
+            <div style="display:flex;align-items:center;gap:10px;"><span style="width:10px;height:10px;border-radius:50%;background:#d97706;display:inline-block;flex-shrink:0;"></span><span style="font-size:12px;font-weight:700;color:#d97706;width:180px;">P3 - Homeless</span><span style="font-size:12px;color:var(--muted);">Family experiencing homelessness or housing instability</span></div>
+            <div style="display:flex;align-items:center;gap:10px;"><span style="width:10px;height:10px;border-radius:50%;background:#0369a1;display:inline-block;flex-shrink:0;"></span><span style="font-size:12px;font-weight:700;color:#0369a1;width:180px;">P4 - Public Assistance</span><span style="font-size:12px;color:var(--muted);">Family receiving TANF, SSI, or SNAP benefits</span></div>
+            <div style="display:flex;align-items:center;gap:10px;"><span style="width:10px;height:10px;border-radius:50%;background:#059669;display:inline-block;flex-shrink:0;"></span><span style="font-size:12px;font-weight:700;color:#059669;width:180px;">P5 - Below Poverty</span><span style="font-size:12px;color:var(--muted);">Family income below Federal Poverty Guideline</span></div>
+            <div style="display:flex;align-items:center;gap:10px;"><span style="width:10px;height:10px;border-radius:50%;background:#6b7280;display:inline-block;flex-shrink:0;"></span><span style="font-size:12px;font-weight:700;color:#6b7280;width:180px;">P6 - First Come First Served</span><span style="font-size:12px;color:var(--muted);">VPK enrollment — no eligibility factors, order by application date</span></div>
+          </div>
+        </div>
+
+        <!-- SAMPLE APPLICATIONS -->
+        <div class="card" style="margin-bottom:20px;">
+          <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:6px;">Sample Applications</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">This is how your priority list will look once families are imported. Your real applications will replace these examples.</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="background:#fafafa;border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:#7c3aed;flex-shrink:0;"></div>
+              <div style="flex:1;">
+                <div style="font-size:14px;font-weight:700;color:var(--navy);">Sofia Martinez <span style="font-weight:400;color:var(--muted);">— Maria Martinez</span></div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px;">Age: 4 &nbsp;|&nbsp; maria.martinez@email.com</div>
+                <div style="font-size:11px;margin-top:4px;"><span style="color:var(--navy);font-weight:600;">1st: </span><span style="color:var(--muted);">Golden Gate Elementary School</span> &nbsp;<span style="color:var(--navy);font-weight:600;">2nd: </span><span style="color:var(--muted);">Lely Elementary School</span></div>
+              </div>
+              <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:#f3e8ff;color:#7c3aed;">P1 - Disability</span>
+            </div>
+            <div style="background:#fafafa;border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:#dc2626;flex-shrink:0;"></div>
+              <div style="flex:1;">
+                <div style="font-size:14px;font-weight:700;color:var(--navy);">James Okafor <span style="font-weight:400;color:var(--muted);">— DCF Case Worker</span></div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px;">Age: 3 &nbsp;|&nbsp; dcf.okafor@collierschools.com</div>
+                <div style="font-size:11px;margin-top:4px;"><span style="color:var(--navy);font-weight:600;">1st: </span><span style="color:var(--muted);">Fun Time Academy (Head Start only)</span></div>
+              </div>
+              <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:#fef2f2;color:#dc2626;">P2 - Foster Care</span>
+            </div>
+            <div style="background:#fafafa;border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:#0369a1;flex-shrink:0;"></div>
+              <div style="flex:1;">
+                <div style="font-size:14px;font-weight:700;color:var(--navy);">Aaliyah Johnson <span style="font-weight:400;color:var(--muted);">— Tasha Johnson</span></div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px;">Age: 4 &nbsp;|&nbsp; tasha.j@gmail.com</div>
+                <div style="font-size:11px;margin-top:4px;"><span style="color:var(--navy);font-weight:600;">1st: </span><span style="color:var(--muted);">Shadowlawn Elementary School</span> &nbsp;<span style="color:var(--navy);font-weight:600;">2nd: </span><span style="color:var(--muted);">Poinciana Elementary School</span> &nbsp;<span style="color:var(--navy);font-weight:600;">3rd: </span><span style="color:var(--muted);">Eden Park Elementary School</span></div>
+              </div>
+              <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:#e0f2fe;color:#0369a1;">P4 - Public Assistance</span>
+            </div>
+            <div style="background:#fafafa;border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:#6b7280;flex-shrink:0;"></div>
+              <div style="flex:1;">
+                <div style="font-size:14px;font-weight:700;color:var(--navy);">Connor Williams <span style="font-weight:400;color:var(--muted);">— Sarah Williams</span></div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px;">Age: 4 &nbsp;|&nbsp; sarah.williams@gmail.com</div>
+                <div style="font-size:11px;margin-top:4px;"><span style="color:var(--navy);font-weight:600;">1st: </span><span style="color:var(--muted);">Pelican Marsh Elementary School</span></div>
+              </div>
+              <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:#f9fafb;color:#6b7280;">P6 - First Come First Served</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- LIVE LIST -->
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-size:14px;font-weight:700;color:var(--navy);">Your Applications</div>
+            <button class="btn btn-secondary btn-sm" onclick="loadPriorityView()">Refresh</button>
+          </div>
+          <div id="priority-list"><div style="font-size:13px;color:var(--muted);">No families added yet. Import from Google Forms or add manually in Applications.</div></div>
+        </div>
+
       </div>
     </div>
 
