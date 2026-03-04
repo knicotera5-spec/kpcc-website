@@ -47,6 +47,19 @@ body{font-family:var(--font-sans);background:var(--offwhite);color:var(--text);m
 .nav-btn.active{color:#fff;background:rgba(255,96,21,.15)}
 .nav-btn.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--orange);border-radius:0 2px 2px 0}
 .nav-btn svg{width:16px;height:16px;flex-shrink:0}
+
+.nav-sub { display:none; flex-direction:column; }
+.nav-sub.open { display:flex; }
+.nav-sub-btn { display:flex; align-items:center; gap:10px; padding:7px 20px 7px 36px; cursor:pointer; color:rgba(255,255,255,.4); font-size:12px; font-weight:500; border:none; background:none; width:100%; text-align:left; transition:all .15s; }
+.nav-sub-btn:hover { color:#fff; background:rgba(255,255,255,.04); }
+.nav-sub-btn.active { color:#fff; }
+.nav-parent-btn { display:flex; align-items:center; gap:10px; padding:9px 20px; cursor:pointer; color:rgba(255,255,255,.5); font-size:13px; font-weight:500; border:none; background:none; width:100%; text-align:left; transition:all .15s; position:relative; }
+.nav-parent-btn:hover { color:#fff; background:rgba(255,255,255,.05); }
+.nav-parent-btn.open { color:#fff; }
+.nav-parent-btn svg { width:16px; height:16px; flex-shrink:0; }
+.nav-chevron { margin-left:auto; width:12px; height:12px; transition:transform .2s; }
+.nav-parent-btn.open .nav-chevron { transform:rotate(180deg); }
+
 .nav-badge{margin-left:auto;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:99px;font-family:var(--font-mono)}
 .sb-foot{padding:14px 20px;border-top:1px solid rgba(255,255,255,.08)}
 .sb-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--orange-light));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
@@ -537,7 +550,20 @@ tbody td{padding:11px 16px;font-size:13px}
     <button class="nav-btn" onclick="switchView('settings',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></button>
     <div class="nav-grp">Help</div>
     <button class="nav-btn" onclick="switchView('integrations',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span>Integrations</span></button>
-    <button class="nav-btn" id="nav-priority" style="display:none;" onclick="switchView('priority',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><span>Priority View</span></button>
+    <div id="nav-priority-group" style="display:none;">
+      <button class="nav-parent-btn" id="nav-priority-parent" onclick="togglePreKNav()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span>Pre-K Tools</span>
+        <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="nav-sub" id="prek-subnav">
+        <button class="nav-sub-btn" onclick="switchView('priority',this);scrollToSection('prek-stats-bar')">📊 Application Summary</button>
+        <button class="nav-sub-btn" onclick="switchView('priority',this);scrollToSection('prek-capacity-card')">🏫 Capacity Tracker</button>
+        <button class="nav-sub-btn" onclick="switchView('priority',this);scrollToSection('prek-bulk-card')">✏️ Bulk Update</button>
+        <button class="nav-sub-btn" onclick="exportEligibilityCSV()">⬇ Export Priority List</button>
+        <button class="nav-sub-btn" onclick="switchView('priority',this)">📋 Full Priority View</button>
+      </div>
+    </div>
     <button class="nav-btn" onclick="switchView('gettingstarted',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Getting Started</span></button>
   </nav>
   <div class="sb-foot"><div style="display:flex;align-items:center;gap:10px;"><div class="sb-av" id="sb-av">?</div><div><div class="sb-uname" id="sb-user">—</div><div class="sb-urole">Administrator</div><button class="logout-btn" onclick="doLogout()">Sign out</button></div></div></div>
@@ -2233,8 +2259,8 @@ let isPreK = false;
 
 function activatePreK() {
   isPreK = true;
-  const btn = document.getElementById('nav-priority');
-  if (btn) btn.style.display = 'flex';
+  const grp = document.getElementById('nav-priority-group');
+  if (grp) grp.style.display = 'block';
 }
 
 function getPreKPriority(f) {
@@ -2389,6 +2415,21 @@ function renderCapacityTracker() {
       ${editingCapacity ? `<input type="number" value="${seats}" min="1" max="200" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:12px;" onchange="capacityData['${s}']=parseInt(this.value);renderCapacityTracker();">` : ''}
     </div>`;
   }).join('');
+}
+
+
+function togglePreKNav() {
+  const sub = document.getElementById('prek-subnav');
+  const btn = document.getElementById('nav-priority-parent');
+  sub.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+
+function scrollToSection(id) {
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 100);
 }
 
 function toggleCapacityEdit() {
