@@ -1235,6 +1235,43 @@ tbody td{padding:11px 16px;font-size:13px}
       <div class="fgrp" style="margin:0;"><label class="flbl">In Geographic Zone?</label><select class="fsel" id="a-zone"><option value="false">No / Unknown</option><option value="true">Yes — confirmed zone resident</option></select></div>
     </div>
     <div class="fgrp"><label class="flbl">Notes</label><input class="finp" id="a-notes" placeholder="How they heard about you, special notes..."></div>
+    
+    <div id="returning-block" style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <label style="font-size:13px;font-weight:600;color:var(--navy);">Returning Applicant?</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+          <input type="checkbox" id="a-returning" onchange="toggleReturningFields(this.checked)">
+          <span style="font-size:12px;color:var(--muted);">Previously applied</span>
+        </label>
+      </div>
+      <div id="returning-fields" style="display:none;background:var(--offwhite);border-radius:8px;padding:12px;border:1px solid var(--border);">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div class="fgrp"><label class="flbl">Year Previously Applied</label>
+            <select class="finp" id="a-prev-year">
+              <option value="">Select year</option>
+              <option value="2025-2026">2025-2026</option>
+              <option value="2024-2025">2024-2025</option>
+              <option value="2023-2024">2023-2024</option>
+              <option value="2022-2023">2022-2023</option>
+            </select>
+          </div>
+          <div class="fgrp"><label class="flbl">Previous Outcome</label>
+            <select class="finp" id="a-prev-outcome">
+              <option value="">Select outcome</option>
+              <option value="waitlisted">Was Waitlisted</option>
+              <option value="offered">Was Offered Seat</option>
+              <option value="did_not_enroll">Did Not Enroll</option>
+              <option value="no_show">No Show</option>
+              <option value="withdrew">Withdrew Application</option>
+            </select>
+          </div>
+        </div>
+        <div class="fgrp"><label class="flbl">Notes from Previous Cycle</label>
+          <input class="finp" id="a-prev-notes" placeholder="e.g. Was on waitlist #3 at Golden Gate, family moved...">
+        </div>
+      </div>
+    </div>
+
     <div id="prek-add-block" style="display:none;border-top:1px solid var(--border);padding-top:14px;margin-top:4px;">
       <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;">Pre-K Eligibility</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
@@ -1576,6 +1613,10 @@ async function addFamily(){
     prek_school1:isPreK?(document.getElementById('a-prek-school1').value||null):null,
     prek_school2:isPreK?(document.getElementById('a-prek-school2').value||null):null,
     prek_school3:isPreK?(document.getElementById('a-prek-school3').value||null):null,
+    is_returning:document.getElementById('a-returning').checked,
+    prev_year:document.getElementById('a-returning').checked?(document.getElementById('a-prev-year').value||null):null,
+    prev_outcome:document.getElementById('a-returning').checked?(document.getElementById('a-prev-outcome').value||null):null,
+    prev_notes:document.getElementById('a-returning').checked?(document.getElementById('a-prev-notes').value||null):null,
   }).select('*,family_documents(*)').single();
   btn.disabled=false;btn.textContent='Add to Pipeline →';
   if(error){showToast('Error saving. Please try again.');return;}
@@ -1584,6 +1625,9 @@ async function addFamily(){
   ['a-parent','a-student','a-email','a-phone','a-notes'].forEach(id=>document.getElementById(id).value='');
   if(isPreK){
     ['a-prek-dob','a-prek-program','a-prek-school1','a-prek-school2','a-prek-school3'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('a-returning').checked=false;
+    document.getElementById('returning-fields').style.display='none';
+    ['a-prev-year','a-prev-outcome','a-prev-notes'].forEach(id=>document.getElementById(id).value='');
     ['a-prek-disability','a-prek-foster','a-prek-homeless','a-prek-assistance','a-prek-poverty'].forEach(id=>document.getElementById(id).checked=false);
   }
   render();showToast(parent+' added ✓');
@@ -2563,6 +2607,12 @@ function renderWaitlist() {
       <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:${pl.bg};color:${pl.color};">${pl.label}</span>
     </div>`;
   }).join('');
+}
+
+
+function toggleReturningFields(show) {
+  const fields = document.getElementById('returning-fields');
+  if (fields) fields.style.display = show ? 'block' : 'none';
 }
 
 function toggleCapacityEdit() {
