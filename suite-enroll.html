@@ -802,6 +802,34 @@ tbody td{padding:11px 16px;font-size:13px}
           </div>
         </div>
 
+
+        <!-- GOOGLE FORMS -->
+        <div class="card" style="margin-bottom:20px;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#4285f4,#34a853);display:flex;align-items:center;justify-content:center;font-size:18px;">📝</div>
+              <div><div style="font-size:16px;font-weight:700;color:var(--navy);">Google Forms</div><div style="font-size:12px;color:var(--muted);">Import applications from a Google Form response sheet</div></div>
+            </div>
+            <span id="gforms-badge" style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:99px;background:#f1f5f9;color:var(--muted);">Not Connected</span>
+          </div>
+          <div style="background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);padding:16px;margin-bottom:16px;">
+            <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px;">Step 1 - Paste your Google Sheet URL</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Open your Google Form, click Responses, then click the Google Sheets icon. Copy the URL and paste it below.</div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="text" id="gforms-url" class="form-input" placeholder="https://docs.google.com/spreadsheets/d/..." style="font-size:12px;padding:8px 12px;">
+              <button class="btn btn-secondary btn-sm" onclick="connectGoogleSheet()">Connect</button>
+            </div>
+          </div>
+          <div id="gforms-mapping" style="display:none;background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);padding:16px;margin-bottom:16px;">
+            <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px;">Step 2 - Match your columns to Enroll fields</div>
+            <div id="gforms-mapping-fields" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;"></div>
+            <button class="btn btn-primary" onclick="importFromGoogleSheet()">Import Families</button>
+            <div style="font-size:12px;color:var(--muted);margin-top:8px;" id="gforms-import-status"></div>
+          </div>
+          <div style="margin-top:4px;padding:12px;background:#eff6ff;border-radius:var(--radius-sm);border:1px solid #bfdbfe;">
+            <div style="font-size:12px;color:#1e40af;"><strong>Note:</strong> Make sure your Google Sheet is shared with Anyone with the link can view before connecting.</div>
+          </div>
+        </div>
         <!-- DUPLICATE DETECTION -->
         <div class="card" style="margin-bottom:20px;">
           <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
