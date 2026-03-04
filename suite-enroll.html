@@ -565,6 +565,7 @@ tbody td{padding:11px 16px;font-size:13px}
         <button class="nav-sub-btn" onclick="switchView('priority',this);loadPriorityView();scrollToSection('prek-age-card')">🎂 Age Checker</button>
         <button class="nav-sub-btn" onclick="switchView('priority',this);loadPriorityView();scrollToSection('prek-docs-card')">📄 Doc Requirements</button>
         <button class="nav-sub-btn" onclick="switchView('priority',this);loadPriorityView();scrollToSection('prek-waitlist-card')">📋 Waitlist</button>
+        <button class="nav-sub-btn" onclick="switchView('priority',this);loadPriorityView();scrollToSection('prek-returning-card')">🔄 Returning Applicants</button>
       </div>
     </div>
     <button class="nav-btn" onclick="switchView('gettingstarted',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Getting Started</span></button>
@@ -955,6 +956,22 @@ tbody td{padding:11px 16px;font-size:13px}
             <button class="btn btn-secondary btn-sm" onclick="renderWaitlist()">Refresh</button>
           </div>
           <div id="waitlist-results"><div style="font-size:13px;color:var(--muted);">Families marked as Waitlist will appear here ranked by priority.</div></div>
+        </div>
+
+
+        <!-- RETURNING APPLICANTS -->
+        <div id="prek-returning-card" class="card" style="margin-bottom:20px;display:none;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="font-size:22px;">🔄</div>
+              <div>
+                <div style="font-size:15px;font-weight:700;color:var(--navy);">Returning Applicants</div>
+                <div style="font-size:12px;color:var(--muted);">Families who previously applied and are back this cycle</div>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="renderReturningApplicants()">Refresh</button>
+          </div>
+          <div id="returning-results"><div style="font-size:13px;color:var(--muted);">No returning applicants recorded yet.</div></div>
         </div>
 
         <!-- LIVE LIST -->
@@ -2388,6 +2405,7 @@ function loadPriorityView() {
   renderBulkUpdate();
   renderAgeChecker();
   renderWaitlist();
+  renderReturningApplicants();
   const exportBtn = document.getElementById('export-elig-btn');
   if (exportBtn && isPreK) exportBtn.style.display = 'inline-flex';
   const container = document.getElementById('priority-list');
@@ -2609,6 +2627,53 @@ function renderWaitlist() {
   }).join('');
 }
 
+
+
+const PREV_OUTCOME_LABELS = {
+  waitlisted: {label:'Previously Waitlisted', color:'#d97706', bg:'#fffbeb'},
+  offered: {label:'Was Offered Seat', color:'#0369a1', bg:'#e0f2fe'},
+  did_not_enroll: {label:'Did Not Enroll', color:'#7c3aed', bg:'#f3e8ff'},
+  no_show: {label:'No Show', color:'#dc2626', bg:'#fef2f2'},
+  withdrew: {label:'Withdrew Application', color:'#6b7280', bg:'#f9fafb'}
+};
+
+function renderReturningApplicants() {
+  const card = document.getElementById('prek-returning-card');
+  const results = document.getElementById('returning-results');
+  if (!card) return;
+  card.style.display = 'block';
+
+  const returning = families.filter(f => f.is_returning);
+  if (returning.length === 0) {
+    results.innerHTML = '<div style="font-size:13px;color:var(--muted);">No returning applicants recorded yet. Check the Returning Applicant box when adding a family.</div>';
+    return;
+  }
+
+  results.innerHTML = returning.map(f => {
+    const outcome = f.prev_outcome ? PREV_OUTCOME_LABELS[f.prev_outcome] : null;
+    const p = getPreKPriority(f);
+    const pl = PRIORITY_LABELS[p];
+    return `<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:8px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <span style="font-size:14px;font-weight:700;color:var(--navy);">${f.student_name}</span>
+            <span style="font-weight:400;color:var(--muted);font-size:13px;">— ${f.parent_name}</span>
+            <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:#fef9c3;color:#92400e;">🔄 Returning</span>
+          </div>
+          <div style="font-size:12px;color:var(--muted);">${f.email||'No email'} &nbsp;|&nbsp; ${f.phone||'No phone'}</div>
+          ${f.prev_year ? `<div style="font-size:12px;color:var(--navy);margin-top:6px;"><strong>Previous cycle:</strong> ${f.prev_year}</div>` : ''}
+          ${f.prev_notes ? `<div style="font-size:12px;color:var(--muted);margin-top:4px;font-style:italic;">"${f.prev_notes}"</div>` : ''}
+          ${f.prek_school1 ? `<div style="font-size:11px;margin-top:6px;"><span style="color:var(--navy);font-weight:600;">1st: </span><span style="color:var(--muted);">${f.prek_school1}</span>${f.prek_school2?' <span style="color:var(--navy);font-weight:600;">2nd: </span><span style="color:var(--muted);">'+f.prek_school2+'</span>':''}</div>` : ''}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+          <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:${pl.bg};color:${pl.color};">${pl.label}</span>
+          ${outcome ? `<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:${outcome.bg};color:${outcome.color};">${outcome.label}</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
 
 function toggleReturningFields(show) {
   const fields = document.getElementById('returning-fields');
