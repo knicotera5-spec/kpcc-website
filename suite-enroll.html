@@ -1128,6 +1128,7 @@ async function doLogin(){
       checkWelcome();
       initWebhook();
       loadTwilioSettings();
+      if(data.school_type === "prek") activatePreK();
       loadSchoolSettings();
       updateSMSPreview();
     }
