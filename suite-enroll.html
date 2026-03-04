@@ -537,6 +537,7 @@ tbody td{padding:11px 16px;font-size:13px}
     <button class="nav-btn" onclick="switchView('settings',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></button>
     <div class="nav-grp">Help</div>
     <button class="nav-btn" onclick="switchView('integrations',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span>Integrations</span></button>
+    <button class="nav-btn" id="nav-priority" style="display:none;" onclick="switchView('priority',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><span>Priority View</span></button>
     <button class="nav-btn" onclick="switchView('gettingstarted',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Getting Started</span></button>
   </nav>
   <div class="sb-foot"><div style="display:flex;align-items:center;gap:10px;"><div class="sb-av" id="sb-av">?</div><div><div class="sb-uname" id="sb-user">—</div><div class="sb-urole">Administrator</div><button class="logout-btn" onclick="doLogout()">Sign out</button></div></div></div>
@@ -725,6 +726,19 @@ tbody td{padding:11px 16px;font-size:13px}
     </div>
 
     <!-- SETTINGS -->
+    
+    <div class="view" id="view-priority">
+      <div style="max-width:900px;">
+        <div style="margin-bottom:24px;">
+          <h2 style="font-family:var(--font-serif);font-size:26px;font-weight:700;color:var(--navy);margin-bottom:6px;">Priority View</h2>
+          <p style="font-size:14px;color:var(--muted);">Applications sorted by eligibility priority. Highest need families appear first.</p>
+        </div>
+        <div id="priority-list" style="display:flex;flex-direction:column;gap:10px;">
+          <div style="font-size:13px;color:var(--muted);">Loading...</div>
+        </div>
+      </div>
+    </div>
+
     <div class="view" id="view-settings">
       <div style="max-width:640px;">
         <div style="margin-bottom:28px;"><h2 style="font-family:var(--font-serif);font-size:26px;font-weight:700;color:var(--navy);margin-bottom:6px;">School Settings</h2><p style="font-size:14px;color:var(--muted);">Configure your school's enrollment settings and integrations.</p></div>
@@ -1234,7 +1248,7 @@ function updateNavBadges(){
   document.getElementById('nb-docs').textContent=families.filter(f=>docsStatus(f)!=='complete').length;
 }
 
-const viewMeta={dashboard:{title:'Dashboard',sub:'2025–2026 Enrollment Cycle'},applications:{title:'All Applications',sub:'View and manage every family'},documents:{title:'Document Tracker',sub:'Track required documents per family'},lottery:{title:'Lottery System',sub:'Assign numbers and run the draw'},emails:{title:'Email Templates',sub:'Customize messages for every stage'},messaging:{title:'Mass Texting',sub:'Send SMS to families'},settings:{title:'Settings',sub:'School configuration and integrations'},integrations:{title:'Integrations',sub:'Connect Cognito Forms and other tools'},gettingstarted:{title:'Getting Started',sub:'How to use Enroll'}};
+const viewMeta={dashboard:{title:'Dashboard',sub:'2025–2026 Enrollment Cycle'},applications:{title:'All Applications',sub:'View and manage every family'},documents:{title:'Document Tracker',sub:'Track required documents per family'},lottery:{title:'Lottery System',sub:'Assign numbers and run the draw'},emails:{title:'Email Templates',sub:'Customize messages for every stage'},messaging:{title:'Mass Texting',sub:'Send SMS to families'},settings:{title:'Settings',sub:'School configuration and integrations'},integrations:{title:'Integrations',sub:'Connect Cognito Forms and other tools'},priority:{title:'Priority View',sub:'Applications sorted by eligibility priority'},gettingstarted:{title:'Getting Started',sub:'How to use Enroll'}};
 
 function switchView(v,btn){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
@@ -2062,6 +2076,12 @@ const PRIORITY_LABELS = {
 
 let isPreK = false;
 
+function activatePreK() {
+  isPreK = true;
+  const btn = document.getElementById('nav-priority');
+  if (btn) btn.style.display = 'flex';
+}
+
 function getPreKPriority(f) {
   if (f.prek_disability) return 1;
   if (f.prek_foster) return 2;
@@ -2069,6 +2089,34 @@ function getPreKPriority(f) {
   if (f.prek_public_assistance) return 4;
   if (f.prek_below_poverty) return 5;
   return 6;
+}
+
+
+function loadPriorityView() {
+  const container = document.getElementById('priority-list');
+  if (!container) return;
+  const sorted = [...families].sort((a,b) => getPreKPriority(a) - getPreKPriority(b));
+  if (sorted.length === 0) {
+    container.innerHTML = '<div style="font-size:13px;color:var(--muted);">No families added yet.</div>';
+    return;
+  }
+  container.innerHTML = sorted.map(f => {
+    const p = getPreKPriority(f);
+    const pl = PRIORITY_LABELS[p];
+    return `<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px;">
+      <div style="width:10px;height:10px;border-radius:50%;background:${pl.color};flex-shrink:0;"></div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:700;color:var(--navy);">${f.student_name} <span style="font-weight:400;color:var(--muted);">— ${f.parent_name}</span></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;">Grade: ${f.grade} &nbsp;|&nbsp; ${f.email||'No email'}</div>
+        <div style="font-size:11px;margin-top:4px;">
+          ${f.prek_school1 ? '<span style="color:var(--navy);font-weight:600;">1st: </span><span style="color:var(--muted);">'+f.prek_school1+'</span>' : ''}
+          ${f.prek_school2 ? ' &nbsp;<span style="color:var(--navy);font-weight:600;">2nd: </span><span style="color:var(--muted);">'+f.prek_school2+'</span>' : ''}
+          ${f.prek_school3 ? ' &nbsp;<span style="color:var(--navy);font-weight:600;">3rd: </span><span style="color:var(--muted);">'+f.prek_school3+'</span>' : ''}
+        </div>
+      </div>
+      <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:${pl.bg};color:${pl.color};">${pl.label}</span>
+    </div>`;
+  }).join('');
 }
 
 function initPreKFields() {
