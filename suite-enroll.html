@@ -827,11 +827,51 @@ tbody td{padding:11px 16px;font-size:13px}
           </div>
         </div>
 
+
+        <!-- P1-P6 STATS -->
+        <div id="prek-stats-bar" class="card" style="margin-bottom:20px;display:none;">
+          <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px;">Application Summary</div>
+          <div id="prek-stats-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;"></div>
+        </div>
+
+        <!-- SCHOOL CAPACITY TRACKER -->
+        <div id="prek-capacity-card" class="card" style="margin-bottom:20px;display:none;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-size:14px;font-weight:700;color:var(--navy);">School Capacity Tracker</div>
+            <button class="btn btn-secondary btn-sm" onclick="toggleCapacityEdit()">Edit Seats</button>
+          </div>
+          <div id="capacity-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+
+        <!-- BULK UPDATE -->
+        <div id="prek-bulk-card" class="card" style="margin-bottom:20px;display:none;">
+          <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px;">Bulk Eligibility Update</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">Select families below to update their eligibility factors all at once.</div>
+          <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+            <select id="bulk-elig-field" class="form-input" style="font-size:12px;width:auto;">
+              <option value="">Select eligibility factor</option>
+              <option value="prek_disability">IEP / Disability</option>
+              <option value="prek_foster">Foster Care</option>
+              <option value="prek_homeless">Homeless</option>
+              <option value="prek_public_assistance">Public Assistance (TANF/SSI/SNAP)</option>
+              <option value="prek_below_poverty">Below Poverty Line</option>
+            </select>
+            <select id="bulk-elig-value" class="form-input" style="font-size:12px;width:auto;">
+              <option value="true">Mark as Yes</option>
+              <option value="false">Mark as No</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="applyBulkEligibility()">Apply to Selected</button>
+            <span id="bulk-status" style="font-size:12px;color:var(--muted);"></span>
+          </div>
+          <div id="bulk-family-list" style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;"></div>
+        </div>
+
         <!-- LIVE LIST -->
         <div class="card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
             <div style="font-size:14px;font-weight:700;color:var(--navy);">Your Applications</div>
             <button class="btn btn-secondary btn-sm" onclick="loadPriorityView()">Refresh</button>
+            <button class="btn btn-secondary btn-sm" onclick="exportEligibilityCSV()" id="export-elig-btn" style="display:none;">⬇ Export Priority List</button>
           </div>
           <div id="priority-list"><div style="font-size:13px;color:var(--muted);">No families added yet. Import from Google Forms or add manually in Applications.</div></div>
         </div>
@@ -2208,6 +2248,11 @@ function getPreKPriority(f) {
 
 
 function loadPriorityView() {
+  renderPreKStats();
+  renderCapacityTracker();
+  renderBulkUpdate();
+  const exportBtn = document.getElementById('export-elig-btn');
+  if (exportBtn && isPreK) exportBtn.style.display = 'inline-flex';
   const container = document.getElementById('priority-list');
   if (!container) return;
   const sorted = [...families].sort((a,b) => getPreKPriority(a) - getPreKPriority(b));
@@ -2246,6 +2291,150 @@ function initPreKFields() {
     }
   });
 }
+
+
+// ── PRE-K FEATURE FUNCTIONS ──
+
+function exportEligibilityCSV() {
+  const sorted = [...families].sort((a,b) => getPreKPriority(a) - getPreKPriority(b));
+  const headers = ['Priority','Priority Label','Student Name','Parent Name','Grade','Email','Phone','DOB','Program','Disability','Foster','Homeless','Public Assistance','Below Poverty','School 1','School 2','School 3'];
+  const rows = sorted.map(f => {
+    const p = getPreKPriority(f);
+    return [
+      p,
+      PRIORITY_LABELS[p].label,
+      f.student_name||'',
+      f.parent_name||'',
+      f.grade||'',
+      f.email||'',
+      f.phone||'',
+      f.prek_dob||'',
+      f.prek_program||'',
+      f.prek_disability?'Yes':'No',
+      f.prek_foster?'Yes':'No',
+      f.prek_homeless?'Yes':'No',
+      f.prek_public_assistance?'Yes':'No',
+      f.prek_below_poverty?'Yes':'No',
+      f.prek_school1||'',
+      f.prek_school2||'',
+      f.prek_school3||''
+    ].map(v => '"'+String(v).replace(/"/g,'""')+'"').join(',');
+  });
+  const csv = [headers.join(','), ...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'ccps-prek-priority-list.csv';
+  a.click();
+  showToast('Priority list exported');
+}
+
+function renderPreKStats() {
+  const statsGrid = document.getElementById('prek-stats-grid');
+  const statsBar = document.getElementById('prek-stats-bar');
+  if (!statsGrid || !isPreK) return;
+  statsBar.style.display = 'block';
+  const counts = {1:0,2:0,3:0,4:0,5:0,6:0};
+  families.forEach(f => counts[getPreKPriority(f)]++);
+  statsGrid.innerHTML = Object.entries(counts).map(([p,count]) => {
+    const pl = PRIORITY_LABELS[parseInt(p)];
+    return `<div style="text-align:center;padding:12px 8px;border-radius:10px;background:${pl.bg};border:1px solid ${pl.color}22;">
+      <div style="font-size:22px;font-weight:900;color:${pl.color};">${count}</div>
+      <div style="font-size:10px;font-weight:700;color:${pl.color};margin-top:4px;line-height:1.3;">${pl.label.replace('P'+p+' - ','')}</div>
+    </div>`;
+  }).join('');
+}
+
+let capacityData = {};
+let editingCapacity = false;
+
+function renderCapacityTracker() {
+  const card = document.getElementById('prek-capacity-card');
+  const list = document.getElementById('capacity-list');
+  if (!card || !isPreK) return;
+  card.style.display = 'block';
+
+  const schoolCounts = {};
+  families.forEach(f => {
+    [f.prek_school1, f.prek_school2, f.prek_school3].forEach((s,i) => {
+      if (s) {
+        if (!schoolCounts[s]) schoolCounts[s] = {first:0,second:0,third:0};
+        if (i===0) schoolCounts[s].first++;
+        else if (i===1) schoolCounts[s].second++;
+        else schoolCounts[s].third++;
+      }
+    });
+  });
+
+  const schools = Object.keys(schoolCounts).sort();
+  if (schools.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--muted);">No school preferences recorded yet.</div>';
+    return;
+  }
+
+  list.innerHTML = schools.map(s => {
+    const seats = capacityData[s] || 20;
+    const demand = schoolCounts[s].first;
+    const pct = Math.min(100, Math.round((demand/seats)*100));
+    const color = pct >= 100 ? '#dc2626' : pct >= 75 ? '#d97706' : '#059669';
+    return `<div style="display:flex;align-items:center;gap:12px;">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="font-size:12px;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s}</span>
+          <span style="font-size:11px;color:var(--muted);flex-shrink:0;margin-left:8px;">${demand} 1st choice / ${seats} seats</span>
+        </div>
+        <div style="height:6px;background:#e5e7eb;border-radius:99px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${color};border-radius:99px;transition:width .3s;"></div>
+        </div>
+      </div>
+      ${editingCapacity ? `<input type="number" value="${seats}" min="1" max="200" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:12px;" onchange="capacityData['${s}']=parseInt(this.value);renderCapacityTracker();">` : ''}
+    </div>`;
+  }).join('');
+}
+
+function toggleCapacityEdit() {
+  editingCapacity = !editingCapacity;
+  renderCapacityTracker();
+}
+
+function renderBulkUpdate() {
+  const card = document.getElementById('prek-bulk-card');
+  const list = document.getElementById('bulk-family-list');
+  if (!card || !isPreK) return;
+  card.style.display = 'block';
+  list.innerHTML = families.map(f => `
+    <label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;">
+      <input type="checkbox" class="bulk-check" value="${f.id}">
+      <span style="font-weight:600;color:var(--navy);">${f.student_name}</span>
+      <span style="color:var(--muted);">— ${f.parent_name}</span>
+      <span style="margin-left:auto;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:${PRIORITY_LABELS[getPreKPriority(f)].bg};color:${PRIORITY_LABELS[getPreKPriority(f)].color};">${PRIORITY_LABELS[getPreKPriority(f)].label}</span>
+    </label>
+  `).join('');
+}
+
+async function applyBulkEligibility() {
+  const field = document.getElementById('bulk-elig-field').value;
+  const value = document.getElementById('bulk-elig-value').value === 'true';
+  const selected = [...document.querySelectorAll('.bulk-check:checked')].map(c => c.value);
+  const status = document.getElementById('bulk-status');
+
+  if (!field) { showToast('Please select an eligibility factor'); return; }
+  if (selected.length === 0) { showToast('Please select at least one family'); return; }
+
+  status.textContent = 'Updating...';
+  let updated = 0;
+  for (const id of selected) {
+    await sb.from('families').update({[field]: value}).eq('id', id);
+    const f = families.find(x => x.id === id);
+    if (f) f[field] = value;
+    updated++;
+  }
+  await loadPriorityView();
+  renderPreKStats();
+  renderBulkUpdate();
+  status.textContent = updated + ' families updated';
+  showToast(updated + ' families updated successfully');
+}
+
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDetail();document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));}});
 
