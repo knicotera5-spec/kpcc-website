@@ -557,11 +557,11 @@ tbody td{padding:11px 16px;font-size:13px}
         <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div class="nav-sub" id="prek-subnav">
-        <button class="nav-sub-btn" onclick="switchView('priority',this);scrollToSection('prek-stats-bar')">📊 Application Summary</button>
-        <button class="nav-sub-btn" onclick="switchView('priority',this);scrollToSection('prek-capacity-card')">🏫 Capacity Tracker</button>
-        <button class="nav-sub-btn" onclick="switchView('priority',this);scrollToSection('prek-bulk-card')">✏️ Bulk Update</button>
+        <button class="nav-sub-btn" onclick="switchView('priority',this);loadPriorityView();scrollToSection('prek-stats-bar')">📊 Application Summary</button>
+        <button class="nav-sub-btn" onclick="switchView('priority',this);loadPriorityView();scrollToSection('prek-capacity-card')">🏫 Capacity Tracker</button>
+        <button class="nav-sub-btn" onclick="switchView('priority',this);loadPriorityView();scrollToSection('prek-bulk-card')">✏️ Bulk Update</button>
         <button class="nav-sub-btn" onclick="exportEligibilityCSV()">⬇ Export Priority List</button>
-        <button class="nav-sub-btn" onclick="switchView('priority',this)">📋 Full Priority View</button>
+        <button class="nav-sub-btn" onclick="switchView('priority',this);loadPriorityView()">📋 Full Priority View</button>
       </div>
     </div>
     <button class="nav-btn" onclick="switchView('gettingstarted',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Getting Started</span></button>
@@ -2428,8 +2428,11 @@ function togglePreKNav() {
 function scrollToSection(id) {
   setTimeout(() => {
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
-  }, 100);
+    if (el) {
+      el.style.display = 'block';
+      el.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }, 300);
 }
 
 function toggleCapacityEdit() {
