@@ -562,6 +562,9 @@ tbody td{padding:11px 16px;font-size:13px}
         <button class="nav-sub-btn" onclick="switchView('priority',this);loadPriorityView();scrollToSection('prek-bulk-card')">✏️ Bulk Update</button>
         <button class="nav-sub-btn" onclick="exportEligibilityCSV()">⬇ Export Priority List</button>
         <button class="nav-sub-btn" onclick="switchView('priority',this);loadPriorityView()">📋 Full Priority View</button>
+        <button class="nav-sub-btn" onclick="switchView('priority',this);loadPriorityView();scrollToSection('prek-age-card')">🎂 Age Checker</button>
+        <button class="nav-sub-btn" onclick="switchView('priority',this);loadPriorityView();scrollToSection('prek-docs-card')">📄 Doc Requirements</button>
+        <button class="nav-sub-btn" onclick="switchView('priority',this);loadPriorityView();scrollToSection('prek-waitlist-card')">📋 Waitlist</button>
       </div>
     </div>
     <button class="nav-btn" onclick="switchView('gettingstarted',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Getting Started</span></button>
@@ -890,6 +893,68 @@ tbody td{padding:11px 16px;font-size:13px}
             <span id="bulk-status" style="font-size:12px;color:var(--muted);"></span>
           </div>
           <div id="bulk-family-list" style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;"></div>
+        </div>
+
+
+        <!-- AGE ELIGIBILITY CHECKER -->
+        <div id="prek-age-card" class="card" style="margin-bottom:20px;display:none;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="font-size:22px;">🎂</div>
+            <div>
+              <div style="font-size:15px;font-weight:700;color:var(--navy);">Age Eligibility Checker</div>
+              <div style="font-size:12px;color:var(--muted);">Flags children who do not meet the September 1, 2026 age cutoff</div>
+            </div>
+          </div>
+          <div id="age-check-results"><div style="font-size:13px;color:var(--muted);">Add families to see age eligibility status.</div></div>
+        </div>
+
+        <!-- PROGRAM DOCUMENT CHECKLIST -->
+        <div id="prek-docs-card" class="card" style="margin-bottom:20px;display:none;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="font-size:22px;">📄</div>
+            <div>
+              <div style="font-size:15px;font-weight:700;color:var(--navy);">Required Documents by Program</div>
+              <div style="font-size:12px;color:var(--muted);">Document requirements vary by program type</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div style="background:#eff6ff;border-radius:10px;padding:14px;border:1px solid #bfdbfe;">
+              <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:10px;">Head Start (Free)</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="font-size:12px;color:var(--navy);display:flex;align-items:center;gap:6px;"><span style="color:#dc2626;font-weight:700;">*</span> Birth Certificate</div>
+                <div style="font-size:12px;color:var(--navy);display:flex;align-items:center;gap:6px;"><span style="color:#dc2626;font-weight:700;">*</span> Immunization Records</div>
+                <div style="font-size:12px;color:var(--navy);display:flex;align-items:center;gap:6px;"><span style="color:#dc2626;font-weight:700;">*</span> Proof of Income / Benefits</div>
+                <div style="font-size:12px;color:var(--navy);display:flex;align-items:center;gap:6px;"><span style="color:#dc2626;font-weight:700;">*</span> Proof of Residency</div>
+                <div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;"><span style="font-weight:700;">○</span> IEP / 504 (if applicable)</div>
+                <div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;"><span style="font-weight:700;">○</span> Foster Care Documentation</div>
+              </div>
+            </div>
+            <div style="background:#f0fdf4;border-radius:10px;padding:14px;border:1px solid #bbf7d0;">
+              <div style="font-size:13px;font-weight:700;color:#15803d;margin-bottom:10px;">VPK (All Types)</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="font-size:12px;color:var(--navy);display:flex;align-items:center;gap:6px;"><span style="color:#dc2626;font-weight:700;">*</span> Birth Certificate</div>
+                <div style="font-size:12px;color:var(--navy);display:flex;align-items:center;gap:6px;"><span style="color:#dc2626;font-weight:700;">*</span> Immunization Records</div>
+                <div style="font-size:12px;color:var(--navy);display:flex;align-items:center;gap:6px;"><span style="color:#dc2626;font-weight:700;">*</span> VPK Certificate of Eligibility</div>
+                <div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;"><span style="font-weight:700;">○</span> Proof of Residency</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:12px;font-size:11px;color:var(--muted);"><span style="color:#dc2626;font-weight:700;">*</span> Required &nbsp;&nbsp; <span style="font-weight:700;">○</span> Situational</div>
+        </div>
+
+        <!-- WAITLIST TRACKER -->
+        <div id="prek-waitlist-card" class="card" style="margin-bottom:20px;display:none;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="font-size:22px;">📋</div>
+              <div>
+                <div style="font-size:15px;font-weight:700;color:var(--navy);">Priority Waitlist</div>
+                <div style="font-size:12px;color:var(--muted);">Families on waitlist ranked by priority tier then application date</div>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="renderWaitlist()">Refresh</button>
+          </div>
+          <div id="waitlist-results"><div style="font-size:13px;color:var(--muted);">Families marked as Waitlist will appear here ranked by priority.</div></div>
         </div>
 
         <!-- LIVE LIST -->
@@ -2277,6 +2342,8 @@ function loadPriorityView() {
   renderPreKStats();
   renderCapacityTracker();
   renderBulkUpdate();
+  renderAgeChecker();
+  renderWaitlist();
   const exportBtn = document.getElementById('export-elig-btn');
   if (exportBtn && isPreK) exportBtn.style.display = 'inline-flex';
   const container = document.getElementById('priority-list');
@@ -2433,6 +2500,69 @@ function scrollToSection(id) {
       el.scrollIntoView({behavior:'smooth', block:'start'});
     }
   }, 300);
+}
+
+
+function renderAgeChecker() {
+  const card = document.getElementById('prek-age-card');
+  const results = document.getElementById('age-check-results');
+  if (!card || !isPreK) return;
+  card.style.display = 'block';
+  if (families.length === 0) {
+    results.innerHTML = '<div style="font-size:13px;color:var(--muted);">No families added yet.</div>';
+    return;
+  }
+  const sep1 = new Date('2026-09-01');
+  const checked = families.filter(f => f.prek_dob).map(f => {
+    const dob = new Date(f.prek_dob);
+    const ageMs = sep1 - dob;
+    const years = ageMs / (1000*60*60*24*365.25);
+    const eligible = years >= 3 && years < 5;
+    const tooYoung = years < 3;
+    const tooOld = years >= 5;
+    return {f, years, eligible, tooYoung, tooOld};
+  });
+  if (checked.length === 0) {
+    results.innerHTML = '<div style="font-size:13px;color:var(--muted);">No families have a date of birth recorded. Add DOB in the Applications tab.</div>';
+    return;
+  }
+  const ineligible = checked.filter(c => !c.eligible);
+  const eligible = checked.filter(c => c.eligible);
+  let html = '';
+  if (ineligible.length > 0) {
+    html += `<div style="margin-bottom:12px;padding:10px 14px;background:#fef2f2;border-radius:8px;border:1px solid #fecaca;">
+      <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px;">⚠️ ${ineligible.length} Ineligible ${ineligible.length===1?'Child':'Children'} (does not meet Sept 1, 2026 cutoff)</div>
+      ${ineligible.map(c => `<div style="font-size:12px;color:#dc2626;padding:4px 0;border-bottom:1px solid #fecaca;">${c.f.student_name} — ${c.tooYoung ? 'Too young (under 3)' : 'Too old (5 or older by Sept 1)'}</div>`).join('')}
+    </div>`;
+  }
+  html += `<div style="font-size:12px;color:#15803d;font-weight:600;">✓ ${eligible.length} eligible ${eligible.length===1?'child':'children'} verified</div>`;
+  results.innerHTML = html;
+}
+
+function renderWaitlist() {
+  const card = document.getElementById('prek-waitlist-card');
+  const results = document.getElementById('waitlist-results');
+  if (!card || !isPreK) return;
+  card.style.display = 'block';
+  const waitlisted = families
+    .filter(f => f.stage === 'waitlist')
+    .sort((a,b) => getPreKPriority(a) - getPreKPriority(b));
+  if (waitlisted.length === 0) {
+    results.innerHTML = '<div style="font-size:13px;color:var(--muted);">No families on waitlist yet. Change a family's stage to Waitlist in the Applications tab.</div>';
+    return;
+  }
+  results.innerHTML = waitlisted.map((f,i) => {
+    const p = getPreKPriority(f);
+    const pl = PRIORITY_LABELS[p];
+    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;">
+      <div style="font-size:16px;font-weight:900;color:var(--muted);width:28px;text-align:center;">#${i+1}</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:700;color:var(--navy);">${f.student_name} <span style="font-weight:400;color:var(--muted);">— ${f.parent_name}</span></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;">${f.prek_school1||'No school preference'}</div>
+      </div>
+      <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:${pl.bg};color:${pl.color};">${pl.label}</span>
+    </div>`;
+  }).join('');
 }
 
 function toggleCapacityEdit() {
