@@ -1435,12 +1435,26 @@ async function addFamily(){
     is_returning:document.getElementById('a-returning').value==='true',
     in_zone:document.getElementById('a-zone').value==='true',
     notes:document.getElementById('a-notes').value.trim()||null,
+    prek_dob:isPreK?(document.getElementById('a-prek-dob').value||null):null,
+    prek_program:isPreK?(document.getElementById('a-prek-program').value||null):null,
+    prek_disability:isPreK?document.getElementById('a-prek-disability').checked:false,
+    prek_foster:isPreK?document.getElementById('a-prek-foster').checked:false,
+    prek_homeless:isPreK?document.getElementById('a-prek-homeless').checked:false,
+    prek_public_assistance:isPreK?document.getElementById('a-prek-assistance').checked:false,
+    prek_below_poverty:isPreK?document.getElementById('a-prek-poverty').checked:false,
+    prek_school1:isPreK?(document.getElementById('a-prek-school1').value||null):null,
+    prek_school2:isPreK?(document.getElementById('a-prek-school2').value||null):null,
+    prek_school3:isPreK?(document.getElementById('a-prek-school3').value||null):null,
   }).select('*,family_documents(*)').single();
   btn.disabled=false;btn.textContent='Add to Pipeline →';
   if(error){showToast('Error saving. Please try again.');return;}
   families.unshift(data);logActivity(`${parent} added to pipeline`);
   closeModal('add-modal');
   ['a-parent','a-student','a-email','a-phone','a-notes'].forEach(id=>document.getElementById(id).value='');
+  if(isPreK){
+    ['a-prek-dob','a-prek-program','a-prek-school1','a-prek-school2','a-prek-school3'].forEach(id=>document.getElementById(id).value='');
+    ['a-prek-disability','a-prek-foster','a-prek-homeless','a-prek-assistance','a-prek-poverty'].forEach(id=>document.getElementById(id).checked=false);
+  }
   render();showToast(parent+' added ✓');
 }
 
