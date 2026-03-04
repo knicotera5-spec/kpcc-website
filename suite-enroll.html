@@ -2548,7 +2548,7 @@ function renderWaitlist() {
     .filter(f => f.stage === 'waitlist')
     .sort((a,b) => getPreKPriority(a) - getPreKPriority(b));
   if (waitlisted.length === 0) {
-    results.innerHTML = '<div style="font-size:13px;color:var(--muted);">No families on waitlist yet. Change a family's stage to Waitlist in the Applications tab.</div>';
+    results.innerHTML = "<div style='font-size:13px;color:var(--muted);'>No families on waitlist yet. Change a family stage to Waitlist in the Applications tab.</div>";
     return;
   }
   results.innerHTML = waitlisted.map((f,i) => {
