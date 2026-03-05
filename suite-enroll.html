@@ -1565,6 +1565,7 @@ function updateNavBadges(){
 const viewMeta={dashboard:{title:'Dashboard',sub:'2025–2026 Enrollment Cycle'},applications:{title:'All Applications',sub:'View and manage every family'},documents:{title:'Document Tracker',sub:'Track required documents per family'},lottery:{title:'Lottery System',sub:'Assign numbers and run the draw'},emails:{title:'Email Templates',sub:'Customize messages for every stage'},messaging:{title:'Mass Texting',sub:'Send SMS to families'},settings:{title:'Settings',sub:'School configuration and integrations'},integrations:{title:'Integrations',sub:'Connect Cognito Forms and other tools'},priority:{title:'Priority View',sub:'Applications sorted by eligibility priority'},gettingstarted:{title:'Getting Started',sub:'How to use Enroll'}};
 
 function switchView(v,btn){
+  if(v==='priority'){setTimeout(()=>loadPriorityView(),100);}
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
@@ -2430,15 +2431,16 @@ function getPreKPriority(f) {
 
 
 function loadPriorityView() {
-  loadCapacityData().then(() => renderCapacityTracker());
-  renderPreKStats();
-  renderCapacityTracker();
-  renderBulkUpdate();
-  renderAgeChecker();
-  renderWaitlist();
-  renderReturningApplicants();
-  const exportBtn = document.getElementById('export-elig-btn');
-  if (exportBtn && isPreK) exportBtn.style.display = 'inline-flex';
+  loadFamilies().then(() => {
+    loadCapacityData().then(() => renderCapacityTracker());
+    renderPreKStats();
+    renderBulkUpdate();
+    renderAgeChecker();
+    renderWaitlist();
+    renderReturningApplicants();
+    const exportBtn = document.getElementById('export-elig-btn');
+    if (exportBtn && isPreK) exportBtn.style.display = 'inline-flex';
+  });
   const container = document.getElementById('priority-list');
   if (!container) return;
   const sorted = [...families].sort((a,b) => getPreKPriority(a) - getPreKPriority(b));
