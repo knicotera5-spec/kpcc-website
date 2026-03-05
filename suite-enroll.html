@@ -2496,6 +2496,7 @@ function loadPriorityView() {
 }
 
 function initPreKFields() {
+  if (school && school.school_type === 'prek') isPreK = true;
   if (!isPreK) return;
   const block = document.getElementById('prek-add-block');
   if (block) block.style.display = 'block';
