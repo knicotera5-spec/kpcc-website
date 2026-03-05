@@ -1632,7 +1632,7 @@ async function removeFamily(){
   closeDetail();render();showToast('Family removed');
 }
 
-function openAddModal(){document.getElementById('add-modal').classList.add('open');setTimeout(()=>document.getElementById('a-parent').focus(),100);}
+function openAddModal(){document.getElementById('add-modal').classList.add('open');setTimeout(()=>{document.getElementById('a-parent').focus();initPreKFields();},100);}
 async function addFamily(){
   const parent=document.getElementById('a-parent').value.trim();
   const student=document.getElementById('a-student').value.trim();
