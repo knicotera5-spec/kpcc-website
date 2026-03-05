@@ -2533,48 +2533,107 @@ function renderPreKStats() {
 let capacityData = {};
 let editingCapacity = false;
 
+let capacityCardsData = [];
+
 function renderCapacityTracker() {
   const card = document.getElementById('prek-capacity-card');
   const list = document.getElementById('capacity-list');
+  const summary = document.getElementById('capacity-summary');
   if (!card || !isPreK) return;
   card.style.display = 'block';
 
+  // Build counts from all families
   const schoolCounts = {};
+  PREK_SCHOOLS.forEach(s => schoolCounts[s] = {first:0, second:0, third:0});
   families.forEach(f => {
-    [f.prek_school1, f.prek_school2, f.prek_school3].forEach((s,i) => {
-      if (s) {
-        if (!schoolCounts[s]) schoolCounts[s] = {first:0,second:0,third:0};
-        if (i===0) schoolCounts[s].first++;
-        else if (i===1) schoolCounts[s].second++;
-        else schoolCounts[s].third++;
-      }
-    });
+    if (f.prek_school1 && schoolCounts[f.prek_school1]) schoolCounts[f.prek_school1].first++;
+    if (f.prek_school2 && schoolCounts[f.prek_school2]) schoolCounts[f.prek_school2].second++;
+    if (f.prek_school3 && schoolCounts[f.prek_school3]) schoolCounts[f.prek_school3].third++;
   });
 
-  const schools = Object.keys(schoolCounts).sort();
-  if (schools.length === 0) {
-    list.innerHTML = '<div style="font-size:13px;color:var(--muted);">No school preferences recorded yet.</div>';
-    return;
+  // Overall summary
+  const totalSeats = PREK_SCHOOLS.reduce((sum,s) => sum + (capacityData[s]||20), 0);
+  const totalApplicants = families.length;
+  const totalFirst = families.filter(f => f.prek_school1).length;
+  const totalRemaining = Math.max(0, totalSeats - totalFirst);
+
+  if (summary) {
+    summary.innerHTML = [
+      {label:'Total Seats', value:totalSeats, color:'#0369a1', bg:'#e0f2fe'},
+      {label:'Total Applicants', value:totalApplicants, color:'#7c3aed', bg:'#f3e8ff'},
+      {label:'1st Choice Requests', value:totalFirst, color:'#d97706', bg:'#fffbeb'},
+      {label:'Seats Remaining', value:totalRemaining, color:totalRemaining<=0?'#dc2626':'#059669', bg:totalRemaining<=0?'#fef2f2':'#ecfdf5'}
+    ].map(s => `<div style="text-align:center;padding:12px 8px;border-radius:10px;background:${s.bg};border:1px solid ${s.color}22;">
+      <div style="font-size:24px;font-weight:900;color:${s.color};">${s.value}</div>
+      <div style="font-size:11px;font-weight:600;color:${s.color};margin-top:4px;">${s.label}</div>
+    </div>`).join('');
   }
 
-  list.innerHTML = schools.map(s => {
+  // Store for filtering
+  capacityCardsData = PREK_SCHOOLS.map(s => {
     const seats = capacityData[s] || 20;
-    const demand = schoolCounts[s].first;
-    const pct = Math.min(100, Math.round((demand/seats)*100));
+    const counts = schoolCounts[s];
+    const totalDemand = counts.first + counts.second + counts.third;
+    const pct = Math.min(100, Math.round((counts.first/seats)*100));
     const color = pct >= 100 ? '#dc2626' : pct >= 75 ? '#d97706' : '#059669';
-    return `<div style="display:flex;align-items:center;gap:12px;">
-      <div style="flex:1;min-width:0;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-          <span style="font-size:12px;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s}</span>
-          <span style="font-size:11px;color:var(--muted);flex-shrink:0;margin-left:8px;">${demand} 1st choice / ${seats} seats</span>
+    const status = pct >= 100 ? 'Full' : pct >= 75 ? 'Nearly Full' : 'Available';
+    const statusBg = pct >= 100 ? '#fef2f2' : pct >= 75 ? '#fffbeb' : '#ecfdf5';
+    return {name:s, seats, counts, totalDemand, pct, color, status, statusBg};
+  });
+
+  renderCapacityCards(capacityCardsData);
+}
+
+function renderCapacityCards(data) {
+  const list = document.getElementById('capacity-list');
+  if (!list) return;
+  if (data.every(d => d.totalDemand === 0 && !editingCapacity)) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--muted);grid-column:1/-1;">No school preferences recorded yet. Add families with school preferences to see demand.</div>';
+    return;
+  }
+  const visible = editingCapacity ? data : data.filter(d => d.totalDemand > 0);
+  if (visible.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--muted);grid-column:1/-1;">No demand recorded yet.</div>';
+    return;
+  }
+  list.innerHTML = visible.map(d => `
+    <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-size:13px;font-weight:700;color:var(--navy);line-height:1.3;flex:1;padding-right:8px;">${d.name}</div>
+        <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${d.statusBg};color:${d.color};flex-shrink:0;">${d.status}</span>
+      </div>
+      <div style="height:6px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-bottom:10px;">
+        <div style="height:100%;width:${d.pct}%;background:${d.color};border-radius:99px;transition:width .3s;"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:${editingCapacity?'10px':'0'};">
+        <div style="text-align:center;padding:6px;background:#f9fafb;border-radius:6px;">
+          <div style="font-size:16px;font-weight:800;color:var(--orange);">${d.counts.first}</div>
+          <div style="font-size:10px;color:var(--muted);">1st Choice</div>
         </div>
-        <div style="height:6px;background:#e5e7eb;border-radius:99px;overflow:hidden;">
-          <div style="height:100%;width:${pct}%;background:${color};border-radius:99px;transition:width .3s;"></div>
+        <div style="text-align:center;padding:6px;background:#f9fafb;border-radius:6px;">
+          <div style="font-size:16px;font-weight:800;color:var(--navy);">${d.counts.second}</div>
+          <div style="font-size:10px;color:var(--muted);">2nd Choice</div>
+        </div>
+        <div style="text-align:center;padding:6px;background:#f9fafb;border-radius:6px;">
+          <div style="font-size:16px;font-weight:800;color:var(--muted);">${d.counts.third}</div>
+          <div style="font-size:10px;color:var(--muted);">3rd Choice</div>
         </div>
       </div>
-      ${editingCapacity ? `<input type="number" value="${seats}" min="1" max="200" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:12px;" onchange="capacityData['${s}']=parseInt(this.value);renderCapacityTracker();">` : ''}
-    </div>`;
-  }).join('');
+      ${editingCapacity ? `
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
+        <span style="font-size:12px;color:var(--muted);">Available seats:</span>
+        <input type="number" value="${d.seats}" min="1" max="500" 
+          style="width:70px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:700;text-align:center;"
+          onchange="capacityData['${d.name}']=parseInt(this.value)||20;renderCapacityTracker();">
+      </div>` : `<div style="font-size:11px;color:var(--muted);margin-top:8px;">${d.counts.first} of ${d.seats} seats requested</div>`}
+    </div>
+  `).join('');
+}
+
+function filterCapacityCards() {
+  const q = document.getElementById('capacity-search').value.toLowerCase();
+  const filtered = capacityCardsData.filter(d => d.name.toLowerCase().includes(q));
+  renderCapacityCards(filtered);
 }
 
 
