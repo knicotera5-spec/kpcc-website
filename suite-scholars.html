@@ -190,6 +190,28 @@ select.finp{background:#fff;}
 .rc-footer{display:flex;justify-content:space-between;padding-top:16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);}
 .rc-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;}
 @media print{aside,.topbar,.rc-actions,#page-reportcards>.card{display:none!important;}.main{margin-left:0!important;padding:0!important;}.report-card{box-shadow:none!important;border:none!important;page-break-after:always;max-width:100%;}body{background:white;}}
+/* SPECIAL PROGRAMS */
+.sp-tab{padding:10px 18px;font-size:13px;font-weight:600;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;font-family:var(--font);}
+.sp-tab:hover{color:var(--navy);}
+.sp-tab.active{color:var(--navy);border-bottom-color:var(--orange);}
+.sp-goal-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;}
+.sp-goal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.sp-goal-area{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:99px;background:#e0f2fe;color:#0369a1;}
+.progress-bar{background:var(--border);border-radius:99px;height:8px;margin-top:8px;}
+.progress-fill{height:8px;border-radius:99px;transition:width .3s;}
+.sp-service-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;}
+.sp-log-item{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;}
+.sp-log-item:last-child{border-bottom:none;}
+.sp-acc-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);}
+.sp-acc-item:last-child{border-bottom:none;}
+.sp-doc-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);}
+.sp-doc-item:last-child{border-bottom:none;}
+.compliance-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(220,38,38,.1);}
+.compliance-item:last-child{border-bottom:none;}
+.days-badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;}
+.days-overdue{background:#fef2f2;color:#dc2626;}
+.days-soon{background:#fef9c3;color:#92400e;}
+.days-ok{background:#dcfce7;color:#16a34a;}
 </style>
 </head>
 <body>
@@ -229,6 +251,8 @@ select.finp{background:#fff;}
         <button class="nav-btn" onclick="showPage('gradebook',this)"><span class="icon">📊</span>Gradebook</button>
         <button class="nav-btn" onclick="showPage('courses',this)"><span class="icon">📚</span>Courses</button>
         <div class="nav-divider"></div>
+        <div class="nav-label">Support</div>
+        <button class="nav-btn" onclick="showPage('specialprograms',this)"><span class="icon">🧩</span>Special Programs</button>
         <div class="nav-label">Reports</div>
         <button class="nav-btn" onclick="showPage('reportcards',this)"><span class="icon">📄</span>Report Cards</button>
         <button class="nav-btn" onclick="showPage('reports',this)"><span class="icon">📈</span>Data Reports</button>
@@ -424,6 +448,130 @@ select.finp{background:#fff;}
   </div>
 </div>
 
+<!-- SPECIAL PROGRAMS PAGE (injected into main via showPage) -->
+<template id="tpl-specialprograms">
+  <!-- CASELOAD DASHBOARD -->
+  <div id="sp-caseload-view">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+      <div class="stat-card"><div class="stat-val" id="sp-stat-total">—</div><div class="stat-lbl">Total Cases</div></div>
+      <div class="stat-card"><div class="stat-val" id="sp-stat-iep" style="color:var(--teal);">—</div><div class="stat-lbl">IEP Students</div></div>
+      <div class="stat-card"><div class="stat-val" id="sp-stat-504" style="color:#7c3aed;">—</div><div class="stat-lbl">504 Students</div></div>
+      <div class="stat-card"><div class="stat-val" id="sp-stat-overdue" style="color:var(--danger);">—</div><div class="stat-lbl">Reviews Overdue</div></div>
+    </div>
+
+    <!-- Compliance Alert Banner -->
+    <div id="sp-compliance-banner" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:16px;margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:700;color:var(--danger);margin-bottom:8px;">⚠ Upcoming & Overdue Reviews</div>
+      <div id="sp-compliance-list" style="font-size:13px;"></div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <select class="finp" id="sp-filter-type" style="width:160px;" onchange="filterCaseload()">
+          <option value="all">All Types</option>
+          <option value="IEP">IEP Only</option>
+          <option value="504">504 Only</option>
+          <option value="GIFTED">Gifted</option>
+          <option value="ELL">ELL</option>
+          <option value="OTHER">Other</option>
+        </select>
+        <select class="finp" id="sp-filter-status" style="width:160px;" onchange="filterCaseload()">
+          <option value="active">Active</option>
+          <option value="all">All Statuses</option>
+          <option value="expired">Expired</option>
+          <option value="exited">Exited</option>
+        </select>
+        <input class="finp" id="sp-search" placeholder="Search student..." style="width:200px;" oninput="filterCaseload()">
+      </div>
+      <button class="btn btn-primary" onclick="openNewProgramModal()">+ Add Case</button>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table class="tbl">
+        <thead><tr><th>Student</th><th>Grade</th><th>Program</th><th>Coordinator</th><th>Annual Review</th><th>Re-eval Due</th><th>Status</th><th></th></tr></thead>
+        <tbody id="sp-caseload-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CASE DETAIL VIEW -->
+  <div id="sp-detail-view" style="display:none;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <button class="btn btn-secondary btn-sm" onclick="backToCaseload()">← Back to Caseload</button>
+      <div style="font-family:var(--font-serif);font-size:22px;color:var(--navy);" id="sp-detail-name"></div>
+      <span class="badge" id="sp-detail-type-badge"></span>
+      <span class="badge" id="sp-detail-status-badge"></span>
+    </div>
+
+    <!-- Tabs -->
+    <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:24px;">
+      <button class="sp-tab active" onclick="switchSpTab('overview',this)">Overview</button>
+      <button class="sp-tab" onclick="switchSpTab('goals',this)">Goals</button>
+      <button class="sp-tab" onclick="switchSpTab('services',this)">Services & Logs</button>
+      <button class="sp-tab" onclick="switchSpTab('accommodations',this)">Accommodations</button>
+      <button class="sp-tab" onclick="switchSpTab('documents',this)">Documents</button>
+    </div>
+
+    <!-- OVERVIEW TAB -->
+    <div id="sp-tab-overview" class="sp-tab-content">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div class="card">
+          <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:16px;">Program Details</div>
+          <div style="display:grid;gap:12px;">
+            <div class="fgrp"><label class="flbl">Program Type</label><select class="finp" id="sp-edit-type"><option value="IEP">IEP</option><option value="504">504</option><option value="GIFTED">Gifted</option><option value="ELL">ELL</option><option value="OTHER">Other</option></select></div>
+            <div class="fgrp"><label class="flbl">Coordinator</label><input class="finp" id="sp-edit-coordinator" placeholder="Case coordinator name"></div>
+            <div class="fgrp"><label class="flbl">Status</label><select class="finp" id="sp-edit-status"><option value="active">Active</option><option value="expired">Expired</option><option value="exited">Exited</option></select></div>
+            <div class="fgrp"><label class="flbl">Eligibility Date</label><input type="date" class="finp" id="sp-edit-eligibility"></div>
+            <div class="fgrp"><label class="flbl">Annual Review Date</label><input type="date" class="finp" id="sp-edit-review"></div>
+            <div class="fgrp"><label class="flbl">Re-evaluation Date</label><input type="date" class="finp" id="sp-edit-reeval"></div>
+            <div class="fgrp"><label class="flbl">Notes</label><textarea class="finp" id="sp-edit-notes" rows="3" placeholder="General case notes..."></textarea></div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px;">
+            <button class="btn btn-primary" onclick="saveProgram()">Save Changes</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteProgram()">Delete Case</button>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:16px;">Compliance Timeline</div>
+          <div id="sp-compliance-timeline"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOALS TAB -->
+    <div id="sp-tab-goals" class="sp-tab-content" style="display:none;">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <button class="btn btn-primary" onclick="openGoalModal()">+ Add Goal</button>
+      </div>
+      <div id="sp-goals-list"></div>
+    </div>
+
+    <!-- SERVICES TAB -->
+    <div id="sp-tab-services" class="sp-tab-content" style="display:none;">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <button class="btn btn-primary" onclick="openServiceModal()">+ Add Service</button>
+      </div>
+      <div id="sp-services-list"></div>
+    </div>
+
+    <!-- ACCOMMODATIONS TAB -->
+    <div id="sp-tab-accommodations" class="sp-tab-content" style="display:none;">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <button class="btn btn-primary" onclick="openAccommodationModal()">+ Add Accommodation</button>
+      </div>
+      <div id="sp-accommodations-list"></div>
+    </div>
+
+    <!-- DOCUMENTS TAB -->
+    <div id="sp-tab-documents" class="sp-tab-content" style="display:none;">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <button class="btn btn-primary" onclick="openDocModal()">+ Add Document</button>
+      </div>
+      <div id="sp-documents-list"></div>
+    </div>
+  </div>
+</template>
+
 <!-- GRADING PERIOD MODAL -->
 <div class="modal-overlay" id="period-modal">
   <div class="modal">
@@ -477,6 +625,137 @@ select.finp{background:#fff;}
     <div class="modal-foot">
       <button class="btn btn-secondary" onclick="closeModal('comment-modal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveComment()">Save Comment</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW PROGRAM MODAL -->
+<div class="modal-overlay" id="new-program-modal">
+  <div class="modal">
+    <div class="modal-head"><h2>Add Case</h2><button class="modal-close" onclick="closeModal('new-program-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row form-row-2" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="fgrp"><label class="flbl">Student *</label><select class="finp" id="np-student"></select></div>
+        <div class="fgrp"><label class="flbl">Program Type *</label>
+          <select class="finp" id="np-type"><option value="IEP">IEP</option><option value="504">504</option><option value="GIFTED">Gifted</option><option value="ELL">ELL</option><option value="OTHER">Other</option></select>
+        </div>
+        <div class="fgrp"><label class="flbl">Coordinator</label><input class="finp" id="np-coordinator" placeholder="Case coordinator"></div>
+        <div class="fgrp"><label class="flbl">Eligibility Date</label><input type="date" class="finp" id="np-eligibility"></div>
+        <div class="fgrp"><label class="flbl">Annual Review Date</label><input type="date" class="finp" id="np-review"></div>
+        <div class="fgrp"><label class="flbl">Re-evaluation Date</label><input type="date" class="finp" id="np-reeval"></div>
+      </div>
+      <div class="fgrp" style="margin-top:14px;"><label class="flbl">Notes</label><textarea class="finp" id="np-notes" rows="3" placeholder="Initial case notes..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('new-program-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewProgram()">Create Case</button>
+    </div>
+  </div>
+</div>
+
+<!-- GOAL MODAL -->
+<div class="modal-overlay" id="goal-modal">
+  <div class="modal">
+    <div class="modal-head"><h2 id="goal-modal-title">Add Goal</h2><button class="modal-close" onclick="closeModal('goal-modal')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div class="fgrp"><label class="flbl">Area</label>
+          <select class="finp" id="g-area"><option value="Reading">Reading</option><option value="Math">Math</option><option value="Writing">Writing</option><option value="Behavior">Behavior</option><option value="Communication">Communication</option><option value="Social-Emotional">Social-Emotional</option><option value="Motor Skills">Motor Skills</option><option value="Other">Other</option></select>
+        </div>
+        <div class="fgrp"><label class="flbl">Progress</label>
+          <select class="finp" id="g-progress"><option value="not_started">Not Started</option><option value="minimal">Minimal</option><option value="some">Some Progress</option><option value="substantial">Substantial</option><option value="achieved">Achieved</option></select>
+        </div>
+      </div>
+      <div class="fgrp" style="margin-bottom:14px;"><label class="flbl">Goal *</label><textarea class="finp" id="g-text" rows="3" placeholder="By [date], student will..."></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="fgrp"><label class="flbl">Baseline</label><input class="finp" id="g-baseline" placeholder="Current performance level"></div>
+        <div class="fgrp"><label class="flbl">Target</label><input class="finp" id="g-target" placeholder="Measurable target"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('goal-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveGoal()">Save Goal</button>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICE MODAL -->
+<div class="modal-overlay" id="service-modal">
+  <div class="modal">
+    <div class="modal-head"><h2>Add Service</h2><button class="modal-close" onclick="closeModal('service-modal')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="fgrp"><label class="flbl">Service Type *</label>
+          <select class="finp" id="svc-type"><option value="Speech Therapy">Speech Therapy</option><option value="Occupational Therapy">Occupational Therapy</option><option value="Physical Therapy">Physical Therapy</option><option value="Counseling">Counseling</option><option value="Reading Support">Reading Support</option><option value="Math Support">Math Support</option><option value="Behavioral Support">Behavioral Support</option><option value="Other">Other</option></select>
+        </div>
+        <div class="fgrp"><label class="flbl">Provider</label><input class="finp" id="svc-provider" placeholder="Provider name"></div>
+        <div class="fgrp"><label class="flbl">Frequency</label><input class="finp" id="svc-frequency" placeholder="e.g. 2x per week, 30 min"></div>
+        <div class="fgrp"><label class="flbl">Setting</label>
+          <select class="finp" id="svc-setting"><option value="Pull-out">Pull-out</option><option value="Push-in">Push-in</option><option value="Self-contained">Self-contained</option><option value="Remote">Remote</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('service-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveService()">Add Service</button>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICE LOG MODAL -->
+<div class="modal-overlay" id="log-modal">
+  <div class="modal">
+    <div class="modal-head"><h2>Log Session</h2><button class="modal-close" onclick="closeModal('log-modal')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div class="fgrp"><label class="flbl">Session Date</label><input type="date" class="finp" id="log-date"></div>
+        <div class="fgrp"><label class="flbl">Duration (minutes)</label><input type="number" class="finp" id="log-duration" placeholder="30"></div>
+        <div class="fgrp"><label class="flbl">Logged By</label><input class="finp" id="log-by" placeholder="Staff name"></div>
+      </div>
+      <div class="fgrp"><label class="flbl">Session Notes</label><textarea class="finp" id="log-notes" rows="4" placeholder="Student response, progress toward goals, next steps..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('log-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveServiceLog()">Save Log</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACCOMMODATION MODAL -->
+<div class="modal-overlay" id="accommodation-modal">
+  <div class="modal">
+    <div class="modal-head"><h2>Add Accommodation</h2><button class="modal-close" onclick="closeModal('accommodation-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="fgrp" style="margin-bottom:14px;"><label class="flbl">Category</label>
+        <select class="finp" id="acc-category"><option value="instruction">Instruction</option><option value="assessment">Assessment</option><option value="environment">Environment</option><option value="behavior">Behavior Support</option></select>
+      </div>
+      <div class="fgrp"><label class="flbl">Accommodation *</label><textarea class="finp" id="acc-text" rows="3" placeholder="e.g. Extended time on assessments (1.5x), preferential seating near teacher..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('accommodation-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAccommodation()">Add Accommodation</button>
+    </div>
+  </div>
+</div>
+
+<!-- DOCUMENT MODAL -->
+<div class="modal-overlay" id="doc-modal">
+  <div class="modal">
+    <div class="modal-head"><h2>Add Document</h2><button class="modal-close" onclick="closeModal('doc-modal')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div class="fgrp"><label class="flbl">Document Name *</label><input class="finp" id="doc-name" placeholder="e.g. 2025 IEP Annual Review"></div>
+        <div class="fgrp"><label class="flbl">Document Type</label>
+          <select class="finp" id="doc-type"><option value="IEP">IEP</option><option value="504 Plan">504 Plan</option><option value="Evaluation">Evaluation</option><option value="Progress Report">Progress Report</option><option value="Consent">Consent Form</option><option value="Other">Other</option></select>
+        </div>
+      </div>
+      <div class="fgrp" style="margin-bottom:14px;"><label class="flbl">Document URL / Link</label><input class="finp" id="doc-url" placeholder="Paste Google Drive or storage link..."></div>
+      <div class="fgrp"><label class="flbl">Uploaded By</label><input class="finp" id="doc-by" placeholder="Staff name"></div>
+      <div style="background:var(--offwhite);border-radius:10px;padding:14px;margin-top:14px;font-size:12px;color:var(--muted);">💡 Tip: Upload your file to Google Drive, set sharing to "Anyone with link can view," then paste the link above.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('doc-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveDocument()">Save Document</button>
     </div>
   </div>
 </div>
@@ -667,14 +946,34 @@ function populateCourseSelects() {
 function showPage(page, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+  // Special Programs uses a template injection
+  if (page === 'specialprograms') {
+    let spPage = document.getElementById('page-specialprograms');
+    if (!spPage) {
+      spPage = document.createElement('div');
+      spPage.className = 'page';
+      spPage.id = 'page-specialprograms';
+      const tpl = document.getElementById('tpl-specialprograms');
+      spPage.innerHTML = tpl.innerHTML;
+      document.querySelector('.main').appendChild(spPage);
+    }
+    spPage.classList.add('active');
+    if (btn) btn.classList.add('active');
+    document.getElementById('page-title').textContent = 'Special Programs';
+    loadSpecialPrograms();
+    return;
+  }
+
   document.getElementById('page-' + page).classList.add('active');
   if (btn) btn.classList.add('active');
-  const titles = {dashboard:'Dashboard',students:'Students',attendance:'Attendance',gradebook:'Gradebook',courses:'Courses',reports:'Reports'};
+  const titles = {dashboard:'Dashboard',students:'Students',attendance:'Attendance',gradebook:'Gradebook',courses:'Courses',reports:'Data Reports',reportcards:'Report Cards'};
   document.getElementById('page-title').textContent = titles[page] || page;
   if (page === 'attendance') { const d = document.getElementById('att-date'); if (d && !d.value) d.value = new Date().toISOString().split('T')[0]; loadAttendanceGrid(); }
   if (page === 'courses') renderCourses();
   if (page === 'students') renderStudents();
   if (page === 'gradebook') loadGradebook();
+  if (page === 'reportcards') initReportCards();
 }
 
 // DASHBOARD
@@ -1143,6 +1442,305 @@ async function savePeriodSettings(){
   await sb.from('school_settings').upsert({school_id:school.id,setting_key:'grading_periods',setting_value:JSON.stringify(gradingPeriods)},{onConflict:'school_id,setting_key'});
   populatePeriodSelect();closeModal('period-modal');showToast('Grading periods saved');
 }
+
+// ── SPECIAL PROGRAMS ──
+let spPrograms=[],currentProgram=null,currentServiceId=null;
+
+async function loadSpecialPrograms(){
+  const{data}=await sb.from('special_programs').select('*,students(first_name,last_name,grade)').eq('school_id',school.id).order('created_at',{ascending:false});
+  spPrograms=data||[];
+  renderCaseload();
+  renderComplianceBanner();
+  updateSpStats();
+}
+
+function updateSpStats(){
+  const el=id=>document.getElementById(id);
+  if(!el('sp-stat-total'))return;
+  const active=spPrograms.filter(p=>p.status==='active');
+  el('sp-stat-total').textContent=active.length;
+  el('sp-stat-iep').textContent=active.filter(p=>p.program_type==='IEP').length;
+  el('sp-stat-504').textContent=active.filter(p=>p.program_type==='504').length;
+  const today=new Date();today.setHours(0,0,0,0);
+  el('sp-stat-overdue').textContent=active.filter(p=>p.annual_review_date&&new Date(p.annual_review_date)<today).length;
+}
+
+function renderComplianceBanner(){
+  const banner=document.getElementById('sp-compliance-banner');
+  const list=document.getElementById('sp-compliance-list');
+  if(!banner||!list)return;
+  const today=new Date();today.setHours(0,0,0,0);
+  const alerts=[];
+  spPrograms.filter(p=>p.status==='active').forEach(p=>{
+    const name=`${p.students?.first_name} ${p.students?.last_name}`;
+    if(p.annual_review_date){
+      const d=new Date(p.annual_review_date),diff=Math.round((d-today)/(1000*60*60*24));
+      if(diff<=30)alerts.push({name,type:p.program_type,label:'Annual Review',diff,id:p.id});
+    }
+    if(p.reevaluation_date){
+      const d=new Date(p.reevaluation_date),diff=Math.round((d-today)/(1000*60*60*24));
+      if(diff<=30)alerts.push({name,type:p.program_type,label:'Re-evaluation',diff,id:p.id});
+    }
+  });
+  if(!alerts.length){banner.style.display='none';return;}
+  banner.style.display='block';
+  list.innerHTML=alerts.sort((a,b)=>a.diff-b.diff).map(a=>`
+    <div class="compliance-item">
+      <div><span style="font-weight:700;">${a.name}</span> <span class="badge badge-purple" style="margin:0 6px;">${a.type}</span>${a.label}</div>
+      <span class="days-badge ${a.diff<0?'days-overdue':a.diff<=7?'days-soon':'days-ok'}">${a.diff<0?Math.abs(a.diff)+' days overdue':a.diff===0?'Due today':a.diff+' days left'}</span>
+    </div>`).join('');
+}
+
+function renderCaseload(list){
+  const data=list||spPrograms;
+  const tbody=document.getElementById('sp-caseload-tbody');
+  if(!tbody)return;
+  if(!data.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);">No cases yet. Click + Add Case.</td></tr>';return;}
+  const today=new Date();today.setHours(0,0,0,0);
+  const typeColors={'IEP':'badge-teal','504':'badge-purple','GIFTED':'badge-yellow','ELL':'badge-blue','OTHER':'badge-gray'};
+  tbody.innerHTML=data.map(p=>{
+    const reviewDate=p.annual_review_date?new Date(p.annual_review_date):null;
+    const reviewDiff=reviewDate?Math.round((reviewDate-today)/(1000*60*60*24)):null;
+    const reevalDate=p.reevaluation_date?new Date(p.reevaluation_date):null;
+    const reevalDiff=reevalDate?Math.round((reevalDate-today)/(1000*60*60*24)):null;
+    return `<tr style="cursor:pointer;" onclick="openCaseDetail('${p.id}')">
+      <td><div style="font-weight:700;color:var(--navy);">${p.students?.last_name}, ${p.students?.first_name}</div></td>
+      <td><span class="badge badge-blue">${p.students?.grade||'—'}</span></td>
+      <td><span class="badge ${typeColors[p.program_type]||'badge-gray'}">${p.program_type}</span></td>
+      <td style="font-size:12px;">${p.coordinator||'—'}</td>
+      <td>${reviewDate?`<span class="days-badge ${reviewDiff<0?'days-overdue':reviewDiff<=30?'days-soon':'days-ok'}">${reviewDiff<0?Math.abs(reviewDiff)+'d overdue':reviewDiff+'d left'}</span>`:'—'}</td>
+      <td>${reevalDate?`<span class="days-badge ${reevalDiff<0?'days-overdue':reevalDiff<=30?'days-soon':'days-ok'}">${reevalDiff<0?Math.abs(reevalDiff)+'d overdue':reevalDiff+'d left'}</span>`:'—'}</td>
+      <td><span class="badge ${p.status==='active'?'badge-green':p.status==='expired'?'badge-red':'badge-gray'}">${p.status}</span></td>
+      <td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openCaseDetail('${p.id}')">Open →</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterCaseload(){
+  const type=document.getElementById('sp-filter-type')?.value,status=document.getElementById('sp-filter-status')?.value,q=document.getElementById('sp-search')?.value?.toLowerCase()||'';
+  let filtered=spPrograms;
+  if(type!=='all')filtered=filtered.filter(p=>p.program_type===type);
+  if(status!=='all')filtered=filtered.filter(p=>p.status===status);
+  if(q)filtered=filtered.filter(p=>`${p.students?.first_name} ${p.students?.last_name}`.toLowerCase().includes(q));
+  renderCaseload(filtered);
+}
+
+function openNewProgramModal(){
+  const sel=document.getElementById('np-student');
+  sel.innerHTML=students.filter(s=>s.enrollment_status==='active').map(s=>`<option value="${s.id}">${s.last_name}, ${s.first_name}</option>`).join('');
+  document.getElementById('new-program-modal').classList.add('open');
+}
+
+async function saveNewProgram(){
+  const sid=document.getElementById('np-student').value;
+  if(!sid){showToast('Please select a student');return;}
+  await sb.from('special_programs').insert({
+    school_id:school.id,student_id:sid,program_type:document.getElementById('np-type').value,
+    coordinator:document.getElementById('np-coordinator').value||null,
+    eligibility_date:document.getElementById('np-eligibility').value||null,
+    annual_review_date:document.getElementById('np-review').value||null,
+    reevaluation_date:document.getElementById('np-reeval').value||null,
+    notes:document.getElementById('np-notes').value||null
+  });
+  closeModal('new-program-modal');await loadSpecialPrograms();showToast('Case created');
+}
+
+async function openCaseDetail(programId){
+  currentProgram=spPrograms.find(p=>p.id===programId);
+  if(!currentProgram)return;
+  document.getElementById('sp-caseload-view').style.display='none';
+  document.getElementById('sp-detail-view').style.display='block';
+  const name=`${currentProgram.students?.first_name} ${currentProgram.students?.last_name}`;
+  document.getElementById('sp-detail-name').textContent=name;
+  const typeColors={'IEP':'badge-teal','504':'badge-purple','GIFTED':'badge-yellow','ELL':'badge-blue','OTHER':'badge-gray'};
+  document.getElementById('sp-detail-type-badge').className=`badge ${typeColors[currentProgram.program_type]||'badge-gray'}`;
+  document.getElementById('sp-detail-type-badge').textContent=currentProgram.program_type;
+  document.getElementById('sp-detail-status-badge').className=`badge ${currentProgram.status==='active'?'badge-green':'badge-gray'}`;
+  document.getElementById('sp-detail-status-badge').textContent=currentProgram.status;
+  // Populate form
+  document.getElementById('sp-edit-type').value=currentProgram.program_type;
+  document.getElementById('sp-edit-coordinator').value=currentProgram.coordinator||'';
+  document.getElementById('sp-edit-status').value=currentProgram.status;
+  document.getElementById('sp-edit-eligibility').value=currentProgram.eligibility_date||'';
+  document.getElementById('sp-edit-review').value=currentProgram.annual_review_date||'';
+  document.getElementById('sp-edit-reeval').value=currentProgram.reevaluation_date||'';
+  document.getElementById('sp-edit-notes').value=currentProgram.notes||'';
+  renderComplianceTimeline();
+  switchSpTab('overview',document.querySelector('.sp-tab.active'));
+}
+
+function backToCaseload(){
+  document.getElementById('sp-detail-view').style.display='none';
+  document.getElementById('sp-caseload-view').style.display='block';
+  currentProgram=null;
+}
+
+function renderComplianceTimeline(){
+  const el=document.getElementById('sp-compliance-timeline');if(!el)return;
+  const today=new Date();today.setHours(0,0,0,0);
+  const dates=[
+    {label:'Eligibility Date',date:currentProgram.eligibility_date,icon:'📋'},
+    {label:'Annual Review',date:currentProgram.annual_review_date,icon:'📅'},
+    {label:'Re-evaluation',date:currentProgram.reevaluation_date,icon:'🔄'}
+  ].filter(d=>d.date);
+  if(!dates.length){el.innerHTML='<div style="color:var(--muted);font-size:13px;">No compliance dates set.</div>';return;}
+  el.innerHTML=dates.map(d=>{
+    const dt=new Date(d.date),diff=Math.round((dt-today)/(1000*60*60*24));
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div><span style="margin-right:8px;">${d.icon}</span><span style="font-size:13px;font-weight:600;">${d.label}</span><div style="font-size:11px;color:var(--muted);margin-top:2px;">${d.date}</div></div>
+      <span class="days-badge ${diff<0?'days-overdue':diff<=30?'days-soon':'days-ok'}">${diff<0?Math.abs(diff)+' days overdue':diff===0?'Due today':diff+' days left'}</span>
+    </div>`;
+  }).join('');
+}
+
+async function saveProgram(){
+  if(!currentProgram)return;
+  await sb.from('special_programs').update({
+    program_type:document.getElementById('sp-edit-type').value,
+    coordinator:document.getElementById('sp-edit-coordinator').value||null,
+    status:document.getElementById('sp-edit-status').value,
+    eligibility_date:document.getElementById('sp-edit-eligibility').value||null,
+    annual_review_date:document.getElementById('sp-edit-review').value||null,
+    reevaluation_date:document.getElementById('sp-edit-reeval').value||null,
+    notes:document.getElementById('sp-edit-notes').value||null
+  }).eq('id',currentProgram.id);
+  await loadSpecialPrograms();currentProgram=spPrograms.find(p=>p.id===currentProgram.id);
+  renderComplianceTimeline();showToast('Case saved');
+}
+
+async function deleteProgram(){
+  if(!currentProgram||!confirm('Delete this case? All goals, services, and logs will be removed.'))return;
+  await sb.from('special_programs').delete().eq('id',currentProgram.id);
+  backToCaseload();await loadSpecialPrograms();showToast('Case deleted');
+}
+
+function switchSpTab(tab,btn){
+  document.querySelectorAll('.sp-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sp-tab-content').forEach(c=>c.style.display='none');
+  if(btn)btn.classList.add('active');
+  document.getElementById('sp-tab-'+tab).style.display='block';
+  if(tab==='goals')loadGoals();
+  if(tab==='services')loadServices();
+  if(tab==='accommodations')loadAccommodations();
+  if(tab==='documents')loadDocuments();
+}
+
+// GOALS
+const PROGRESS_COLORS={not_started:'#9ca3af',minimal:'#f97316',some:'#eab308',substantial:'#3b82f6',achieved:'#16a34a'};
+const PROGRESS_PCT={not_started:0,minimal:25,some:50,substantial:75,achieved:100};
+
+async function loadGoals(){
+  const{data}=await sb.from('sp_goals').select('*').eq('program_id',currentProgram.id).order('created_at');
+  const el=document.getElementById('sp-goals-list');
+  if(!data||!data.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);">No goals yet. Click + Add Goal.</div>';return;}
+  el.innerHTML=data.map(g=>`
+    <div class="sp-goal-card">
+      <div class="sp-goal-header">
+        <span class="sp-goal-area">${g.area||'General'}</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <select style="font-size:12px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;" onchange="updateGoalProgress('${g.id}',this.value)">
+            <option value="not_started" ${g.progress==='not_started'?'selected':''}>Not Started</option>
+            <option value="minimal" ${g.progress==='minimal'?'selected':''}>Minimal</option>
+            <option value="some" ${g.progress==='some'?'selected':''}>Some Progress</option>
+            <option value="substantial" ${g.progress==='substantial'?'selected':''}>Substantial</option>
+            <option value="achieved" ${g.progress==='achieved'?'selected':''}>Achieved</option>
+          </select>
+          <button class="btn btn-danger btn-sm" onclick="deleteGoal('${g.id}')">✕</button>
+        </div>
+      </div>
+      <div style="font-size:13px;color:#374151;margin-bottom:8px;line-height:1.5;">${g.goal_text}</div>
+      ${g.baseline||g.target?`<div style="display:flex;gap:16px;font-size:12px;color:var(--muted);"><span><strong>Baseline:</strong> ${g.baseline||'—'}</span><span><strong>Target:</strong> ${g.target||'—'}</span></div>`:''}
+      <div class="progress-bar"><div class="progress-fill" style="width:${PROGRESS_PCT[g.progress]||0}%;background:${PROGRESS_COLORS[g.progress]||'#9ca3af'};"></div></div>
+    </div>`).join('');
+}
+
+function openGoalModal(){document.getElementById('g-text').value='';document.getElementById('g-baseline').value='';document.getElementById('g-target').value='';document.getElementById('goal-modal').classList.add('open');}
+async function saveGoal(){
+  const text=document.getElementById('g-text').value.trim();if(!text){showToast('Please enter a goal');return;}
+  await sb.from('sp_goals').insert({program_id:currentProgram.id,school_id:school.id,goal_text:text,area:document.getElementById('g-area').value,baseline:document.getElementById('g-baseline').value||null,target:document.getElementById('g-target').value||null,progress:document.getElementById('g-progress').value});
+  closeModal('goal-modal');loadGoals();showToast('Goal added');
+}
+async function updateGoalProgress(id,value){await sb.from('sp_goals').update({progress:value}).eq('id',id);showToast('Progress updated');}
+async function deleteGoal(id){if(!confirm('Delete this goal?'))return;await sb.from('sp_goals').delete().eq('id',id);loadGoals();}
+
+// SERVICES
+async function loadServices(){
+  const{data}=await sb.from('sp_services').select('*').eq('program_id',currentProgram.id);
+  const el=document.getElementById('sp-services-list');
+  if(!data||!data.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);">No services yet.</div>';return;}
+  el.innerHTML=data.map(s=>`
+    <div class="sp-service-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <div><div style="font-size:15px;font-weight:700;color:var(--navy);">${s.service_type}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">${s.provider||'No provider'} · ${s.frequency||'No frequency'} · ${s.setting||''}</div></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="openLogModal('${s.id}')">+ Log Session</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteService('${s.id}')">✕</button>
+        </div>
+      </div>
+      <div id="logs-${s.id}" style="border-top:1px solid var(--border);"></div>
+    </div>`).join('');
+  data.forEach(s=>loadServiceLogs(s.id));
+}
+
+async function loadServiceLogs(serviceId){
+  const{data}=await sb.from('sp_service_logs').select('*').eq('service_id',serviceId).order('session_date',{ascending:false}).limit(5);
+  const el=document.getElementById('logs-'+serviceId);if(!el)return;
+  if(!data||!data.length){el.innerHTML='<div style="padding:10px 14px;font-size:12px;color:var(--muted);">No sessions logged yet.</div>';return;}
+  el.innerHTML=data.map(l=>`<div class="sp-log-item"><div style="display:flex;justify-content:space-between;"><span style="font-weight:600;">${l.session_date}</span><span style="color:var(--muted);">${l.duration_minutes?l.duration_minutes+' min':''} ${l.logged_by?'· '+l.logged_by:''}</span></div>${l.notes?`<div style="color:#374151;margin-top:4px;font-size:12px;">${l.notes}</div>`:''}</div>`).join('');
+}
+
+function openServiceModal(){['svc-provider','svc-frequency'].forEach(id=>document.getElementById(id).value='');document.getElementById('service-modal').classList.add('open');}
+async function saveService(){
+  const type=document.getElementById('svc-type').value;
+  await sb.from('sp_services').insert({program_id:currentProgram.id,school_id:school.id,service_type:type,provider:document.getElementById('svc-provider').value||null,frequency:document.getElementById('svc-frequency').value||null,setting:document.getElementById('svc-setting').value});
+  closeModal('service-modal');loadServices();showToast('Service added');
+}
+async function deleteService(id){if(!confirm('Delete this service and all its logs?'))return;await sb.from('sp_services').delete().eq('id',id);loadServices();}
+
+function openLogModal(serviceId){
+  currentServiceId=serviceId;
+  document.getElementById('log-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('log-duration').value='';document.getElementById('log-notes').value='';document.getElementById('log-by').value='';
+  document.getElementById('log-modal').classList.add('open');
+}
+async function saveServiceLog(){
+  const date=document.getElementById('log-date').value;if(!date){showToast('Please select a date');return;}
+  await sb.from('sp_service_logs').insert({service_id:currentServiceId,school_id:school.id,student_id:currentProgram.student_id,session_date:date,duration_minutes:parseInt(document.getElementById('log-duration').value)||null,notes:document.getElementById('log-notes').value||null,logged_by:document.getElementById('log-by').value||null});
+  closeModal('log-modal');loadServiceLogs(currentServiceId);showToast('Session logged');
+}
+
+// ACCOMMODATIONS
+async function loadAccommodations(){
+  const{data}=await sb.from('sp_accommodations').select('*').eq('program_id',currentProgram.id).order('category');
+  const el=document.getElementById('sp-accommodations-list');
+  if(!data||!data.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);">No accommodations yet.</div>';return;}
+  const catColors={instruction:'badge-blue',assessment:'badge-purple',environment:'badge-green',behavior:'badge-yellow'};
+  el.innerHTML=`<div class="card" style="padding:0;overflow:hidden;">${data.map(a=>`<div class="sp-acc-item"><span class="badge ${catColors[a.category]||'badge-gray'}" style="flex-shrink:0;">${a.category}</span><div style="flex:1;font-size:13px;">${a.accommodation}</div><button class="btn btn-danger btn-sm" onclick="deleteAccommodation('${a.id}')">✕</button></div>`).join('')}</div>`;
+}
+function openAccommodationModal(){document.getElementById('acc-text').value='';document.getElementById('accommodation-modal').classList.add('open');}
+async function saveAccommodation(){
+  const text=document.getElementById('acc-text').value.trim();if(!text){showToast('Please enter an accommodation');return;}
+  await sb.from('sp_accommodations').insert({program_id:currentProgram.id,school_id:school.id,accommodation:text,category:document.getElementById('acc-category').value});
+  closeModal('accommodation-modal');loadAccommodations();showToast('Accommodation added');
+}
+async function deleteAccommodation(id){if(!confirm('Remove this accommodation?'))return;await sb.from('sp_accommodations').delete().eq('id',id);loadAccommodations();}
+
+// DOCUMENTS
+async function loadDocuments(){
+  const{data}=await sb.from('sp_documents').select('*').eq('program_id',currentProgram.id).order('created_at',{ascending:false});
+  const el=document.getElementById('sp-documents-list');
+  if(!data||!data.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);">No documents yet.</div>';return;}
+  const typeIcons={IEP:'📋','504 Plan':'📄',Evaluation:'🔬','Progress Report':'📊',Consent:'✍️',Other:'📁'};
+  el.innerHTML=`<div class="card" style="padding:0;overflow:hidden;">${data.map(d=>`<div class="sp-doc-item"><span style="font-size:20px;">${typeIcons[d.doc_type]||'📁'}</span><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--navy);">${d.doc_name}</div><div style="font-size:11px;color:var(--muted);">${d.doc_type||''} ${d.uploaded_by?'· Uploaded by '+d.uploaded_by:''} · ${new Date(d.created_at).toLocaleDateString()}</div></div>${d.doc_url?`<a href="${d.doc_url}" target="_blank" class="btn btn-secondary btn-sm">View →</a>`:''}<button class="btn btn-danger btn-sm" onclick="deleteDocument('${d.id}')">✕</button></div>`).join('')}</div>`;
+}
+function openDocModal(){['doc-name','doc-url','doc-by'].forEach(id=>document.getElementById(id).value='');document.getElementById('doc-modal').classList.add('open');}
+async function saveDocument(){
+  const name=document.getElementById('doc-name').value.trim();if(!name){showToast('Please enter a document name');return;}
+  await sb.from('sp_documents').insert({program_id:currentProgram.id,school_id:school.id,student_id:currentProgram.student_id,doc_name:name,doc_type:document.getElementById('doc-type').value,doc_url:document.getElementById('doc-url').value||null,uploaded_by:document.getElementById('doc-by').value||null});
+  closeModal('doc-modal');loadDocuments();showToast('Document added');
+}
+async function deleteDocument(id){if(!confirm('Remove this document?'))return;await sb.from('sp_documents').delete().eq('id',id);loadDocuments();}
 </script>
 </body>
 </html>
