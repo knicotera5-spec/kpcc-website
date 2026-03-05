@@ -1784,8 +1784,8 @@ let csvHeaders=[];
 let csvMapping={};
 
 const REQUIRED_FIELDS=['parent_name','student_name','grade'];
-const ALL_FIELDS=['parent_name','student_name','grade','email','phone','stage','sibling','notes'];
-const FIELD_LABELS={parent_name:'Parent Name',student_name:'Student Name',grade:'Grade',email:'Email',phone:'Phone',stage:'Stage',sibling:'Sibling Priority',notes:'Notes'};
+const ALL_FIELDS=['parent_name','student_name','grade','email','phone','stage','sibling','notes','dob','program','disability','foster','homeless','public_assistance','below_poverty','school1','school2','school3','returning','prev_year','prev_outcome','prev_notes'];
+const FIELD_LABELS={parent_name:'Parent Name',student_name:'Student Name',grade:'Grade',email:'Email',phone:'Phone',stage:'Stage',sibling:'Sibling Priority',notes:'Notes',dob:'Date of Birth',program:'Program',disability:'Disability (true/false)',foster:'Foster Care (true/false)',homeless:'Homeless (true/false)',public_assistance:'Public Assistance (true/false)',below_poverty:'Below Poverty (true/false)',school1:'1st Choice School',school2:'2nd Choice School',school3:'3rd Choice School',returning:'Returning (true/false)',prev_year:'Previous Year',prev_outcome:'Previous Outcome',prev_notes:'Previous Notes'};
 const AUTO_MAP={
   // parent
   parent:'parent_name',parent_name:'parent_name','parent/guardian':'parent_name',guardian:'parent_name','parent name':'parent_name',
@@ -1803,6 +1803,20 @@ const AUTO_MAP={
   sibling:'sibling','sibling priority':'sibling',
   // notes
   notes:'notes',note:'notes',comments:'comments',comment:'notes',
+  dob:'dob','date of birth':'dob','birth date':'dob',
+  program:'program','program interest':'program','program type':'program',
+  disability:'disability','has disability':'disability','iep':'disability',
+  foster:'foster','foster care':'foster','in foster care':'foster',
+  homeless:'homeless','housing instability':'homeless',
+  public_assistance:'public_assistance','tanf':'public_assistance','snap':'public_assistance','ssi':'public_assistance',
+  below_poverty:'below_poverty','below poverty':'below_poverty','poverty':'below_poverty',
+  school1:'school1','1st choice':'school1','first choice':'school1','school preference 1':'school1',
+  school2:'school2','2nd choice':'school2','second choice':'school2','school preference 2':'school2',
+  school3:'school3','3rd choice':'school3','third choice':'school3','school preference 3':'school3',
+  returning:'returning','is returning':'returning','returning applicant':'returning',
+  prev_year:'prev_year','previous year':'prev_year','prior year':'prev_year',
+  prev_outcome:'prev_outcome','previous outcome':'prev_outcome','prior outcome':'prev_outcome',
+  prev_notes:'prev_notes','previous notes':'prev_notes','prior notes':'prev_notes',
 };
 
 function downloadTemplate(){
@@ -1920,6 +1934,20 @@ async function executeCSVImport(){
         email:row[getColFor('email')]||null,phone:row[getColFor('phone')]||null,
         stage,sibling:(row[getColFor('sibling')]||'').toLowerCase()==='true',
         notes:row[getColFor('notes')]||null,
+        prek_dob:row[getColFor('dob')]||null,
+        prek_program:row[getColFor('program')]||null,
+        prek_disability:(row[getColFor('disability')]||'').toLowerCase()==='true',
+        prek_foster:(row[getColFor('foster')]||'').toLowerCase()==='true',
+        prek_homeless:(row[getColFor('homeless')]||'').toLowerCase()==='true',
+        prek_public_assistance:(row[getColFor('public_assistance')]||'').toLowerCase()==='true',
+        prek_below_poverty:(row[getColFor('below_poverty')]||'').toLowerCase()==='true',
+        prek_school1:row[getColFor('school1')]||null,
+        prek_school2:row[getColFor('school2')]||null,
+        prek_school3:row[getColFor('school3')]||null,
+        is_returning:(row[getColFor('returning')]||'').toLowerCase()==='true',
+        prev_year:row[getColFor('prev_year')]||null,
+        prev_outcome:row[getColFor('prev_outcome')]||null,
+        prev_notes:row[getColFor('prev_notes')]||null,
         is_staff:false,is_returning:false,in_zone:false,
       }).select('*,family_documents(*)').single();
       if(error)throw error;
