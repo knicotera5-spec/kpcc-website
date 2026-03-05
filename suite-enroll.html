@@ -868,7 +868,10 @@ tbody td{padding:11px 16px;font-size:13px}
         <div id="prek-capacity-card" class="card" style="margin-bottom:20px;display:none;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
             <div style="font-size:14px;font-weight:700;color:var(--navy);">School Capacity Tracker</div>
-            <button class="btn btn-secondary btn-sm" onclick="toggleCapacityEdit()">Edit Seats</button>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-secondary btn-sm" id="save-capacity-btn" onclick="saveCapacityData()" style="display:none;">Save Seat Counts</button>
+              <button class="btn btn-secondary btn-sm" onclick="toggleCapacityEdit()">Edit Seats</button>
+            </div>
           </div>
           <div id="capacity-list" style="display:flex;flex-direction:column;gap:8px;"></div>
         </div>
@@ -1092,7 +1095,31 @@ tbody td{padding:11px 16px;font-size:13px}
             <div style="font-size:12px;color:#1e40af;"><strong>Note:</strong> Make sure your Google Sheet is shared with Anyone with the link can view before connecting.</div>
           </div>
         </div>
-        <!-- DUPLICATE DETECTION -->
+        
+          <!-- CUSTOM CSV FIELDS -->
+          <div class="card" style="margin-bottom:20px;" id="custom-fields-card">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;">
+              <div style="display:flex;align-items:center;gap:14px;">
+                <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:18px;">⚙️</div>
+                <div><div style="font-size:16px;font-weight:700;color:var(--navy);">Custom CSV Fields</div><div style="font-size:12px;color:var(--muted);">Add custom columns to your CSV import template for your specific workflow</div></div>
+              </div>
+            </div>
+            <div id="custom-fields-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <input class="form-input" id="new-field-label" placeholder="Field label (e.g. Case Worker Name)" style="font-size:12px;max-width:220px;">
+              <input class="form-input" id="new-field-key" placeholder="CSV column key (e.g. case_worker)" style="font-size:12px;max-width:200px;">
+              <select class="form-input" id="new-field-type" style="font-size:12px;width:auto;">
+                <option value="text">Text</option>
+                <option value="boolean">Yes/No</option>
+                <option value="date">Date</option>
+                <option value="number">Number</option>
+              </select>
+              <button class="btn btn-primary btn-sm" onclick="addCustomField()">+ Add Field</button>
+            </div>
+            <div style="margin-top:12px;font-size:12px;color:var(--muted);">Custom fields will appear in your CSV template download and import mapping.</div>
+          </div>
+
+          <!-- DUPLICATE DETECTION -->
         <div class="card" style="margin-bottom:20px;">
           <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
             <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:18px;">🔍</div>
@@ -1116,7 +1143,7 @@ tbody td{padding:11px 16px;font-size:13px}
           <div style="background:var(--offwhite);border-radius:var(--radius-sm);border:1px solid var(--border);padding:16px;margin-bottom:14px;">
             <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px;">Step 1 — Download the import template</div>
             <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Export your roster from your SIS as a CSV, then match it to these columns. Or download our template and paste your data in.</div>
-            <div style="font-family:var(--font-mono);font-size:11px;background:#fff;border:1px solid var(--border);border-radius:6px;padding:10px;color:var(--teal);margin-bottom:10px;overflow-x:auto;white-space:nowrap;">parent_name, student_name, grade, email, phone, stage, sibling, notes</div>
+            <div style="font-family:var(--font-mono);font-size:11px;background:#fff;border:1px solid var(--border);border-radius:6px;padding:10px;color:var(--teal);margin-bottom:10px;overflow-x:auto;white-space:nowrap;">parent_name, student_name, grade, email, phone, stage, sibling, notes, dob, program, disability, foster, homeless, public_assistance, below_poverty, school1, school2, school3, returning, prev_year, prev_outcome, prev_notes</div>
             <button class="btn btn-secondary btn-sm" onclick="downloadTemplate()">⬇ Download Template CSV</button>
           </div>
 
@@ -1414,6 +1441,7 @@ async function doLogin(){
       initWebhook();
       loadTwilioSettings();
       if(data.school_type === "prek") activatePreK();
+      loadCustomFields();
       loadSchoolSettings();
       updateSMSPreview();
     }
@@ -1777,7 +1805,9 @@ const AUTO_MAP={
 };
 
 function downloadTemplate(){
-  const header='parent_name,student_name,grade,email,phone,stage,sibling,notes';
+  const customFields = (school && school.custom_csv_fields) ? JSON.parse(school.custom_csv_fields||'[]') : [];
+  const customHeaders = customFields.map(f => f.key).join(',');
+  const header='parent_name,student_name,grade,email,phone,stage,sibling,notes,dob,program,disability,foster,homeless,public_assistance,below_poverty,school1,school2,school3,returning,prev_year,prev_outcome,prev_notes' + (customHeaders ? ',' + customHeaders : '');
   const example='Johnson - Maria,Emma Johnson,K,maria@email.com,(555) 123-4567,inquiry,false,Referred by current family';
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([header+'\n'+example],{type:'text/csv'}));
@@ -2400,6 +2430,7 @@ function getPreKPriority(f) {
 
 
 function loadPriorityView() {
+  loadCapacityData().then(() => renderCapacityTracker());
   renderPreKStats();
   renderCapacityTracker();
   renderBulkUpdate();
@@ -2675,13 +2706,114 @@ function renderReturningApplicants() {
   }).join('');
 }
 
+
+let customCSVFields = [];
+
+async function loadCustomFields() {
+  const { data } = await sb.from('school_settings')
+    .select('setting_value')
+    .eq('school_id', school.id)
+    .eq('setting_key', 'custom_csv_fields')
+    .single();
+  if (data) {
+    try { customCSVFields = JSON.parse(data.setting_value) || []; } catch(e) { customCSVFields = []; }
+  }
+  renderCustomFields();
+}
+
+async function saveCustomFields() {
+  await sb.from('school_settings').upsert({
+    school_id: school.id,
+    setting_key: 'custom_csv_fields',
+    setting_value: JSON.stringify(customCSVFields)
+  }, {onConflict: 'school_id,setting_key'});
+  showToast('Custom fields saved');
+}
+
+function renderCustomFields() {
+  const list = document.getElementById('custom-fields-list');
+  if (!list) return;
+  if (customCSVFields.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--muted);">No custom fields yet. Add one below.</div>';
+    return;
+  }
+  list.innerHTML = customCSVFields.map((f, i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--offwhite);border-radius:8px;border:1px solid var(--border);">
+      <div style="flex:1;">
+        <span style="font-size:13px;font-weight:600;color:var(--navy);">${f.label}</span>
+        <span style="font-size:11px;color:var(--muted);margin-left:8px;">key: ${f.key} · ${f.type}</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="removeCustomField(${i})" style="color:#dc2626;">Remove</button>
+    </div>
+  `).join('');
+}
+
+async function addCustomField() {
+  const label = document.getElementById('new-field-label').value.trim();
+  const key = document.getElementById('new-field-key').value.trim().replace(/\s+/g,'_').toLowerCase();
+  const type = document.getElementById('new-field-type').value;
+  if (!label || !key) { showToast('Please enter both a label and a key'); return; }
+  if (customCSVFields.find(f => f.key === key)) { showToast('A field with that key already exists'); return; }
+  customCSVFields.push({label, key, type});
+  await saveCustomFields();
+  document.getElementById('new-field-label').value = '';
+  document.getElementById('new-field-key').value = '';
+  renderCustomFields();
+}
+
+async function removeCustomField(index) {
+  customCSVFields.splice(index, 1);
+  await saveCustomFields();
+  renderCustomFields();
+}
+
 function toggleReturningFields(show) {
   const fields = document.getElementById('returning-fields');
   if (fields) fields.style.display = show ? 'block' : 'none';
 }
 
+
+async function saveCapacityData() {
+  const btn = document.getElementById('save-capacity-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+  const entries = Object.entries(capacityData).map(([school, seats]) => ({
+    school_id: school.id,
+    school_name: school,
+    seats: seats
+  }));
+  for (const [school, seats] of Object.entries(capacityData)) {
+    await sb.from('school_settings').upsert({
+      school_id: school_obj.id,
+      setting_key: 'capacity_' + school.replace(/\s+/g,'_').toLowerCase(),
+      setting_value: String(seats)
+    }, {onConflict: 'school_id,setting_key'});
+  }
+  if (btn) { btn.disabled = false; btn.textContent = 'Saved ✓'; setTimeout(() => btn.textContent = 'Save Seat Counts', 2000); }
+  showToast('Seat counts saved successfully');
+}
+
+async function loadCapacityData() {
+  if (!school) return;
+  const { data } = await sb.from('school_settings')
+    .select('*')
+    .eq('school_id', school.id)
+    .like('setting_key', 'capacity_%');
+  if (data) {
+    data.forEach(row => {
+      const schoolName = row.setting_key
+        .replace('capacity_', '')
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, l => l.toUpperCase());
+      const match = PREK_SCHOOLS.find(s => s.toLowerCase().replace(/\s+/g,'_') === row.setting_key.replace('capacity_',''));
+      if (match) capacityData[match] = parseInt(row.setting_value) || 20;
+    });
+  }
+}
+
 function toggleCapacityEdit() {
   editingCapacity = !editingCapacity;
+  const saveBtn = document.getElementById('save-capacity-btn');
+  if (saveBtn) saveBtn.style.display = editingCapacity ? 'inline-flex' : 'none';
   renderCapacityTracker();
 }
 
