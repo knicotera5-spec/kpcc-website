@@ -162,6 +162,34 @@ select.finp{background:#fff;}
 .pbar-wrap{height:6px;background:#e5e7eb;border-radius:99px;overflow:hidden;}
 .pbar{height:100%;border-radius:99px;transition:width .3s;}
 .chronic{color:var(--danger);font-weight:700;}
+/* REPORT CARD */
+.report-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:32px;max-width:760px;margin:0 auto;box-shadow:var(--shadow);}
+.rc-header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:2px solid var(--navy);margin-bottom:20px;}
+.rc-school-name{font-family:var(--font-serif);font-size:22px;color:var(--navy);font-weight:700;}
+.rc-period-badge{background:var(--navy);color:#fff;padding:6px 14px;border-radius:99px;font-size:12px;font-weight:700;}
+.rc-student-info{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;background:var(--offwhite);border-radius:10px;padding:14px;margin-bottom:20px;}
+.rc-info-cell label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px;}
+.rc-info-cell span{font-size:13px;font-weight:700;color:var(--navy);}
+.rc-subjects{margin-bottom:20px;}
+.rc-subjects table{width:100%;border-collapse:collapse;font-size:13px;}
+.rc-subjects th{text-align:left;padding:8px 12px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid var(--border);background:var(--offwhite);}
+.rc-subjects td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+.rc-subjects tr:last-child td{border-bottom:none;}
+.rc-grade-A{color:#16a34a;font-weight:800;font-size:16px;}
+.rc-grade-B{color:#0369a1;font-weight:800;font-size:16px;}
+.rc-grade-C{color:#d97706;font-weight:800;font-size:16px;}
+.rc-grade-D{color:#dc2626;font-weight:800;font-size:16px;}
+.rc-grade-F{color:#7c3aed;font-weight:800;font-size:16px;}
+.rc-comment-btn{font-size:11px;color:var(--teal);background:none;border:none;cursor:pointer;text-decoration:underline;display:block;margin-top:4px;}
+.rc-attendance-bar{background:var(--offwhite);border-radius:10px;padding:14px;margin-bottom:20px;display:flex;justify-content:space-around;text-align:center;}
+.rc-att-cell label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px;}
+.rc-att-cell span{font-size:18px;font-weight:900;color:var(--navy);}
+.rc-overall-comment{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px;margin-bottom:20px;}
+.rc-overall-comment label{font-size:10px;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px;}
+.rc-overall-comment p{font-size:13px;color:#1a1a1a;line-height:1.6;}
+.rc-footer{display:flex;justify-content:space-between;padding-top:16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);}
+.rc-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;}
+@media print{aside,.topbar,.rc-actions,#page-reportcards>.card{display:none!important;}.main{margin-left:0!important;padding:0!important;}.report-card{box-shadow:none!important;border:none!important;page-break-after:always;max-width:100%;}body{background:white;}}
 </style>
 </head>
 <body>
@@ -202,7 +230,8 @@ select.finp{background:#fff;}
         <button class="nav-btn" onclick="showPage('courses',this)"><span class="icon">📚</span>Courses</button>
         <div class="nav-divider"></div>
         <div class="nav-label">Reports</div>
-        <button class="nav-btn" onclick="showPage('reports',this)"><span class="icon">📈</span>Reports</button>
+        <button class="nav-btn" onclick="showPage('reportcards',this)"><span class="icon">📄</span>Report Cards</button>
+        <button class="nav-btn" onclick="showPage('reports',this)"><span class="icon">📈</span>Data Reports</button>
       </nav>
       <div class="sidebar-footer">
         <button class="btn-logout" onclick="doLogout()">Sign Out</button>
@@ -351,6 +380,103 @@ select.finp{background:#fff;}
         <div id="report-output" style="margin-top:24px;"></div>
       </div>
 
+      <!-- REPORT CARDS -->
+      <div class="page" id="page-reportcards">
+        <!-- Settings Bar -->
+        <div class="card" style="margin-bottom:20px;">
+          <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;">
+            <div class="fgrp" style="flex:1;min-width:160px;">
+              <label class="flbl">Grading Period</label>
+              <select class="finp" id="rc-period">
+                <option value="">Select period...</option>
+              </select>
+            </div>
+            <div class="fgrp" style="flex:1;min-width:160px;">
+              <label class="flbl">Grade Level</label>
+              <select class="finp" id="rc-grade-filter">
+                <option value="all">All Grades</option>
+                <option value="PK3">Pre-K 3</option><option value="PK4">Pre-K 4</option>
+                <option value="K">Kindergarten</option><option value="1">1st</option>
+                <option value="2">2nd</option><option value="3">3rd</option>
+                <option value="4">4th</option><option value="5">5th</option>
+                <option value="6">6th</option><option value="7">7th</option><option value="8">8th</option>
+              </select>
+            </div>
+            <div class="fgrp" style="flex:1;min-width:160px;">
+              <label class="flbl">Student</label>
+              <select class="finp" id="rc-student-filter">
+                <option value="all">All Students</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="loadReportCards()">Generate Report Cards</button>
+            <button class="btn btn-secondary" onclick="printAllReportCards()">🖨 Print All</button>
+            <button class="btn btn-secondary" onclick="openPeriodModal()">⚙ Manage Periods</button>
+          </div>
+        </div>
+
+        <!-- Report Cards Grid -->
+        <div id="rc-grid" style="display:flex;flex-direction:column;gap:24px;">
+          <div style="text-align:center;padding:48px;color:var(--muted);font-size:14px;">Select a grading period and click Generate Report Cards.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- GRADING PERIOD MODAL -->
+<div class="modal-overlay" id="period-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Manage Grading Periods</h2>
+      <button class="modal-close" onclick="closeModal('period-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Choose your school's grading period structure. This determines how report cards are organized.</div>
+      <div class="fgrp" style="margin-bottom:16px;">
+        <label class="flbl">Period Structure</label>
+        <select class="finp" id="period-structure" onchange="renderPeriodInputs()">
+          <option value="quarters">Quarters (Q1, Q2, Q3, Q4)</option>
+          <option value="semesters">Semesters (S1, S2)</option>
+          <option value="trimesters">Trimesters (T1, T2, T3)</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div id="period-inputs"></div>
+      <div id="custom-period-add" style="display:none;margin-top:12px;">
+        <div style="display:flex;gap:10px;">
+          <input class="finp" id="custom-period-name" placeholder="Period name e.g. Quarter 1" style="flex:1;">
+          <button class="btn btn-secondary" onclick="addCustomPeriod()">+ Add</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('period-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="savePeriodSettings()">Save Periods</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMMENT MODAL -->
+<div class="modal-overlay" id="comment-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="comment-modal-title">Add Teacher Comment</h2>
+      <button class="modal-close" onclick="closeModal('comment-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fgrp" style="margin-bottom:14px;">
+        <label class="flbl">Subject Comment</label>
+        <textarea class="finp" id="comment-subject-text" rows="3" placeholder="Comment for this subject..."></textarea>
+      </div>
+      <div class="fgrp">
+        <label class="flbl">Overall Teacher Comment</label>
+        <textarea class="finp" id="comment-overall-text" rows="4" placeholder="Overall comment for this student this period..."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('comment-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveComment()">Save Comment</button>
     </div>
   </div>
 </div>
@@ -495,7 +621,7 @@ function doLogout() {
   document.getElementById('login-code').value = '';
 }
 
-async function loadAll() { await Promise.all([loadStudents(), loadCourses()]); }
+async function loadAll() { await Promise.all([loadStudents(), loadCourses()]); await initReportCards(); }
 
 async function loadStudents() {
   const { data } = await sb.from('students').select('*').eq('school_id', school.id).order('last_name');
@@ -887,6 +1013,136 @@ function downloadCSV(rows,filename){
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ── REPORT CARDS ──
+let gradingPeriods=[],rcComments={},rcOverallComments={},editingCommentKey=null,customPeriods=[];
+const DEFAULT_PERIODS={quarters:[{id:'Q1',label:'Quarter 1'},{id:'Q2',label:'Quarter 2'},{id:'Q3',label:'Quarter 3'},{id:'Q4',label:'Quarter 4'}],semesters:[{id:'S1',label:'Semester 1'},{id:'S2',label:'Semester 2'}],trimesters:[{id:'T1',label:'Trimester 1'},{id:'T2',label:'Trimester 2'},{id:'T3',label:'Trimester 3'}]};
+
+async function initReportCards(){
+  const{data}=await sb.from('school_settings').select('setting_value').eq('school_id',school.id).eq('setting_key','grading_periods').maybeSingle();
+  gradingPeriods=data?.setting_value?JSON.parse(data.setting_value):DEFAULT_PERIODS.quarters;
+  populatePeriodSelect();populateRCStudentFilter();
+}
+
+function populatePeriodSelect(){const sel=document.getElementById('rc-period');if(!sel)return;sel.innerHTML='<option value="">Select period...</option>'+gradingPeriods.map(p=>`<option value="${p.id}">${p.label}</option>`).join('');}
+function populateRCStudentFilter(){const sel=document.getElementById('rc-student-filter');if(!sel)return;sel.innerHTML='<option value="all">All Students</option>'+students.filter(s=>s.enrollment_status==='active').map(s=>`<option value="${s.id}">${s.last_name}, ${s.first_name}</option>`).join('');}
+
+async function loadReportCards(){
+  const periodId=document.getElementById('rc-period').value,gradeFilter=document.getElementById('rc-grade-filter').value,studentFilter=document.getElementById('rc-student-filter').value;
+  if(!periodId){showToast('Please select a grading period');return;}
+  const period=gradingPeriods.find(p=>p.id===periodId);
+  let filtered=students.filter(s=>s.enrollment_status==='active');
+  if(gradeFilter!=='all')filtered=filtered.filter(s=>s.grade===gradeFilter);
+  if(studentFilter!=='all')filtered=filtered.filter(s=>s.id===studentFilter);
+  if(!filtered.length){document.getElementById('rc-grid').innerHTML='<div style="text-align:center;padding:48px;color:var(--muted);">No students match your filters.</div>';return;}
+  const{data:gradeData}=await sb.from('grades').select('*,assignments(name,course_id,points_possible)').eq('school_id',school.id);
+  const{data:attData}=await sb.from('attendance_records').select('student_id,status').eq('school_id',school.id);
+  const{data:cd}=await sb.from('school_settings').select('setting_value').eq('school_id',school.id).eq('setting_key','rc_comments_'+periodId).maybeSingle();
+  if(cd?.setting_value)rcComments=JSON.parse(cd.setting_value);
+  const{data:od}=await sb.from('school_settings').select('setting_value').eq('school_id',school.id).eq('setting_key','rc_overall_'+periodId).maybeSingle();
+  if(od?.setting_value)rcOverallComments=JSON.parse(od.setting_value);
+  document.getElementById('rc-grid').innerHTML=filtered.map(s=>buildReportCard(s,period,gradeData||[],attData||[])).join('');
+}
+
+function buildReportCard(student,period,gradeData,attData){
+  const sa=attData.filter(r=>r.student_id===student.id);
+  const present=sa.filter(r=>r.status==='present').length,absent=sa.filter(r=>r.status==='absent').length,tardy=sa.filter(r=>r.status==='tardy').length;
+  const attRate=sa.length>0?Math.round((present/sa.length)*100):null;
+  const sg=gradeData.filter(g=>g.student_id===student.id);
+  const byCourse={};sg.forEach(g=>{const cid=g.assignments?.course_id;if(!cid)return;if(!byCourse[cid])byCourse[cid]={earned:0,possible:0};byCourse[cid].earned+=g.points_earned||0;byCourse[cid].possible+=g.assignments?.points_possible||0;});
+  const getLetter=pct=>pct>=90?'A':pct>=80?'B':pct>=70?'C':pct>=60?'D':'F';
+  const gradeColors={'A':'#16a34a','B':'#0369a1','C':'#d97706','D':'#dc2626','F':'#7c3aed'};
+  const subjectRows=courses.map(c=>{
+    const d=byCourse[c.id],pct=d&&d.possible>0?Math.round((d.earned/d.possible)*100):null,letter=pct!==null?getLetter(pct):'—';
+    const ck=`${student.id}_${period.id}_${c.id}`,comment=rcComments[ck]||'';
+    return `<tr><td style="font-weight:600;">${c.name}<div style="font-size:11px;color:var(--muted);">${c.teacher_name||''}</div></td>
+      <td style="text-align:center;font-size:18px;font-weight:800;color:${gradeColors[letter]||'var(--navy)'};">${letter}</td>
+      <td style="text-align:center;font-weight:700;">${pct!==null?pct+'%':'—'}</td>
+      <td><div style="font-size:12px;color:#374151;">${comment||'<span style="color:var(--muted);font-style:italic;">No comment</span>'}</div>
+        <button class="rc-comment-btn" onclick="openCommentModal('${student.id}','${period.id}','${c.id}','${c.name}')">✏ Edit comment</button></td></tr>`;
+  }).join('');
+  const ok=`${student.id}_${period.id}`,overall=rcOverallComments[ok]||'';
+  return `<div class="report-card" id="rc-${student.id}">
+    <div class="rc-header"><div><div class="rc-school-name">${school.name}</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">Student Report Card — 2025–2026</div></div><div class="rc-period-badge">${period.label}</div></div>
+    <div class="rc-student-info">
+      <div class="rc-info-cell"><label>Student</label><span>${student.first_name} ${student.last_name}</span></div>
+      <div class="rc-info-cell"><label>Grade</label><span>${student.grade}</span></div>
+      <div class="rc-info-cell"><label>Date of Birth</label><span>${student.dob||'—'}</span></div>
+      <div class="rc-info-cell"><label>Status</label><span>${student.enrollment_status}</span></div>
+    </div>
+    <div class="rc-subjects"><table><thead><tr><th>Subject</th><th style="text-align:center;">Grade</th><th style="text-align:center;">Average</th><th>Teacher Comment</th></tr></thead>
+      <tbody>${subjectRows||'<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px;">No grades yet.</td></tr>'}</tbody></table></div>
+    <div class="rc-attendance-bar">
+      <div class="rc-att-cell"><label>Attendance Rate</label><span style="color:${attRate!==null?(attRate<90?'#dc2626':'#16a34a'):'var(--navy)'};">${attRate!==null?attRate+'%':'—'}</span></div>
+      <div class="rc-att-cell"><label>Days Present</label><span>${present}</span></div>
+      <div class="rc-att-cell"><label>Days Absent</label><span style="color:${absent>0?'#dc2626':'var(--navy)'};">${absent}</span></div>
+      <div class="rc-att-cell"><label>Days Tardy</label><span style="color:${tardy>0?'#d97706':'var(--navy)'};">${tardy}</span></div>
+    </div>
+    <div class="rc-overall-comment"><label>Overall Teacher Comment</label>
+      <p id="overall-${student.id}-${period.id}">${overall||'<span style="color:var(--muted);font-style:italic;">No overall comment yet.</span>'}</p>
+      <button class="rc-comment-btn" onclick="openOverallCommentModal('${student.id}','${period.id}')">✏ Edit overall comment</button></div>
+    <div class="rc-footer"><span>Generated ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</span><span>${student.has_iep?'⚡ IEP on file':''} ${student.has_504?'📋 504 on file':''}</span></div>
+    <div class="rc-actions"><button class="btn btn-secondary btn-sm" onclick="printOneReportCard('${student.id}')">🖨 Print</button></div>
+  </div>`;
+}
+
+function openCommentModal(sid,pid,cid,cname){
+  editingCommentKey={type:'subject',key:`${sid}_${pid}_${cid}`,periodId:pid};
+  document.getElementById('comment-modal-title').textContent='Comment — '+cname;
+  document.getElementById('comment-subject-text').value=rcComments[editingCommentKey.key]||'';
+  document.getElementById('comment-subject-text').style.display='';
+  document.getElementById('comment-overall-text').style.display='none';
+  document.getElementById('comment-modal').classList.add('open');
+}
+
+function openOverallCommentModal(sid,pid){
+  editingCommentKey={type:'overall',key:`${sid}_${pid}`,periodId:pid};
+  document.getElementById('comment-modal-title').textContent='Overall Teacher Comment';
+  document.getElementById('comment-subject-text').style.display='none';
+  document.getElementById('comment-overall-text').style.display='';
+  document.getElementById('comment-overall-text').value=rcOverallComments[editingCommentKey.key]||'';
+  document.getElementById('comment-modal').classList.add('open');
+}
+
+async function saveComment(){
+  if(!editingCommentKey)return;
+  const pid=editingCommentKey.periodId;
+  if(editingCommentKey.type==='subject'){
+    rcComments[editingCommentKey.key]=document.getElementById('comment-subject-text').value.trim();
+    await sb.from('school_settings').upsert({school_id:school.id,setting_key:'rc_comments_'+pid,setting_value:JSON.stringify(rcComments)},{onConflict:'school_id,setting_key'});
+  } else {
+    rcOverallComments[editingCommentKey.key]=document.getElementById('comment-overall-text').value.trim();
+    await sb.from('school_settings').upsert({school_id:school.id,setting_key:'rc_overall_'+pid,setting_value:JSON.stringify(rcOverallComments)},{onConflict:'school_id,setting_key'});
+  }
+  closeModal('comment-modal');document.getElementById('comment-subject-text').style.display='';document.getElementById('comment-overall-text').style.display='';
+  showToast('Comment saved');loadReportCards();
+}
+
+function printOneReportCard(studentId){
+  const el=document.getElementById('rc-'+studentId);if(!el)return;
+  const printCSS=`body{font-family:sans-serif;padding:32px;color:#1a1a1a;}.rc-actions,.rc-comment-btn{display:none!important;}.rc-header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:2px solid #0f2d5a;margin-bottom:20px;}.rc-school-name{font-size:22px;font-weight:700;color:#0f2d5a;}.rc-period-badge{background:#0f2d5a;color:#fff;padding:6px 14px;border-radius:99px;font-size:12px;font-weight:700;}.rc-student-info{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;background:#f8fafc;border-radius:10px;padding:14px;margin-bottom:20px;}.rc-info-cell label{font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:2px;}.rc-info-cell span{font-size:13px;font-weight:700;color:#0f2d5a;}.rc-subjects table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;}th{text-align:left;padding:8px 12px;font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;border-bottom:2px solid #e5e7eb;background:#f8fafc;}td{padding:10px 12px;border-bottom:1px solid #e5e7eb;vertical-align:top;}.rc-attendance-bar{background:#f8fafc;border-radius:10px;padding:14px;margin-bottom:20px;display:flex;justify-content:space-around;text-align:center;}.rc-att-cell label{font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:4px;}.rc-att-cell span{font-size:18px;font-weight:900;color:#0f2d5a;}.rc-overall-comment{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px;margin-bottom:20px;}.rc-overall-comment label{font-size:10px;font-weight:700;color:#16a34a;text-transform:uppercase;display:block;margin-bottom:6px;}.rc-footer{display:flex;justify-content:space-between;padding-top:16px;border-top:1px solid #e5e7eb;font-size:11px;color:#6b7280;}`;
+  const w=window.open('','_blank');w.document.write(`<!DOCTYPE html><html><head><title>Report Card</title><style>${printCSS}</style></head><body>${el.outerHTML}</body></html>`);w.document.close();w.focus();setTimeout(()=>{w.print();},500);
+}
+
+function printAllReportCards(){
+  const cards=document.querySelectorAll('.report-card');if(!cards.length){showToast('Generate report cards first');return;}
+  const printCSS=`body{font-family:sans-serif;padding:32px;color:#1a1a1a;}.report-card{page-break-after:always;max-width:760px;margin:0 auto;}.rc-actions,.rc-comment-btn{display:none!important;}.rc-header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:2px solid #0f2d5a;margin-bottom:20px;}.rc-school-name{font-size:22px;font-weight:700;color:#0f2d5a;}.rc-period-badge{background:#0f2d5a;color:#fff;padding:6px 14px;border-radius:99px;font-size:12px;font-weight:700;}.rc-student-info{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;background:#f8fafc;border-radius:10px;padding:14px;margin-bottom:20px;}.rc-info-cell label{font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:2px;}.rc-info-cell span{font-size:13px;font-weight:700;color:#0f2d5a;}.rc-subjects table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;}th{text-align:left;padding:8px 12px;font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;border-bottom:2px solid #e5e7eb;background:#f8fafc;}td{padding:10px 12px;border-bottom:1px solid #e5e7eb;vertical-align:top;}.rc-attendance-bar{background:#f8fafc;border-radius:10px;padding:14px;margin-bottom:20px;display:flex;justify-content:space-around;text-align:center;}.rc-att-cell label{font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:4px;}.rc-att-cell span{font-size:18px;font-weight:900;color:#0f2d5a;}.rc-overall-comment{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px;margin-bottom:20px;}.rc-overall-comment label{font-size:10px;font-weight:700;color:#16a34a;text-transform:uppercase;display:block;margin-bottom:6px;}.rc-footer{display:flex;justify-content:space-between;padding-top:16px;border-top:1px solid #e5e7eb;font-size:11px;color:#6b7280;}`;
+  const w=window.open('','_blank');w.document.write(`<!DOCTYPE html><html><head><title>Report Cards</title><style>${printCSS}</style></head><body>${Array.from(cards).map(c=>c.outerHTML).join('')}</body></html>`);w.document.close();w.focus();setTimeout(()=>{w.print();},500);
+}
+
+function openPeriodModal(){renderPeriodInputs();document.getElementById('period-modal').classList.add('open');}
+function renderPeriodInputs(){
+  const structure=document.getElementById('period-structure').value,container=document.getElementById('period-inputs'),customAdd=document.getElementById('custom-period-add');
+  if(structure==='custom'){customAdd.style.display='block';container.innerHTML=customPeriods.map((p,i)=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><input class="finp" value="${p.label}" style="flex:1;" onchange="customPeriods[${i}].label=this.value"><button class="btn btn-danger btn-sm" onclick="customPeriods.splice(${i},1);renderPeriodInputs()">✕</button></div>`).join('');}
+  else{customAdd.style.display='none';container.innerHTML=DEFAULT_PERIODS[structure].map(p=>`<div style="padding:8px 12px;background:var(--offwhite);border-radius:8px;margin-bottom:8px;font-size:13px;font-weight:600;color:var(--navy);">${p.label}</div>`).join('');}
+}
+function addCustomPeriod(){const name=document.getElementById('custom-period-name').value.trim();if(!name)return;customPeriods.push({id:'CP'+Date.now(),label:name});document.getElementById('custom-period-name').value='';renderPeriodInputs();}
+async function savePeriodSettings(){
+  const structure=document.getElementById('period-structure').value;
+  gradingPeriods=structure==='custom'?customPeriods:DEFAULT_PERIODS[structure];
+  await sb.from('school_settings').upsert({school_id:school.id,setting_key:'grading_periods',setting_value:JSON.stringify(gradingPeriods)},{onConflict:'school_id,setting_key'});
+  populatePeriodSelect();closeModal('period-modal');showToast('Grading periods saved');
+}
 </script>
 </body>
 </html>
