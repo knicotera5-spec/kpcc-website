@@ -2,3 +2,7 @@
   base = "/"
   publish = "/"
   command = ""
+  functions = "netlify/functions"
+
+[forms]
+  submissions_forwarding = true
