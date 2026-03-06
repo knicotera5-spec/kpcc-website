@@ -484,40 +484,18 @@ body {
 </div>
 
 <script>
-// ── SUPABASE CONFIG ──
-const SUPABASE_URL = 'https://cjkhkwuqxnlfgjpnknzq.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_o8myAu_-FwS-tfc0wYUENg_b69GnNR6';
-
-async function supabase(method, path, body) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    method,
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: body ? JSON.stringify(body) : undefined
-  });
-  return res.json();
-}
-
-async function supabaseAuth(email, password) {
-  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
-    method: 'POST',
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email, password })
-  });
-  return res.json();
-}
+// ── DEMO ACCOUNTS (replace with real auth) ──
+const DEMO_USERS = [
+  { email: 'hub@demo.com',    password: 'demo', plan: 'hub',    name: 'The Meliora School' },
+  { email: 'enroll@demo.com', password: 'demo', plan: 'enroll', name: 'Simple Vue Academy' },
+  { email: 'suite@demo.com',  password: 'demo', plan: 'suite',  name: 'The Meliora School' },
+  { email: 'demo@demo.com',   password: 'demo', plan: 'suite',  name: 'Demo School' },
+];
 
 let selectedPlan = 'suite';
 
 // ── LOGIN ──
-async function handleLogin() {
+function handleLogin() {
   const email = document.getElementById('email-input').value.trim().toLowerCase();
   const pass = document.getElementById('password-input').value;
   const btn = document.getElementById('login-btn');
@@ -530,49 +508,20 @@ async function handleLogin() {
   }
 
   btn.classList.add('loading');
-  btn.innerHTML = 'Signing in...';
+  btn.textContent = 'Signing in...';
 
-  try {
-    // 1. Authenticate with Supabase Auth
-    const auth = await supabaseAuth(email, pass);
+  setTimeout(() => {
+    const user = DEMO_USERS.find(u => u.email === email && u.password === pass);
+    btn.classList.remove('loading');
+    btn.innerHTML = 'Sign In <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
 
-    if (auth.error || !auth.access_token) {
-      btn.classList.remove('loading');
-      btn.innerHTML = 'Sign In <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
-      showError('Invalid email or password. Please try again.');
-      return;
+    if (user) {
+      showSuccess('Signed in! Loading your dashboard...');
+      setTimeout(() => showProductPicker(user), 900);
+    } else {
+      showError('Invalid email or password. Try: suite@demo.com / demo');
     }
-
-    // 2. Fetch school record matched to this auth user
-    const userId = auth.user?.id;
-    const schools = await fetch(`${SUPABASE_URL}/rest/v1/schools?select=id,name,plan&auth_user_id=eq.${userId}&limit=1`, {
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${auth.access_token}`,
-        'Accept': 'application/json'
-      }
-    }).then(r => r.json());
-
-    const school = Array.isArray(schools) && schools.length > 0 ? schools[0] : null;
-    const plan = school?.plan || 'enroll';
-    const name = school?.name || email;
-
-    btn.classList.remove('loading');
-    btn.innerHTML = 'Sign In <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
-
-    // Store session
-    localStorage.setItem('kpcc_token', auth.access_token);
-    localStorage.setItem('kpcc_plan', plan);
-    localStorage.setItem('kpcc_school', name);
-
-    showSuccess('Signed in! Loading your dashboard...');
-    setTimeout(() => showProductPicker({ plan, name }), 900);
-
-  } catch(err) {
-    btn.classList.remove('loading');
-    btn.innerHTML = 'Sign In <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
-    showError('Something went wrong. Please try again.');
-  }
+  }, 1100);
 }
 
 // ── PRODUCT PICKER ──
@@ -591,7 +540,7 @@ function showProductPicker(user) {
   const hasEnroll = user.plan === 'enroll' || user.plan === 'suite';
 
   cards.innerHTML = `
-    <div class="picker-card ${hasHub ? '' : 'locked'}" onclick="${hasHub ? "window.location='suite-hub.html'" : "showLockedMessage('Hub', '$127/mo')"}">
+    <div class="picker-card ${hasHub ? '' : 'locked'}" onclick="${hasHub ? "window.location='suite-suite-hub.html'" : "showLockedMessage('Hub', '$127/mo')"}">
       <div class="picker-card-icon hub">H</div>
       <div class="picker-card-body">
         <div class="picker-card-name">Hub</div>
@@ -632,18 +581,8 @@ function selectSignupPlan(el, plan) {
   el.classList.add('selected');
   selectedPlan = plan;
 }
-async function handleSignup() {
-  const school = document.querySelector('#signup-form input[placeholder="The Meliora School"]').value.trim();
-  const name = document.querySelector('#signup-form input[placeholder="Kristina Nicotera"]').value.trim();
-  const email = document.querySelector('#signup-form input[placeholder="you@yourschool.org"]').value.trim();
-
-  if (!school || !name || !email) {
-    alert('Please fill in all fields.');
-    return;
-  }
-
-  // Send application email via Supabase or just notify
-  alert(`Application received for ${school}!\n\nWe'll review your request and get you set up within 1 business day.\n\nQuestions? Email kristina@kpcharterkollective.com`);
+function handleSignup() {
+  alert(`Application received!\n\nWe'll review your request and get you set up within 1 business day.\n\nQuestions? Email kristina@kpcharterkollective.com`);
 }
 
 // ── UI HELPERS ──
