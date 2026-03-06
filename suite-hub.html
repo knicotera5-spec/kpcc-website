@@ -807,8 +807,8 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
 
   <div class="school-selector">
     <div>
-      <div class="school-selector-name">The Meliora School</div>
-      <div class="school-selector-type">Opening Fall 2026 · Atlanta, GA</div>
+      <div class="school-selector-name">Your School</div>
+      <div class="school-selector-type">Charter School · 2025–2026</div>
     </div>
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
   </div>
@@ -865,7 +865,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
     <div class="topbar-left">
       <div>
         <div class="topbar-title">Content Calendar</div>
-        <div class="topbar-subtitle">The Meliora School · February 2026</div>
+        <div class="topbar-subtitle">Your School · February 2026</div>
       </div>
     </div>
     <div class="topbar-right">
@@ -971,7 +971,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
             <div class="queue-item">
               <div class="queue-platform ig">📷</div>
               <div class="queue-content">
-                <div class="queue-text">Meliora Monday: Why we chose personalized learning...</div>
+                <div class="queue-text">Your School: Why we chose personalized learning...</div>
                 <div class="queue-meta">Tomorrow · 9:00 AM · Instagram</div>
               </div>
               <div class="queue-status scheduled">Scheduled</div>
@@ -1034,7 +1034,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
               <div class="template-item" onclick="openModal()">
                 <div class="template-thumb" style="background:#f0fafa;">🗓️</div>
                 <div class="template-info">
-                  <div class="template-name">Meliora Monday</div>
+                  <div class="template-name">Weekly Feature</div>
                   <div class="template-tags">
                     <span class="template-tag">Instagram</span>
                     <span class="template-tag">Recurring</span>
@@ -1210,7 +1210,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
         <select class="form-select">
           <option value="">— No template —</option>
           <option>Open House Announcement</option>
-          <option>Meliora Monday</option>
+          <option>Weekly Feature</option>
           <option>Lottery Hype Campaign</option>
           <option>Founding Family Spotlight</option>
           <option>Intent-to-Enroll Drive</option>
@@ -1261,19 +1261,19 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
 <script>
 // ── CALENDAR DATA ──
 const posts = {
-  '2026-02-03': [{type:'ig', text:'Why Meliora? Our founder story'}, {type:'email', text:'February newsletter'}],
-  '2026-02-09': [{type:'ig', text:'Meliora Monday: Personalized learning'}, {type:'fb', text:'Meliora Monday: Personalized learning'}],
+  '2026-02-03': [{type:'ig', text:'Why us? Our founder story'}, {type:'email', text:'February newsletter'}],
+  '2026-02-09': [{type:'ig', text:'Weekly Feature: Personalized learning'}, {type:'fb', text:'Weekly Feature: Personalized learning'}],
   '2026-02-11': [{type:'email', text:'Open House invite — Feb 28'}],
-  '2026-02-14': [{type:'ig', text:'Happy Valentine\'s Day from Meliora 💛'}, {type:'fb', text:'Valentine\'s Day post'}],
-  '2026-02-16': [{type:'ig', text:'Meliora Monday: What is mastery?'}],
+  '2026-02-14': [{type:'ig', text:'Happy Valentine\'s Day from Your School 💛'}, {type:'fb', text:'Valentine\'s Day post'}],
+  '2026-02-16': [{type:'ig', text:'Weekly Feature: What is mastery?'}],
   '2026-02-18': [{type:'email', text:'Open House reminder #2'}],
-  '2026-02-23': [{type:'ig', text:'Meliora Monday: Meet our team'}, {type:'fb', text:'Meet our team'}],
+  '2026-02-23': [{type:'ig', text:'Weekly Feature: Meet our team'}, {type:'fb', text:'Meet our team'}],
   '2026-02-25': [{type:'ig', text:'Open House this Saturday — RSVP now!'}, {type:'email', text:'Final Open House reminder'}, {type:'fb', text:'Open House this Saturday!'}],
   '2026-02-26': [{type:'ig', text:'Founding family spotlight: The Williams family'}],
   '2026-02-27': [{type:'email', text:'Open House reminder — tomorrow!'}],
   '2026-02-28': [{type:'ig', text:'See you at Open House TODAY! 🎉'}, {type:'fb', text:'Open House Day!'}],
   '2026-03-02': [{type:'ig', text:'Founding Family Spotlight', draft:true}],
-  '2026-03-09': [{type:'ig', text:'Meliora Monday: Character + academics', draft:true}],
+  '2026-03-09': [{type:'ig', text:'Weekly Feature: Character + academics', draft:true}],
   '2026-03-10': [{type:'email', text:'Lottery Opens March 15', draft:true}],
 };
 
@@ -1303,7 +1303,7 @@ function showSection(name, el) {
 const templates = [
   { id:1, name:'Open House Announcement', emoji:'🏫', tags:['instagram','facebook','event'], caption:'Our open house is coming up — and you don\'t want to miss it. Come see what makes [School Name] different. Registration link in bio.' },
   { id:2, name:'Lottery Now Open', emoji:'🎰', tags:['instagram','facebook','enrollment'], caption:'The lottery is OPEN. If you\'ve been watching us, now is the time. Apply today — seats are limited and we fill fast.' },
-  { id:3, name:'Meliora Monday', emoji:'⭐', tags:['instagram','facebook'], caption:'Meliora Monday. This week we\'re pursuing better in [subject/skill]. What does pursuing better look like for your family this week?' },
+  { id:3, name:'Weekly Feature', emoji:'⭐', tags:['instagram','facebook'], caption:'Weekly Feature. This week we\'re pursuing better in [subject/skill]. What does pursuing better look like for your family this week?' },
   { id:4, name:'Founding Family Spotlight', emoji:'👨‍👩‍👧', tags:['instagram','facebook'], caption:'Meet one of our founding families. [Quote from family]. We\'re grateful for every family who believed in this vision before we opened our doors.' },
   { id:5, name:'Enrollment Deadline Reminder', emoji:'⏰', tags:['instagram','facebook','email','enrollment'], caption:'Deadline reminder — applications close [DATE]. Don\'t miss your chance to be part of the founding class at [School Name].' },
   { id:6, name:'Why We Started This School', emoji:'💡', tags:['instagram','facebook'], caption:'We started [School Name] because we believed every child deserves [mission]. That belief hasn\'t changed. It\'s why we show up every day.' },
