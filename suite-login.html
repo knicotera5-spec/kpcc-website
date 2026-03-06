@@ -567,7 +567,7 @@ function showProductPicker(user) {
   const hasEnroll = user.plan === 'enroll' || user.plan === 'suite';
 
   cards.innerHTML = `
-    <div class="picker-card ${hasHub ? '' : 'locked'}" onclick="${hasHub ? "window.location='suite-suite-hub.html'" : "showLockedMessage('Hub', '$127/mo')"}">
+    <div class="picker-card ${hasHub ? '' : 'locked'}" onclick="${hasHub ? "window.location='suite-hub.html'" : "showLockedMessage('Hub', '$127/mo')"}">
       <div class="picker-card-icon hub">H</div>
       <div class="picker-card-body">
         <div class="picker-card-name">Hub</div>
