@@ -846,6 +846,14 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
     </a>
   </div>
 
+  <div class="nav-section" style="margin-top:8px;">
+    <div class="nav-label">Settings</div>
+    <a class="nav-item" href="#" onclick="showSection('integrations', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+      Integrations
+    </a>
+  </div>
+
   <div class="sidebar-footer">
     <div class="sidebar-user">
       <div class="user-avatar">K</div>
@@ -979,8 +987,8 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
           </div>
           <div class="card-body" style="padding-top:8px;">
             <div class="template-list">
-              <div class="template-item" onclick="openModal()">
-                <div class="template-thumb" style="background:#fff3ee;">📣</div>
+              <div class="template-item" onclick="openTemplateModal(1)">
+                <div class="template-thumb" style="background:#fff3ee;">🏫</div>
                 <div class="template-info">
                   <div class="template-name">Open House Announcement</div>
                   <div class="template-tags">
@@ -991,8 +999,8 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
                 </div>
                 <div class="template-use">Use →</div>
               </div>
-              <div class="template-item" onclick="openModal()">
-                <div class="template-thumb" style="background:#f0fafa;">🗓️</div>
+              <div class="template-item" onclick="openTemplateModal(3)">
+                <div class="template-thumb" style="background:#f0fafa;">⭐</div>
                 <div class="template-info">
                   <div class="template-name">Weekly Feature</div>
                   <div class="template-tags">
@@ -1002,18 +1010,18 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
                 </div>
                 <div class="template-use">Use →</div>
               </div>
-              <div class="template-item" onclick="openModal()">
-                <div class="template-thumb" style="background:#fff0f5;">🎉</div>
+              <div class="template-item" onclick="openTemplateModal(2)">
+                <div class="template-thumb" style="background:#fff0f5;">🎰</div>
                 <div class="template-info">
-                  <div class="template-name">Lottery Hype Campaign</div>
+                  <div class="template-name">Lottery Now Open</div>
                   <div class="template-tags">
-                    <span class="template-tag">Email</span>
                     <span class="template-tag">Instagram</span>
+                    <span class="template-tag">Facebook</span>
                   </div>
                 </div>
                 <div class="template-use">Use →</div>
               </div>
-              <div class="template-item" onclick="openModal()">
+              <div class="template-item" onclick="openTemplateModal(4)">
                 <div class="template-thumb" style="background:#f0f4fd;">👨‍👩‍👧</div>
                 <div class="template-info">
                   <div class="template-name">Founding Family Spotlight</div>
@@ -1024,13 +1032,13 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
                 </div>
                 <div class="template-use">Use →</div>
               </div>
-              <div class="template-item" onclick="openModal()">
-                <div class="template-thumb" style="background:#f3fff0;">📋</div>
+              <div class="template-item" onclick="openTemplateModal(5)">
+                <div class="template-thumb" style="background:#f3fff0;">⏰</div>
                 <div class="template-info">
-                  <div class="template-name">Intent-to-Enroll Drive</div>
+                  <div class="template-name">Enrollment Deadline Reminder</div>
                   <div class="template-tags">
                     <span class="template-tag">Email</span>
-                    <span class="template-tag">SMS</span>
+                    <span class="template-tag">Instagram</span>
                   </div>
                 </div>
                 <div class="template-use">Use →</div>
@@ -1084,7 +1092,76 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
       </div>
     </div>
 
-    <!-- EMAIL COMPOSER (hidden by default) -->
+    <!-- INTEGRATIONS SECTION -->
+  <div class="content" id="section-integrations" style="display:none;">
+    <div style="padding:24px 24px 0;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:18px;font-weight:700;color:var(--navy);">Integrations</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px;">Connect your social media accounts and tools.</div>
+      </div>
+    </div>
+    <div style="padding:20px 24px;display:flex;flex-direction:column;gap:16px;">
+
+      <!-- INSTAGRAM -->
+      <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:20px 24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:flex;align-items:center;justify-content:center;font-size:22px;">📷</div>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--navy);">Instagram</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="ig-connect-status">Not connected</div>
+            </div>
+          </div>
+          <button id="ig-connect-btn" onclick="connectAccount('ig')" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;">Connect →</button>
+        </div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.6;">
+          Connecting Instagram allows Hub to auto-publish posts at their scheduled time. You'll need a <strong>Business or Creator account</strong> linked to a Facebook Page.
+        </div>
+      </div>
+
+      <!-- FACEBOOK -->
+      <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:20px 24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="width:44px;height:44px;border-radius:12px;background:#1877f2;display:flex;align-items:center;justify-content:center;font-size:22px;">👍</div>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--navy);">Facebook</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="fb-connect-status">Not connected</div>
+            </div>
+          </div>
+          <button id="fb-connect-btn" onclick="connectAccount('fb')" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;">Connect →</button>
+        </div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.6;">
+          Connect your Facebook Page to auto-publish posts and track reach and engagement directly in Hub.
+        </div>
+      </div>
+
+      <!-- CANVA -->
+      <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:20px 24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="width:44px;height:44px;border-radius:12px;background:#7d2ae8;display:flex;align-items:center;justify-content:center;font-size:22px;">🎨</div>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--navy);">Canva</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;">Design graphics for your posts</div>
+            </div>
+          </div>
+          <button onclick="window.open('https://canva.com','_blank')" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;">Open Canva →</button>
+        </div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.6;">
+          Use Canva to design your post graphics. Create your design, copy the share link, and paste it into the post scheduler.
+        </div>
+      </div>
+
+      <!-- NOTE -->
+      <div style="background:#f0fafa;border:1.5px solid #089494;border-radius:12px;padding:16px 20px;font-size:13px;color:#056565;line-height:1.6;">
+        <strong>Note:</strong> Social media integrations require API access from Meta (Instagram/Facebook). During the beta, connecting your accounts will guide you through the Meta Business setup. Full auto-publishing will be live in the next release.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- EMAIL COMPOSER (hidden by default) -->
     <div id="email-composer" style="display:none;padding:0 24px 24px;">
       <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;">
         <div style="background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;">
@@ -1218,17 +1295,11 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
           </label>
         </div>
         <div id="autopost-accounts" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
-          <div class="connected-chip ig-chip">
-            <span>📷</span> Instagram Connected
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="connected-chip fb-chip">
-            <span>👍</span> Facebook Connected
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="connect-btn-chip" onclick="showConnectFlow()">
+          <div id="ig-status-chip"></div>
+          <div id="fb-status-chip"></div>
+          <div class="connect-btn-chip" onclick="showSection('integrations',null)">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Connect account
+            Manage Connections
           </div>
         </div>
       </div>
@@ -1249,6 +1320,39 @@ const posts = {
 
 let currentDate = new Date(2026, 1, 1); // Feb 2026
 
+let igConnected = false;
+let fbConnected = false;
+
+function connectAccount(platform) {
+  const isIg = platform === 'ig';
+  const name = isIg ? 'Instagram' : 'Facebook';
+  const handle = prompt(`Enter your ${name} Page/Account handle (e.g. @yourschool):`);
+  if (!handle) return;
+  if (isIg) {
+    igConnected = true;
+    document.getElementById('ig-connect-status').textContent = 'Connected: ' + handle;
+    document.getElementById('ig-connect-btn').textContent = 'Disconnect';
+    document.getElementById('ig-connect-btn').style.color = 'var(--danger)';
+  } else {
+    fbConnected = true;
+    document.getElementById('fb-connect-status').textContent = 'Connected: ' + handle;
+    document.getElementById('fb-connect-btn').textContent = 'Disconnect';
+    document.getElementById('fb-connect-btn').style.color = 'var(--danger)';
+  }
+  updateConnectionChips();
+}
+
+function updateConnectionChips() {
+  const igChip = document.getElementById('ig-status-chip');
+  const fbChip = document.getElementById('fb-status-chip');
+  if (igChip) igChip.innerHTML = igConnected
+    ? '<div class="connected-chip ig-chip"><span>📷</span> Instagram Connected <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>'
+    : '<div style="font-size:12px;color:var(--muted);">📷 Instagram not connected</div>';
+  if (fbChip) fbChip.innerHTML = fbConnected
+    ? '<div class="connected-chip fb-chip"><span>👍</span> Facebook Connected <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>'
+    : '<div style="font-size:12px;color:var(--muted);">👍 Facebook not connected</div>';
+}
+
 function showSection(name, el) {
   if(event) event.preventDefault();
   ['calendar','templates','email','analytics'].forEach(s => {
@@ -1262,7 +1366,7 @@ function showSection(name, el) {
   document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
   if (el) el.classList.add('active');
   // Update topbar
-  const titles = {calendar:'Content Calendar',templates:'Template Bank',email:'Email Campaigns',analytics:'Analytics'};
+  const titles = {calendar:'Content Calendar',templates:'Template Bank',email:'Email Campaigns',analytics:'Analytics',integrations:'Integrations'};
   const topbar = document.querySelector('.topbar-title');
   if (topbar) topbar.textContent = titles[name] || name;
   // Render templates if needed
