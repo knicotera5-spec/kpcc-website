@@ -836,12 +836,11 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
 
   <div class="nav-section" style="margin-top:8px;">
     <div class="nav-label">Enrollment</div>
-    <a class="nav-item" href="#">
+    <a class="nav-item" href="#" onclick="goToEnroll()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Family Pipeline
-      <span class="nav-badge" style="background:var(--teal);">47</span>
     </a>
-    <a class="nav-item" href="#">
+    <a class="nav-item" href="#" onclick="goToEnroll()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       Lottery
     </a>
@@ -890,7 +889,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
         <div class="enroll-banner-title">Connected to Enroll — families from campaigns go directly into your pipeline</div>
         <div class="enroll-banner-sub">47 families tracked · 12 added from Hub campaigns this month · Last sync 2 min ago</div>
       </div>
-      <button class="enroll-banner-btn">View Pipeline →</button>
+      <button class="enroll-banner-btn" onclick="goToEnroll()">View Pipeline →</button>
     </div>
 
     <!-- STATS -->
@@ -1068,37 +1067,60 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
 
   <!-- EMAIL CAMPAIGNS SECTION -->
   <div class="content" id="section-email" style="display:none;">
-    <div class="topbar-title" style="padding:24px 24px 0;font-size:18px;font-weight:700;color:var(--navy);">Email Campaigns</div>
-    <div style="padding:8px 24px 24px;color:var(--muted);font-size:13px;">Create and schedule email campaigns to your family pipeline.</div>
-    <div style="padding:0 24px 24px;display:flex;flex-direction:column;gap:16px;">
-      <div style="background:#fff8f5;border:1.5px solid var(--orange);border-radius:12px;padding:24px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:12px;">✉️</div>
-        <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px;">Email Campaigns Coming Soon</div>
-        <div style="font-size:13px;color:var(--muted);max-width:400px;margin:0 auto 16px;">Build and schedule email campaigns directly to families in your Enroll pipeline. Open rate tracking included.</div>
-        <button class="btn btn-orange btn-sm" onclick="alert('Email campaigns launching soon!')">Get Notified When It Launches</button>
+    <div style="padding:24px 24px 0;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:18px;font-weight:700;color:var(--navy);">Email Campaigns</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px;">Create and send email campaigns to your families.</div>
       </div>
-      <!-- PLACEHOLDER CAMPAIGNS -->
-      <div style="opacity:.4;pointer-events:none;">
-        <div style="background:var(--offwhite);border:1.5px solid var(--border);border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;">
-          <div>
-            <div style="font-size:13px;font-weight:700;color:var(--navy);">Open House Reminder — March 15</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px;">Sent to 47 families · 41% open rate</div>
-          </div>
-          <span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;">Sent</span>
+      <button class="btn btn-orange btn-sm" onclick="openEmailComposer()">+ New Campaign</button>
+    </div>
+
+    <!-- CAMPAIGN LIST -->
+    <div style="padding:20px 24px;display:flex;flex-direction:column;gap:12px;" id="campaign-list">
+      <div style="text-align:center;padding:48px 24px;color:var(--muted);font-size:14px;" id="campaign-empty">
+        <div style="font-size:36px;margin-bottom:12px;">✉️</div>
+        <div style="font-weight:600;color:var(--navy);margin-bottom:6px;">No campaigns yet</div>
+        <div style="font-size:13px;">Click + New Campaign to write and send your first email.</div>
+      </div>
+    </div>
+
+    <!-- EMAIL COMPOSER (hidden by default) -->
+    <div id="email-composer" style="display:none;padding:0 24px 24px;">
+      <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;">
+        <div style="background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:14px;font-weight:700;color:#fff;">New Email Campaign</div>
+          <button onclick="closeEmailComposer()" style="background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;font-size:20px;line-height:1;">×</button>
         </div>
-        <div style="background:var(--offwhite);border:1.5px solid var(--border);border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+        <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
           <div>
-            <div style="font-size:13px;font-weight:700;color:var(--navy);">Lottery Deadline — April 1</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px;">Scheduled · 47 recipients</div>
+            <label style="font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px;">Subject Line</label>
+            <input id="email-subject" type="text" placeholder="e.g. Open House this Saturday — RSVP now" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-sans);outline:none;box-sizing:border-box;">
           </div>
-          <span style="background:#fef9c3;color:#854d0e;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;">Scheduled</span>
-        </div>
-        <div style="background:var(--offwhite);border:1.5px solid var(--border);border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
           <div>
-            <div style="font-size:13px;font-weight:700;color:var(--navy);">Founding Family Welcome</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px;">Draft · Not scheduled</div>
+            <label style="font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px;">Recipient List</label>
+            <select id="email-recipients" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-sans);outline:none;background:#fff;">
+              <option value="all">All Families</option>
+              <option value="inquiry">Inquiry Stage</option>
+              <option value="applied">Applied</option>
+              <option value="accepted">Accepted — Not Yet Enrolled</option>
+              <option value="enrolled">Enrolled Families</option>
+              <option value="waitlisted">Waitlisted</option>
+            </select>
           </div>
-          <span style="background:#f1f5f9;color:#64748b;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;">Draft</span>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px;">Message</label>
+            <textarea id="email-body" rows="8" placeholder="Hi [First Name],&#10;&#10;Write your message here...&#10;&#10;[Your Name]&#10;[School Name]" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-sans);outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div style="flex:1;">
+              <label style="font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px;">Schedule Send (optional)</label>
+              <input id="email-schedule" type="datetime-local" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-sans);outline:none;box-sizing:border-box;">
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:4px;">
+            <button onclick="saveCampaignDraft()" style="padding:10px 20px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;">Save Draft</button>
+            <button onclick="sendCampaign()" style="padding:10px 24px;border:none;border-radius:8px;background:var(--orange);font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Send Campaign →</button>
+          </div>
         </div>
       </div>
     </div>
