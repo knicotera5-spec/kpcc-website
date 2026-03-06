@@ -11,6 +11,12 @@ exports.handler = async function(event) {
     email = body.payload?.email || data.email || '';
     plan = data.plan || 'suite';
     console.log('Form submission received:', { school, name, email, plan });
+    // Only process suite-trial and suite-access-request forms
+    const formName = body.payload?.form_name || '';
+    if (!formName.includes('suite')) {
+      console.log('Ignoring non-suite form:', formName);
+      return { statusCode: 200, body: 'Ignored' };
+    }
   } catch(e) {
     console.error('Parse error:', e);
     return { statusCode: 400, body: 'Bad request' };
