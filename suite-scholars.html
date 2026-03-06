@@ -1464,6 +1464,8 @@ function showPage(page, btn) {
     document.getElementById('page-title').textContent='Medicaid Billing';
     loadMedicaid(); return;
   }
+
+  if (page === 'specialprograms') {
     let spPage = document.getElementById('page-specialprograms');
     if (!spPage) {
       spPage = document.createElement('div');
