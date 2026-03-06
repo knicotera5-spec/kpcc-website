@@ -775,7 +775,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
     </div>
     <svg class="switcher-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
   </div>
-  <div class="switcher-dropdown">
+  <div class="switcher-dropdown" id="hub-switcher-dropdown">
     <div class="switcher-header">KPCC Suite</div>
     <div class="switcher-item active" onclick="closeSwitcher()">
       <div class="switcher-icon hub">H</div>
@@ -785,16 +785,16 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
       </div>
       <div class="switcher-check">✓</div>
     </div>
-    <div class="switcher-item locked" onclick="showUpgradeModal('enroll')">
+    <div class="switcher-item" id="enroll-switch-item" onclick="goToEnroll()">
       <div class="switcher-icon enroll">E</div>
       <div class="switcher-item-text">
         <div class="switcher-item-name">Enroll</div>
-        <div class="switcher-item-sub">Enrollment Management</div>
+        <div class="switcher-item-sub" id="enroll-switch-sub">Enrollment Management</div>
       </div>
-      <div class="switcher-lock">🔒</div>
+      <div id="enroll-switch-badge">🔒</div>
     </div>
     <div class="switcher-divider"></div>
-    <div class="switcher-item" onclick="showUpgradeModal('suite')">
+    <div class="switcher-item" id="suite-switch-item" onclick="showUpgradeModal('suite')">
       <div class="switcher-icon suite" style="font-size:10px;font-family:var(--font-mono);">SUITE</div>
       <div class="switcher-item-text">
         <div class="switcher-item-name">Get the Full Suite</div>
@@ -968,46 +968,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
             <button class="btn btn-ghost btn-sm">See all</button>
           </div>
           <div class="card-body" style="padding-top:8px;">
-            <div class="queue-item">
-              <div class="queue-platform ig">📷</div>
-              <div class="queue-content">
-                <div class="queue-text">Your School: Why we chose personalized learning...</div>
-                <div class="queue-meta">Tomorrow · 9:00 AM · Instagram</div>
-              </div>
-              <div class="queue-status scheduled">Scheduled</div>
-            </div>
-            <div class="queue-item">
-              <div class="queue-platform email">✉️</div>
-              <div class="queue-content">
-                <div class="queue-text">Open House Reminder — Feb 28 · Register Now</div>
-                <div class="queue-meta">Feb 27 · 10:00 AM · Email</div>
-              </div>
-              <div class="queue-status scheduled">Scheduled</div>
-            </div>
-            <div class="queue-item">
-              <div class="queue-platform fb">👍</div>
-              <div class="queue-content">
-                <div class="queue-text">Open House this Saturday — bring your family!</div>
-                <div class="queue-meta">Feb 27 · 12:00 PM · Facebook</div>
-              </div>
-              <div class="queue-status scheduled">Scheduled</div>
-            </div>
-            <div class="queue-item">
-              <div class="queue-platform ig">📷</div>
-              <div class="queue-content">
-                <div class="queue-text">Founding Family Spotlight: Meet the Washingtons</div>
-                <div class="queue-meta">Mar 2 · 9:00 AM · Draft</div>
-              </div>
-              <div class="queue-status draft">Draft</div>
-            </div>
-            <div class="queue-item">
-              <div class="queue-platform email">✉️</div>
-              <div class="queue-content">
-                <div class="queue-text">Lottery Opens March 15 — Here's What to Know</div>
-                <div class="queue-meta">Mar 10 · 8:00 AM · Draft</div>
-              </div>
-              <div class="queue-status draft">Draft</div>
-            </div>
+            <div style="text-align:center;padding:24px;color:var(--muted);font-size:13px;">No posts scheduled yet. Use the content calendar to schedule your first post.</div>
           </div>
         </div>
 
@@ -1261,20 +1222,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
 <script>
 // ── CALENDAR DATA ──
 const posts = {
-  '2026-02-03': [{type:'ig', text:'Why us? Our founder story'}, {type:'email', text:'February newsletter'}],
-  '2026-02-09': [{type:'ig', text:'Weekly Feature: Personalized learning'}, {type:'fb', text:'Weekly Feature: Personalized learning'}],
-  '2026-02-11': [{type:'email', text:'Open House invite — Feb 28'}],
-  '2026-02-14': [{type:'ig', text:'Happy Valentine\'s Day from Your School 💛'}, {type:'fb', text:'Valentine\'s Day post'}],
-  '2026-02-16': [{type:'ig', text:'Weekly Feature: What is mastery?'}],
-  '2026-02-18': [{type:'email', text:'Open House reminder #2'}],
-  '2026-02-23': [{type:'ig', text:'Weekly Feature: Meet our team'}, {type:'fb', text:'Meet our team'}],
-  '2026-02-25': [{type:'ig', text:'Open House this Saturday — RSVP now!'}, {type:'email', text:'Final Open House reminder'}, {type:'fb', text:'Open House this Saturday!'}],
-  '2026-02-26': [{type:'ig', text:'Founding family spotlight: The Williams family'}],
-  '2026-02-27': [{type:'email', text:'Open House reminder — tomorrow!'}],
-  '2026-02-28': [{type:'ig', text:'See you at Open House TODAY! 🎉'}, {type:'fb', text:'Open House Day!'}],
-  '2026-03-02': [{type:'ig', text:'Founding Family Spotlight', draft:true}],
-  '2026-03-09': [{type:'ig', text:'Weekly Feature: Character + academics', draft:true}],
-  '2026-03-10': [{type:'email', text:'Lottery Opens March 15', draft:true}],
+  // Calendar starts empty for new schools
 };
 
 let currentDate = new Date(2026, 1, 1); // Feb 2026
@@ -1418,6 +1366,7 @@ function renderCalendar() {
 function prevMonth() {
   currentDate.setMonth(currentDate.getMonth() - 1);
   renderCalendar();
+  initPlanSwitcher();
 }
 function nextMonth() {
   currentDate.setMonth(currentDate.getMonth() + 1);
@@ -1477,6 +1426,35 @@ function showConnectFlow() {
 renderCalendar();
 
 // ── PRODUCT SWITCHER ──
+function goToEnroll() {
+  const plan = new URLSearchParams(window.location.search).get('plan') || 'hub';
+  if (plan === 'suite') {
+    window.location.href = 'suite-enroll.html';
+  } else {
+    showUpgradeModal('enroll');
+  }
+}
+
+function initPlanSwitcher() {
+  const plan = new URLSearchParams(window.location.search).get('plan') || 'hub';
+  const enrollItem = document.getElementById('enroll-switch-item');
+  const enrollBadge = document.getElementById('enroll-switch-badge');
+  const enrollSub = document.getElementById('enroll-switch-sub');
+  const suiteItem = document.getElementById('suite-switch-item');
+
+  if (plan === 'suite') {
+    // Suite users: unlock Enroll, hide upgrade prompt
+    if (enrollItem) enrollItem.classList.remove('locked');
+    if (enrollBadge) enrollBadge.textContent = '→';
+    if (enrollSub) enrollSub.textContent = 'Switch to Enroll';
+    if (suiteItem) suiteItem.style.display = 'none';
+  } else {
+    // Hub only: keep Enroll locked
+    if (enrollItem) enrollItem.classList.add('locked');
+    if (enrollBadge) enrollBadge.textContent = '🔒';
+  }
+}
+
 function toggleSwitcher() {
   document.getElementById('product-switcher').classList.toggle('open');
 }

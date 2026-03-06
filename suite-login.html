@@ -567,7 +567,7 @@ function showProductPicker(user) {
   const hasEnroll = user.plan === 'enroll' || user.plan === 'suite';
 
   cards.innerHTML = `
-    <div class="picker-card ${hasHub ? '' : 'locked'}" onclick="${hasHub ? "window.location='suite-hub.html'" : "showLockedMessage('Hub', '$127/mo')"}">
+    <div class="picker-card ${hasHub ? '' : 'locked'}" onclick="${hasHub ? `window.location='suite-hub.html?plan=${user.plan}'` : "showLockedMessage('Hub', '$127/mo')"}">
       <div class="picker-card-icon hub">H</div>
       <div class="picker-card-body">
         <div class="picker-card-name">Hub</div>
@@ -575,7 +575,7 @@ function showProductPicker(user) {
       </div>
       <div class="picker-card-arrow">${hasHub ? '→' : '<span class="picker-lock">🔒</span>'}</div>
     </div>
-    <div class="picker-card ${hasEnroll ? '' : 'locked'}" onclick="${hasEnroll ? "window.location='suite-enroll.html'" : "showLockedMessage('Enroll', '$97/mo')"}">
+    <div class="picker-card ${hasEnroll ? '' : 'locked'}" onclick="${hasEnroll ? "window.location='suite-enroll.html?plan='+user.plan" : "showLockedMessage('Enroll', '$97/mo')"}">
       <div class="picker-card-icon enroll">E</div>
       <div class="picker-card-body">
         <div class="picker-card-name">Enroll</div>
