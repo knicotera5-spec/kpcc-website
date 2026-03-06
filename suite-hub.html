@@ -1153,9 +1153,20 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
         </div>
       </div>
 
-      <!-- NOTE -->
-      <div style="background:#f0fafa;border:1.5px solid #089494;border-radius:12px;padding:16px 20px;font-size:13px;color:#056565;line-height:1.6;">
-        <strong>Note:</strong> Social media integrations require API access from Meta (Instagram/Facebook). During the beta, connecting your accounts will guide you through the Meta Business setup. Full auto-publishing will be live in the next release.
+      <!-- AUTO-POST WORKFLOW NOTE -->
+      <div style="background:#f0fafa;border:1.5px solid #089494;border-radius:12px;padding:20px 24px;">
+        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:8px;">📱 How Auto-Publishing Works</div>
+        <div style="font-size:13px;color:#374151;line-height:1.7;">
+          When you schedule a post in Hub, here's what happens at the scheduled time:
+          <ol style="margin:10px 0 0 16px;padding:0;display:flex;flex-direction:column;gap:6px;">
+            <li>Hub prepares your caption and any attached graphic link</li>
+            <li>You get a push notification or email reminder at the scheduled time</li>
+            <li>One tap opens your caption pre-copied — paste and post in seconds</li>
+          </ol>
+        </div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid #b2e0e0;font-size:12px;color:#056565;">
+          <strong>Coming next:</strong> Full hands-free auto-publishing via Meta Business API. Connect your accounts above to be first when it launches.
+        </div>
       </div>
 
     </div>
@@ -1355,7 +1366,7 @@ function updateConnectionChips() {
 
 function showSection(name, el) {
   if(event) event.preventDefault();
-  ['calendar','templates','email','analytics'].forEach(s => {
+  ['calendar','templates','email','analytics','integrations'].forEach(s => {
     const sec = document.getElementById('section-' + s);
     if (sec) sec.style.display = 'none';
   });
@@ -1425,8 +1436,13 @@ function filterTemplates(el, filter) {
 function openTemplateModal(id) {
   const t = templates.find(x => x.id === id);
   if (!t) return;
-  document.getElementById('modal-caption').value = t.caption;
   openModal();
+  setTimeout(() => {
+    const cap = document.getElementById('modal-caption');
+    if (cap) cap.value = t.caption;
+    const titleEl = document.querySelector('.modal-title');
+    if (titleEl) titleEl.textContent = t.name;
+  }, 50);
 }
 
 function renderCalendar() {
@@ -1510,8 +1526,47 @@ function closeModalOutside(e) {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 }
 function schedulePost() {
+  const caption = document.getElementById('modal-caption')?.value?.trim();
+  const dateEl = document.querySelector('.modal-body input[type=date]');
+  const timeEl = document.querySelector('.modal-body input[type=time]');
+  const dateVal = dateEl?.value;
+  const timeVal = timeEl?.value;
+  const canvaLink = document.getElementById('canva-link-input')?.value?.trim();
+
+  if (!caption) { alert('Please write a caption before scheduling.'); return; }
+
+  // Save to calendar
+  if (dateVal) {
+    if (!calData[dateVal]) calData[dateVal] = [];
+    document.querySelectorAll('.platform-btn.selected').forEach(b => {
+      const type = b.classList.contains('ig') ? 'ig' : b.classList.contains('fb') ? 'fb' : 'email';
+      calData[dateVal].push({type, text: caption.substring(0,60)+(caption.length>60?'...':'')});
+    });
+  }
+
+  navigator.clipboard?.writeText(caption).catch(() => {});
   closeModal();
-  alert('Post scheduled! It will appear on your calendar.');
+  renderCalendar();
+
+  const dt = (dateVal && timeVal)
+    ? new Date(dateVal + 'T' + timeVal).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})
+    : 'your scheduled time';
+
+  const postModal = document.createElement('div');
+  postModal.style.cssText = 'position:fixed;inset:0;background:rgba(15,45,90,.55);backdrop-filter:blur(4px);z-index:600;display:flex;align-items:center;justify-content:center;';
+  postModal.innerHTML = `<div style="background:#fff;border-radius:16px;padding:32px;max-width:420px;width:90%;box-shadow:0 24px 64px rgba(9,30,62,.2);">
+    <div style="font-size:28px;margin-bottom:12px;">✅</div>
+    <div style="font-size:17px;font-weight:700;color:#0f2d5a;margin-bottom:8px;">Post Scheduled — ${dt}</div>
+    <div style="font-size:13px;color:#6b7280;margin-bottom:20px;line-height:1.6;">Caption copied to clipboard. At post time, open your platform and paste to publish instantly.</div>
+    ${canvaLink ? `<a href="${canvaLink}" target="_blank" style="display:block;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;color:#0f2d5a;text-decoration:none;margin-bottom:12px;text-align:center;">🎨 Open Canva Graphic →</a>` : ''}
+    <div style="font-size:12px;font-weight:600;color:#6b7280;margin-bottom:8px;">POST TO:</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <button onclick="navigator.clipboard?.writeText(\`${caption.replace(/`/g,"'")}\`);window.open('https://www.instagram.com','_blank')" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px;font-weight:600;cursor:pointer;">📷 Instagram</button>
+      <button onclick="navigator.clipboard?.writeText(\`${caption.replace(/`/g,"'")}\`);window.open('https://www.facebook.com','_blank')" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;background:#fff;font-size:13px;font-weight:600;cursor:pointer;">👍 Facebook</button>
+    </div>
+    <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:11px;border:none;border-radius:8px;background:#0f2d5a;color:#fff;font-size:13px;font-weight:700;cursor:pointer;">Done</button>
+  </div>`;
+  document.body.appendChild(postModal);
 }
 
 // ── PLATFORM TOGGLE ──
