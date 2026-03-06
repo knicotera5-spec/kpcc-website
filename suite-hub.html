@@ -1273,7 +1273,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
       </div>
       <div class="form-group">
         <label class="form-label">Post Caption / Content</label>
-        <textarea class="form-textarea" placeholder="Write your post or paste from a template..."></textarea>
+        <textarea class="form-textarea" id="modal-caption" placeholder="Write your post or paste from a template..."></textarea>
       </div>
       <div class="form-group">
         <label class="form-label">Canva Graphic</label>
@@ -1928,6 +1928,83 @@ function schedulePost() {
     <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:11px;border:none;border-radius:8px;background:#0f2d5a;color:#fff;font-size:13px;font-weight:700;cursor:pointer;">Done</button>
   </div>`;
   document.body.appendChild(postModal);
+}
+
+// ── EMAIL COMPOSER ──
+function openEmailComposer() {
+  const composer = document.getElementById('email-composer');
+  const empty = document.getElementById('campaign-empty');
+  if (composer) composer.style.display = 'block';
+  if (empty) empty.style.display = 'none';
+  composer.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function closeEmailComposer() {
+  const composer = document.getElementById('email-composer');
+  if (composer) composer.style.display = 'none';
+}
+
+function saveCampaignDraft() {
+  const subject = document.getElementById('email-subject')?.value?.trim();
+  const body = document.getElementById('email-body')?.value?.trim();
+  if (!subject && !body) { alert('Add a subject or message before saving.'); return; }
+  addCampaignToList(subject || '(No subject)', 'Draft');
+  closeEmailComposer();
+  clearEmailComposer();
+}
+
+function sendCampaign() {
+  const subject = document.getElementById('email-subject')?.value?.trim();
+  const body = document.getElementById('email-body')?.value?.trim();
+  const schedule = document.getElementById('email-schedule')?.value;
+  if (!subject) { alert('Please add a subject line.'); return; }
+  if (!body) { alert('Please write your message.'); return; }
+  const status = schedule ? 'Scheduled' : 'Sent';
+  addCampaignToList(subject, status);
+  closeEmailComposer();
+  clearEmailComposer();
+  const msg = schedule
+    ? `Campaign scheduled for ${new Date(schedule).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}`
+    : 'Campaign sent!';
+  showToast(msg);
+}
+
+function addCampaignToList(subject, status) {
+  const list = document.getElementById('campaign-list');
+  const empty = document.getElementById('campaign-empty');
+  if (empty) empty.style.display = 'none';
+  const colors = {Sent:'#089494', Scheduled:'#f57c00', Draft:'#6b7280'};
+  const card = document.createElement('div');
+  card.style.cssText = 'background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;';
+  card.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="font-size:20px;">✉️</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--navy);">${subject}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px;">${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+      </div>
+    </div>
+    <span style="padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;background:${colors[status]}18;color:${colors[status]};">${status}</span>`;
+  list.insertBefore(card, list.firstChild);
+}
+
+function clearEmailComposer() {
+  ['email-subject','email-body','email-schedule'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.querySelectorAll('#email-template-chips button').forEach(b => {
+    b.style.background = '#fff';
+    b.style.color = 'var(--navy)';
+  });
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:28px;right:28px;background:var(--navy);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.2);';
+  t.textContent = '✅ ' + msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
 }
 
 // ── PLATFORM TOGGLE ──
