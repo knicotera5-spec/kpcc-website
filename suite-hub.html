@@ -48,6 +48,7 @@ body { font-family: var(--font-sans); color: var(--text); background: var(--offw
   top: 0; left: 0; bottom: 0;
   z-index: 100;
   padding: 0 0 24px;
+  overflow-y: auto;
 }
 .sidebar-logo {
   padding: 24px 20px 20px;
@@ -1074,6 +1075,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
   </div>
 
   <!-- EMAIL CAMPAIGNS SECTION -->
+  <!-- EMAIL CAMPAIGNS SECTION -->
   <div class="content" id="section-email" style="display:none;">
     <div style="padding:24px 24px 0;display:flex;align-items:center;justify-content:space-between;">
       <div>
@@ -1082,8 +1084,6 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
       </div>
       <button class="btn btn-orange btn-sm" onclick="openEmailComposer()">+ New Campaign</button>
     </div>
-
-    <!-- CAMPAIGN LIST -->
     <div style="padding:20px 24px;display:flex;flex-direction:column;gap:12px;" id="campaign-list">
       <div style="text-align:center;padding:48px 24px;color:var(--muted);font-size:14px;" id="campaign-empty">
         <div style="font-size:36px;margin-bottom:12px;">✉️</div>
@@ -1091,14 +1091,80 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
         <div style="font-size:13px;">Click + New Campaign to write and send your first email.</div>
       </div>
     </div>
-
-    <!-- INTEGRATIONS SECTION -->
-  <div class="content" id="section-integrations" style="display:none;">
-    <div style="padding:24px 24px 0;display:flex;align-items:center;justify-content:space-between;">
-      <div>
-        <div style="font-size:18px;font-weight:700;color:var(--navy);">Integrations</div>
-        <div style="font-size:13px;color:var(--muted);margin-top:4px;">Connect your social media accounts and tools.</div>
+    <div id="email-composer" style="display:none;padding:0 24px 24px;">
+      <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;">
+        <div style="background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:14px;font-weight:700;color:#fff;">New Email Campaign</div>
+          <button onclick="closeEmailComposer()" style="background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;font-size:20px;line-height:1;">×</button>
+        </div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <label style="font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px;">Subject Line</label>
+            <input id="email-subject" type="text" placeholder="e.g. Open House this Saturday — RSVP now" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-sans);outline:none;box-sizing:border-box;">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px;">Use a Template</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;" id="email-template-chips">
+              <button onclick="loadEmailTemplate('openhouse')" style="padding:6px 12px;border:1.5px solid var(--border);border-radius:20px;background:#fff;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;">🏫 Open House Invite</button>
+              <button onclick="loadEmailTemplate('lottery')" style="padding:6px 12px;border:1.5px solid var(--border);border-radius:20px;background:#fff;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;">🎰 Lottery Reminder</button>
+              <button onclick="loadEmailTemplate('welcome')" style="padding:6px 12px;border:1.5px solid var(--border);border-radius:20px;background:#fff;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;">🎉 Welcome Family</button>
+              <button onclick="loadEmailTemplate('deadline')" style="padding:6px 12px;border:1.5px solid var(--border);border-radius:20px;background:#fff;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;">⏰ Deadline Reminder</button>
+              <button onclick="loadEmailTemplate('waitlist')" style="padding:6px 12px;border:1.5px solid var(--border);border-radius:20px;background:#fff;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;">📋 Waitlist Notice</button>
+              <button onclick="loadEmailTemplate('accepted')" style="padding:6px 12px;border:1.5px solid var(--border);border-radius:20px;background:#fff;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;">✅ Acceptance Letter</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px;">Recipient List</label>
+            <select id="email-recipients" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-sans);outline:none;background:#fff;">
+              <option value="all">All Families</option>
+              <option value="inquiry">Inquiry Stage</option>
+              <option value="applied">Applied</option>
+              <option value="accepted">Accepted — Not Yet Enrolled</option>
+              <option value="enrolled">Enrolled Families</option>
+              <option value="waitlisted">Waitlisted</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px;">Message</label>
+            <textarea id="email-body" rows="10" placeholder="Hi [First Name],&#10;&#10;Write your message here...&#10;&#10;[Your Name]&#10;[School Name]" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-sans);outline:none;resize:vertical;box-sizing:border-box;line-height:1.6;"></textarea>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px;">Schedule Send (optional)</label>
+            <input id="email-schedule" type="datetime-local" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-sans);outline:none;box-sizing:border-box;">
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:4px;">
+            <button onclick="saveCampaignDraft()" style="padding:10px 20px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;">Save Draft</button>
+            <button onclick="sendCampaign()" style="padding:10px 24px;border:none;border-radius:8px;background:var(--orange);font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Send Campaign →</button>
+          </div>
+        </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS SECTION -->
+  <div class="content" id="section-analytics" style="display:none;">
+    <div style="padding:24px 24px 0;font-size:18px;font-weight:700;color:var(--navy);">Analytics</div>
+    <div style="padding:8px 24px 24px;color:var(--muted);font-size:13px;">Track what's driving families to your school.</div>
+    <div style="padding:0 24px 24px;">
+      <div style="background:#fff8f5;border:1.5px solid var(--orange);border-radius:12px;padding:24px;text-align:center;margin-bottom:20px;">
+        <div style="font-size:32px;margin-bottom:12px;">📊</div>
+        <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px;">Full Analytics Coming Soon</div>
+        <div style="font-size:13px;color:var(--muted);max-width:400px;margin:0 auto;">See reach, clicks, email opens, and which campaigns are driving the most families into your pipeline.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;opacity:.4;pointer-events:none;">
+        <div class="stat-card"><div class="stat-label">Total Reach</div><div class="stat-value">2,847</div><div class="stat-delta">↑ 18% this month</div></div>
+        <div class="stat-card"><div class="stat-label">Link Clicks</div><div class="stat-value">312</div><div class="stat-delta">↑ 24% this month</div></div>
+        <div class="stat-card"><div class="stat-label">Email Opens</div><div class="stat-value">41%</div><div class="stat-delta">↑ 6% vs last send</div></div>
+        <div class="stat-card"><div class="stat-label">Families Added</div><div class="stat-value">12</div><div class="stat-delta">From Hub campaigns</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTEGRATIONS SECTION -->
+  <div class="content" id="section-integrations" style="display:none;">
+    <div style="padding:24px 24px 0;">
+      <div style="font-size:18px;font-weight:700;color:var(--navy);">Integrations</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px;">Connect your social media accounts and email provider.</div>
     </div>
     <div style="padding:20px 24px;display:flex;flex-direction:column;gap:16px;">
 
@@ -1106,7 +1172,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
       <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:20px 24px;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
           <div style="display:flex;align-items:center;gap:14px;">
-            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:flex;align-items:center;justify-content:center;font-size:22px;">📷</div>
+            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366);display:flex;align-items:center;justify-content:center;font-size:22px;">📷</div>
             <div>
               <div style="font-size:14px;font-weight:700;color:var(--navy);">Instagram</div>
               <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="ig-connect-status">Not connected</div>
@@ -1115,7 +1181,7 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
           <button id="ig-connect-btn" onclick="connectAccount('ig')" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;">Connect →</button>
         </div>
         <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.6;">
-          Connecting Instagram allows Hub to auto-publish posts at their scheduled time. You'll need a <strong>Business or Creator account</strong> linked to a Facebook Page.
+          Connect Instagram to schedule posts and copy captions with one click. Requires a Business or Creator account linked to a Facebook Page.
         </div>
       </div>
 
@@ -1132,7 +1198,31 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
           <button id="fb-connect-btn" onclick="connectAccount('fb')" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;">Connect →</button>
         </div>
         <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.6;">
-          Connect your Facebook Page to auto-publish posts and track reach and engagement directly in Hub.
+          Connect your Facebook Page to schedule posts and track reach and engagement in Hub.
+        </div>
+      </div>
+
+      <!-- EMAIL PROVIDER -->
+      <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:20px 24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#089494,#0f2d5a);display:flex;align-items:center;justify-content:center;font-size:22px;">✉️</div>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--navy);">Email Provider</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="email-provider-status">Not connected</div>
+            </div>
+          </div>
+          <button id="email-provider-btn" onclick="connectEmailProvider()" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;">Connect →</button>
+        </div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Choose your email provider to send campaigns directly from Hub:</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;" id="provider-options">
+            <button onclick="selectProvider('Flodesk')" style="padding:7px 14px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;">Flodesk</button>
+            <button onclick="selectProvider('Mailchimp')" style="padding:7px 14px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;">Mailchimp</button>
+            <button onclick="selectProvider('Constant Contact')" style="padding:7px 14px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;">Constant Contact</button>
+            <button onclick="selectProvider('Gmail')" style="padding:7px 14px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;">Gmail</button>
+            <button onclick="selectProvider('Other')" style="padding:7px 14px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;">Other</button>
+          </div>
         </div>
       </div>
 
@@ -1149,91 +1239,18 @@ input:checked + .toggle-slider:before { transform: translateX(20px); }
           <button onclick="window.open('https://canva.com','_blank')" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;">Open Canva →</button>
         </div>
         <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.6;">
-          Use Canva to design your post graphics. Create your design, copy the share link, and paste it into the post scheduler.
+          Design your post graphics in Canva, copy the share link, and paste it into the post scheduler.
         </div>
       </div>
 
-      <!-- AUTO-POST WORKFLOW NOTE -->
-      <div style="background:#f0fafa;border:1.5px solid #089494;border-radius:12px;padding:20px 24px;">
-        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:8px;">📱 How Auto-Publishing Works</div>
-        <div style="font-size:13px;color:#374151;line-height:1.7;">
-          When you schedule a post in Hub, here's what happens at the scheduled time:
-          <ol style="margin:10px 0 0 16px;padding:0;display:flex;flex-direction:column;gap:6px;">
-            <li>Hub prepares your caption and any attached graphic link</li>
-            <li>You get a push notification or email reminder at the scheduled time</li>
-            <li>One tap opens your caption pre-copied — paste and post in seconds</li>
-          </ol>
-        </div>
-        <div style="margin-top:14px;padding-top:14px;border-top:1px solid #b2e0e0;font-size:12px;color:#056565;">
-          <strong>Coming next:</strong> Full hands-free auto-publishing via Meta Business API. Connect your accounts above to be first when it launches.
-        </div>
+      <div style="background:#f0fafa;border:1.5px solid #089494;border-radius:12px;padding:16px 20px;">
+        <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px;">📱 How Posting Works</div>
+        <div style="font-size:13px;color:#374151;line-height:1.7;">Schedule a post → Hub copies your caption at post time → one tap opens Instagram or Facebook → paste and publish in seconds. Full hands-free auto-publishing coming in the next release.</div>
       </div>
 
     </div>
   </div>
 
-  <!-- EMAIL COMPOSER (hidden by default) -->
-    <div id="email-composer" style="display:none;padding:0 24px 24px;">
-      <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;">
-        <div style="background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;">
-          <div style="font-size:14px;font-weight:700;color:#fff;">New Email Campaign</div>
-          <button onclick="closeEmailComposer()" style="background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;font-size:20px;line-height:1;">×</button>
-        </div>
-        <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
-          <div>
-            <label style="font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px;">Subject Line</label>
-            <input id="email-subject" type="text" placeholder="e.g. Open House this Saturday — RSVP now" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-sans);outline:none;box-sizing:border-box;">
-          </div>
-          <div>
-            <label style="font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px;">Recipient List</label>
-            <select id="email-recipients" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-sans);outline:none;background:#fff;">
-              <option value="all">All Families</option>
-              <option value="inquiry">Inquiry Stage</option>
-              <option value="applied">Applied</option>
-              <option value="accepted">Accepted — Not Yet Enrolled</option>
-              <option value="enrolled">Enrolled Families</option>
-              <option value="waitlisted">Waitlisted</option>
-            </select>
-          </div>
-          <div>
-            <label style="font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px;">Message</label>
-            <textarea id="email-body" rows="8" placeholder="Hi [First Name],&#10;&#10;Write your message here...&#10;&#10;[Your Name]&#10;[School Name]" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-sans);outline:none;resize:vertical;box-sizing:border-box;"></textarea>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <div style="flex:1;">
-              <label style="font-size:12px;font-weight:600;color:var(--navy);display:block;margin-bottom:5px;">Schedule Send (optional)</label>
-              <input id="email-schedule" type="datetime-local" style="width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:var(--font-sans);outline:none;box-sizing:border-box;">
-            </div>
-          </div>
-          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:4px;">
-            <button onclick="saveCampaignDraft()" style="padding:10px 20px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;">Save Draft</button>
-            <button onclick="sendCampaign()" style="padding:10px 24px;border:none;border-radius:8px;background:var(--orange);font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Send Campaign →</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ANALYTICS SECTION -->
-  <div class="content" id="section-analytics" style="display:none;">
-    <div class="topbar-title" style="padding:24px 24px 0;font-size:18px;font-weight:700;color:var(--navy);">Analytics</div>
-    <div style="padding:8px 24px 24px;color:var(--muted);font-size:13px;">Track what's driving families to your school.</div>
-    <div style="padding:0 24px 24px;">
-      <div style="background:#fff8f5;border:1.5px solid var(--orange);border-radius:12px;padding:24px;text-align:center;margin-bottom:20px;">
-        <div style="font-size:32px;margin-bottom:12px;">📊</div>
-        <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px;">Full Analytics Coming Soon</div>
-        <div style="font-size:13px;color:var(--muted);max-width:400px;margin:0 auto 16px;">See reach, clicks, email opens, and which campaigns are driving the most families into your enrollment pipeline.</div>
-        <button class="btn btn-orange btn-sm" onclick="alert('Analytics launching soon!')">Get Notified When It Launches</button>
-      </div>
-      <!-- PLACEHOLDER STATS -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;opacity:.4;pointer-events:none;">
-        <div class="stat-card"><div class="stat-label">Total Reach</div><div class="stat-value">2,847</div><div class="stat-delta">↑ 18% this month</div></div>
-        <div class="stat-card"><div class="stat-label">Link Clicks</div><div class="stat-value">312</div><div class="stat-delta">↑ 24% this month</div></div>
-        <div class="stat-card"><div class="stat-label">Email Opens</div><div class="stat-value">41%</div><div class="stat-delta">↑ 6% vs last send</div></div>
-        <div class="stat-card"><div class="stat-label">Families Added</div><div class="stat-value">12</div><div class="stat-delta">From Hub campaigns</div></div>
-      </div>
-    </div>
-  </div>
 
 </main>
 
@@ -1334,6 +1351,143 @@ let currentDate = new Date(2026, 1, 1); // Feb 2026
 let igConnected = false;
 let fbConnected = false;
 
+// ── EMAIL TEMPLATES ──
+const emailTemplates = {
+  openhouse: {
+    subject: "You're invited — [School Name] Open House on [Date]",
+    body: `Hi [First Name],
+
+We'd love for your family to join us at our upcoming open house.
+
+Tour [School Name], meet our team, see our classrooms, and get every question answered — in person.
+
+📅 [Date]
+🕐 [Time]
+📍 [Address]
+
+RSVP here: [Link]
+
+Space is limited, so please reserve your spot soon. We look forward to meeting you.
+
+Warm regards,
+[Your Name]
+[School Name] | [Phone] | [Website]`
+  },
+  lottery: {
+    subject: "Lottery closes [DATE] — don't miss your chance",
+    body: `Hi [First Name],
+
+Just a quick reminder that our enrollment lottery for [School Year] closes on [DATE].
+
+After this date, we'll move to a waitlist — so now is the time to apply if your family is interested in [School Name].
+
+Apply here: [Link]
+
+It only takes a few minutes. Reply to this email with any questions — we're happy to help.
+
+[Your Name]
+[School Name]`
+  },
+  welcome: {
+    subject: "Welcome to the [School Name] family 🎉",
+    body: `Hi [First Name],
+
+Your child has been officially enrolled at [School Name] — and we are so glad you're here.
+
+You are now part of our founding community, and that means everything to us.
+
+Here's what comes next:
+1. Complete your enrollment checklist: [Link]
+2. Submit required documents by [Date]
+3. Join our family orientation on [Date]
+
+If you have any questions before then, please don't hesitate to reach out. We're here.
+
+Welcome home.
+
+[Your Name]
+[School Name] | [Phone] | [Website]`
+  },
+  deadline: {
+    subject: "Enrollment deadline is [DATE] — secure your child's spot",
+    body: `Hi [First Name],
+
+This is a friendly reminder that enrollment for [School Name] closes on [DATE].
+
+If your child has been accepted and you haven't completed enrollment yet, please do so before the deadline to secure their seat.
+
+Complete enrollment here: [Link]
+
+After [DATE], any unclaimed seats will be offered to the next family on our waitlist.
+
+Questions? Reply to this email or call us at [Phone].
+
+[Your Name]
+[School Name]`
+  },
+  waitlist: {
+    subject: "[School Name] Enrollment Update — You're on the Waitlist",
+    body: `Hi [First Name],
+
+Thank you for applying to [School Name] for the [School Year] school year.
+
+We received more applications than available seats. [Child's Name] has been placed on our waitlist.
+
+Spots do open throughout [Month–Month], and when they do, we reach out immediately. We will keep you updated.
+
+We appreciate your interest and hope to welcome your family to [School Name] soon.
+
+[Your Name]
+[School Name] | [Phone]`
+  },
+  accepted: {
+    subject: "Congratulations — [Child's Name] has been accepted to [School Name] 🎉",
+    body: `Hi [First Name],
+
+We are thrilled to offer [Child's Name] a seat in the [Grade] class at [School Name] for [School Year].
+
+Please complete your enrollment by [Enrollment Deadline] to secure your child's spot.
+
+Next steps:
+1. Complete enrollment form: [Link]
+2. Submit required documents: [List]
+3. Attend new family orientation: [Date]
+
+We are so glad your family chose us.
+
+Warmly,
+[Your Name]
+[School Name] | [Phone] | [Website]`
+  }
+};
+
+function loadEmailTemplate(key) {
+  const t = emailTemplates[key];
+  if (!t) return;
+  const subj = document.getElementById('email-subject');
+  const body = document.getElementById('email-body');
+  if (subj) subj.value = t.subject;
+  if (body) body.value = t.body;
+  // Highlight the active chip
+  document.querySelectorAll('#email-template-chips button').forEach(b => {
+    b.style.background = b.getAttribute('onclick').includes(key) ? 'var(--navy)' : '#fff';
+    b.style.color = b.getAttribute('onclick').includes(key) ? '#fff' : 'var(--navy)';
+  });
+}
+
+function selectProvider(name) {
+  document.getElementById('email-provider-status').textContent = 'Connected: ' + name;
+  const btn = document.getElementById('email-provider-btn');
+  btn.textContent = 'Disconnect';
+  btn.style.color = '#e53e3e';
+  document.querySelectorAll('#provider-options button').forEach(b => {
+    const isSelected = b.textContent === name;
+    b.style.background = isSelected ? 'var(--navy)' : '#fff';
+    b.style.color = isSelected ? '#fff' : 'var(--navy)';
+    b.style.borderColor = isSelected ? 'var(--navy)' : 'var(--border)';
+  });
+}
+
 function connectAccount(platform) {
   const isIg = platform === 'ig';
   const name = isIg ? 'Instagram' : 'Facebook';
@@ -1386,22 +1540,229 @@ function showSection(name, el) {
 
 // ── TEMPLATE BANK ──
 const templates = [
-  { id:1, name:'Open House Announcement', emoji:'🏫', tags:['instagram','facebook','event'], caption:'Our open house is coming up — and you don\'t want to miss it. Come see what makes [School Name] different. Registration link in bio.' },
-  { id:2, name:'Lottery Now Open', emoji:'🎰', tags:['instagram','facebook','enrollment'], caption:'The lottery is OPEN. If you\'ve been watching us, now is the time. Apply today — seats are limited and we fill fast.' },
-  { id:3, name:'Weekly Feature', emoji:'⭐', tags:['instagram','facebook'], caption:'Weekly Feature. This week we\'re pursuing better in [subject/skill]. What does pursuing better look like for your family this week?' },
-  { id:4, name:'Founding Family Spotlight', emoji:'👨‍👩‍👧', tags:['instagram','facebook'], caption:'Meet one of our founding families. [Quote from family]. We\'re grateful for every family who believed in this vision before we opened our doors.' },
-  { id:5, name:'Enrollment Deadline Reminder', emoji:'⏰', tags:['instagram','facebook','email','enrollment'], caption:'Deadline reminder — applications close [DATE]. Don\'t miss your chance to be part of the founding class at [School Name].' },
-  { id:6, name:'Why We Started This School', emoji:'💡', tags:['instagram','facebook'], caption:'We started [School Name] because we believed every child deserves [mission]. That belief hasn\'t changed. It\'s why we show up every day.' },
-  { id:7, name:'Waitlist Announcement', emoji:'📋', tags:['instagram','facebook','enrollment'], caption:'We\'ve officially hit our enrollment goal — and we\'re now building our waitlist. Add your name. Seats open up. We want you ready.' },
-  { id:8, name:'Save the Date — Open House', emoji:'📅', tags:['instagram','facebook','email','event'], caption:'Save the date. Our next open house is [DATE] at [TIME]. Tour the campus, meet the team, and ask every question on your mind.' },
-  { id:9, name:'Student Learning Moment', emoji:'📚', tags:['instagram','facebook'], caption:'This is what learning looks like at [School Name]. [Brief description of activity]. This is what we mean when we say personalized.' },
-  { id:10, name:'Email: Open House Invite', emoji:'✉️', tags:['email','event'], caption:'Subject: You\'re invited — [School Name] Open House\n\nHi [First Name],\n\nWe\'d love to see you at our upcoming open house. Come tour the school, meet our team, and learn what makes [School Name] different.\n\n[DATE] · [TIME] · [LOCATION]\n\nRegister here: [LINK]' },
-  { id:11, name:'Email: Lottery Reminder', emoji:'✉️', tags:['email','enrollment'], caption:'Subject: Don\'t miss the lottery deadline — [DATE]\n\nHi [First Name],\n\nJust a reminder that our enrollment lottery closes on [DATE]. If you\'re interested in [School Name] for the [YEAR] school year, now is the time to apply.\n\nApply here: [LINK]' },
-  { id:12, name:'Founding Scholar Welcome', emoji:'🎉', tags:['instagram','facebook','enrollment'], caption:'Welcome to the founding class of [School Name]. You are not just students — you are the first chapter of something that will outlast all of us.' },
-  { id:13, name:'Mission Statement Post', emoji:'🎯', tags:['instagram','facebook'], caption:'At [School Name], we believe [mission statement]. That\'s not marketing copy. That\'s why we built this school.' },
-  { id:14, name:'Community Partner Spotlight', emoji:'🤝', tags:['instagram','facebook'], caption:'We\'re proud to partner with [Partner Name]. This partnership means [benefit for students]. Building a school means building a village.' },
-  { id:15, name:'Countdown to Opening', emoji:'🚀', tags:['instagram','facebook'], caption:'[X] days until we open our doors. Every day we get closer, we get more excited about the students who are going to walk through them.' },
-  { id:16, name:'Email: Welcome to the Family', emoji:'✉️', tags:['email','enrollment'], caption:'Subject: Welcome to the [School Name] family 🎉\n\nHi [First Name],\n\nYour child has been officially enrolled at [School Name]. We are so glad you\'re here.\n\nNext steps: [LIST NEXT STEPS]\n\nWelcome home.' },
+  { id:1, name:'Open House Announcement', emoji:'🏫', tags:['instagram','facebook','event'], caption:`📣 Open House — You're Invited.
+
+Come see what we're building at [School Name].
+
+📅 [Date]
+📍 [Location]
+🕐 [Time]
+
+Meet our team, tour the space, and ask every question on your mind. This is the school your child deserves.
+
+Registration link in bio. Seats are limited — reserve yours today.
+
+#CharterSchool #OpenHouse #[YourCity]Schools #PublicEducation` },
+
+  { id:2, name:'Lottery Now Open', emoji:'🎰', tags:['instagram','facebook','enrollment'], caption:`The lottery is OPEN. 🎉
+
+If your family has been watching us — now is the time.
+
+✅ Tuition-free
+✅ [Grade levels]
+✅ [Your school's focus, e.g. STEAM / Arts / Dual Language]
+✅ Enrolling for [School Year]
+
+Applications are first-come, seats are limited. Don't wait.
+
+Apply now → link in bio.
+
+#LotteryOpen #EnrollNow #CharterSchool #[YourCity]` },
+
+  { id:3, name:'Weekly Feature', emoji:'⭐', tags:['instagram','facebook'], caption:`✨ Weekly Feature
+
+This week at [School Name], we're focused on [skill or subject].
+
+What does that look like in practice? [Brief description of an activity, project, or moment from the week.]
+
+This is what we mean when we say we do school differently.
+
+#WeeklyFeature #CharterSchool #StudentLife #[YourCity]Education` },
+
+  { id:4, name:'Founding Family Spotlight', emoji:'👨‍👩‍👧', tags:['instagram','facebook'], caption:`Meet one of our Founding Families. 💙
+
+"[Quote from the family about why they chose your school.]"
+— [Family Name], future [School Name] family
+
+Every founding family made a leap of faith. They saw the vision before the doors opened — and we will never forget that.
+
+We are building this school for families like yours.
+
+#FoundingFamily #CharterSchool #[YourCity] #SchoolCommunity` },
+
+  { id:5, name:'Enrollment Deadline Reminder', emoji:'⏰', tags:['instagram','facebook','enrollment'], caption:`⏰ Enrollment deadline is coming up.
+
+Applications for [School Name] close on [DATE].
+
+If your family has been thinking about it — this is the moment.
+
+✔️ Tuition-free
+✔️ [Grade levels served]
+✔️ [Unique program feature]
+
+Apply before spots are gone → link in bio.
+
+#EnrollmentDeadline #ApplyNow #CharterSchool #[YourCity]Schools` },
+
+  { id:6, name:'Why We Started This School', emoji:'💡', tags:['instagram','facebook'], caption:`We started [School Name] because we believed every child deserves [your mission in plain language].
+
+Not just kids in certain zip codes. Not just kids whose families have connections. Every child.
+
+That belief is why we show up every single day.
+
+If it resonates with your family — we'd love to meet you.
+
+Link in bio to learn more.
+
+#WhyWeDoThis #CharterSchool #EducationEquity #[YourCity]` },
+
+  { id:7, name:'Waitlist Announcement', emoji:'📋', tags:['instagram','facebook','enrollment'], caption:`We've officially reached our enrollment goal. 🎉
+
+[School Name] is now forming a waitlist for [School Year].
+
+Spots do open up — and when they do, we go to the waitlist first.
+
+Add your name now so you're ready → link in bio.
+
+Thank you to every family who applied. This community is everything.
+
+#Waitlist #CharterSchool #EnrollmentFull #[YourCity]` },
+
+  { id:8, name:'Save the Date', emoji:'📅', tags:['instagram','facebook','event'], caption:`📅 Save the Date.
+
+[School Name] Open House
+📆 [Date]
+🕐 [Time]
+📍 [Location]
+
+Come tour the school, meet the team, and see firsthand what makes us different.
+
+All are welcome. Bring your questions.
+
+RSVP link in bio — space is limited.
+
+#SaveTheDate #OpenHouse #CharterSchool #[YourCity]` },
+
+  { id:9, name:'Student Learning Moment', emoji:'📚', tags:['instagram','facebook'], caption:`This is what learning looks like at [School Name]. 📚
+
+[Describe a specific activity, project, or moment: e.g. "Our 6th graders spent the week designing solutions to a real community problem — and presenting their findings to a panel of local leaders."]
+
+This is personalized. This is rigorous. This is what we built this school to do.
+
+#StudentLearning #CharterSchool #ProjectBasedLearning #[YourCity]Education` },
+
+  { id:10, name:'Countdown to Opening', emoji:'🚀', tags:['instagram','facebook'], caption:`[X] days until we open our doors. 🚀
+
+The hallways are ready. The classrooms are set. The team is fired up.
+
+Most importantly — the students who are about to walk through those doors are ready.
+
+[School Name]. Opening [Month, Year].
+
+We cannot wait.
+
+#CountdownToOpening #CharterSchool #NewSchool #[YourCity]` },
+
+  { id:11, name:'Mission Statement Post', emoji:'🎯', tags:['instagram','facebook'], caption:`At [School Name], we believe [your mission statement].
+
+That's not marketing copy. That's the reason this school exists.
+
+It shapes who we hire, how we teach, and what we expect — for every student, every day.
+
+If that's the kind of school you've been looking for, we'd love to meet your family.
+
+Link in bio.
+
+#OurMission #CharterSchool #[YourCity] #PublicEducation` },
+
+  { id:12, name:'Community Partner Spotlight', emoji:'🤝', tags:['instagram','facebook'], caption:`Proud to partner with [Partner Name]. 🤝
+
+This partnership means [specific benefit for students — internships, field trips, mentorship, etc.].
+
+Building a great school means building a great village.
+
+Thank you to [Partner Name] for believing in our students before they ever walk through our doors.
+
+#CommunityPartner #CharterSchool #[YourCity] #StudentOpportunities` },
+
+  { id:13, name:'Founding Scholar Welcome', emoji:'🎉', tags:['instagram','facebook','enrollment'], caption:`Welcome to the Founding Class of [School Name]. 🎉
+
+You are not just students. You are the first chapter of something that will outlast all of us.
+
+The decisions you make this year, the culture you build, the standard you set — it will shape this school for every class that follows.
+
+We are honored to do this with you.
+
+#FoundingClass #CharterSchool #NewBeginnings #[YourCity]` },
+
+  { id:14, name:'Email: Open House Invite', emoji:'✉️', tags:['email','event'], caption:`Subject: You're invited — [School Name] Open House on [Date]
+
+Hi [First Name],
+
+We'd love for your family to join us at our upcoming open house.
+
+This is your chance to tour [School Name], meet our team, see our classrooms, and get every question answered — in person.
+
+📅 [Date]
+🕐 [Time]
+📍 [Address]
+
+RSVP here: [Link]
+
+Space is limited, so please reserve your spot soon. We look forward to meeting you.
+
+Warm regards,
+[Your Name]
+[School Name] | [Phone] | [Website]` },
+
+  { id:15, name:'Email: Lottery Reminder', emoji:'✉️', tags:['email','enrollment'], caption:`Subject: Lottery closes [DATE] — don't miss your chance
+
+Hi [First Name],
+
+Just a quick reminder that our enrollment lottery for [School Year] closes on [DATE].
+
+If your family is interested in [School Name], this is the deadline to apply. After this date, we'll move to a waitlist.
+
+Apply here: [Link]
+
+It only takes a few minutes, and it keeps your options open. If you have any questions, reply to this email — we're happy to help.
+
+[Your Name]
+[School Name]` },
+
+  { id:16, name:'Email: Acceptance Letter', emoji:'✉️', tags:['email','enrollment'], caption:`Subject: Congratulations — [Child's Name] has been accepted to [School Name] 🎉
+
+Hi [First Name],
+
+We are thrilled to offer [Child's Name] a seat in the [Grade] class at [School Name] for the [School Year] school year.
+
+Please complete your enrollment by [Enrollment Deadline] to secure your child's spot.
+
+Next steps:
+1. Complete enrollment form: [Link]
+2. Submit required documents: [List]
+3. Attend new family orientation: [Date]
+
+We are so glad your family chose us. Welcome to [School Name].
+
+Warmly,
+[Your Name]
+[School Name]` },
+
+  { id:17, name:'Email: Waitlist Notice', emoji:'✉️', tags:['email','enrollment'], caption:`Subject: [School Name] Enrollment Update — You're on the Waitlist
+
+Hi [First Name],
+
+Thank you for applying to [School Name] for the [School Year] school year.
+
+We have received more applications than available seats. [Child's Name] has been placed on our waitlist at position [#].
+
+Spots do open up — and when they do, we reach out immediately. We will keep you updated throughout [Month–Month].
+
+In the meantime, please don't hesitate to reach out with any questions.
+
+[Your Name]
+[School Name] | [Phone]` },
 ];
 
 let activeTemplateFilter = 'all';
