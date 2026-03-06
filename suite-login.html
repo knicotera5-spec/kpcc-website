@@ -468,7 +468,7 @@ body {
         <div style="text-align:center;font-size:11.5px;color:var(--teal);font-weight:600;margin-top:6px;">🏫 Pre-opening school? Get 50% off your first year.</div>
       </div>
 
-      <button class="login-btn" onclick="handleSignup()" style="background:var(--orange);">
+      <button type="button" class="login-btn" onclick="submitAccessForm()" style="background:var(--orange);">
         Request Access
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
@@ -594,7 +594,50 @@ function selectSignupPlan(el, plan) {
   selectedPlan = plan;
 }
 function handleSignup() {
-  // Legacy - now handled by Netlify Form submission
+  submitAccessForm();
+}
+
+function submitAccessForm() {
+  const school = document.getElementById('signup-school').value.trim();
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const plan = document.getElementById('hidden-plan').value || selectedPlan || 'suite';
+
+  if (!school || !name || !email) {
+    showError('Please fill in all fields before submitting.');
+    return;
+  }
+
+  const btn = document.querySelector('#signup-form .login-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  const formData = new FormData();
+  formData.append('form-name', 'suite-access-request');
+  formData.append('school', school);
+  formData.append('name', name);
+  formData.append('email', email);
+  formData.append('plan', plan);
+
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(formData).toString()
+  })
+  .then(() => {
+    document.getElementById('signup-form').innerHTML = `
+      <div style="text-align:center;padding:32px 0;">
+        <div style="font-size:40px;margin-bottom:16px;">🎉</div>
+        <div class="login-title">You're on the list!</div>
+        <div class="login-sub" style="margin-top:8px;">We received your request for <strong>${plan.toUpperCase()}</strong>. Kristina will get you set up within 1 business day.</div>
+        <div style="margin-top:24px;font-size:13px;color:var(--muted);">Questions? <a href="mailto:kristina@kpcharterkollective.com" style="color:var(--teal);">kristina@kpcharterkollective.com</a></div>
+      </div>`;
+  })
+  .catch(() => {
+    btn.disabled = false;
+    btn.textContent = 'Request Access';
+    showError('Something went wrong. Please email kristina@kpcharterkollective.com directly.');
+  });
 }
 
 // ── UI HELPERS ──
