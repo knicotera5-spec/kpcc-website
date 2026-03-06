@@ -311,6 +311,17 @@ body {
 </style>
 </head>
 <body>
+  <!-- Netlify Forms detection - do not remove -->
+  <form name="suite-access-request" data-netlify="true" netlify-honeypot="bot-field" style="display:none;">
+    <input type="hidden" name="form-name" value="suite-access-request">
+    <input name="bot-field">
+    <input type="text" name="school">
+    <input type="text" name="name">
+    <input type="email" name="email">
+    <input type="text" name="plan">
+  </form>
+
+
 
 <!-- LEFT PANEL -->
 <div class="left-panel">
@@ -577,12 +588,13 @@ function showUpgradeFromPicker(product, price) {
 
 // ── SIGNUP ──
 function selectSignupPlan(el, plan) {
+  document.getElementById('hidden-plan').value = plan;
   document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
   selectedPlan = plan;
 }
 function handleSignup() {
-  alert(`Application received!\n\nWe'll review your request and get you set up within 1 business day.\n\nQuestions? Email kristina@kpcharterkollective.com`);
+  // Legacy - now handled by Netlify Form submission
 }
 
 // ── UI HELPERS ──
