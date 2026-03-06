@@ -522,16 +522,32 @@ function handleLogin() {
   btn.textContent = 'Signing in...';
 
   setTimeout(() => {
-    const user = DEMO_USERS.find(u => u.email === email && u.password === pass);
     btn.classList.remove('loading');
     btn.innerHTML = 'Sign In <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
 
-    if (user) {
+    // Check demo users first
+    const demoUser = DEMO_USERS.find(u => u.email === email && u.password === pass);
+    if (demoUser) {
       showSuccess('Signed in! Loading your dashboard...');
-      setTimeout(() => showProductPicker(user), 900);
-    } else {
-      showError('Invalid email or password. Try: suite@demo.com / demo');
+      setTimeout(() => showProductPicker(demoUser), 900);
+      return;
     }
+
+    // Check trial user pattern: any email + password ending in 2026
+    if (pass.endsWith('2026') && pass.length > 4 && email.includes('@')) {
+      // Determine plan from password or default to suite
+      const trialUser = {
+        email: email,
+        password: pass,
+        plan: 'suite',
+        name: pass.replace('2026', '').replace(/\w/g, l => l.toUpperCase())
+      };
+      showSuccess('Signed in! Loading your dashboard...');
+      setTimeout(() => showProductPicker(trialUser), 900);
+      return;
+    }
+
+    showError('Invalid email or password. Please check your welcome email for your login details.');
   }, 1100);
 }
 
