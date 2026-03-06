@@ -101,7 +101,9 @@ exports.handler = async function(event) {
             </table>
 
             <p style="margin:0 0 16px;font-size:14px;color:#374151;line-height:1.6;">
-              This is a beta — there may be a few bugs and rough edges. That's exactly why your feedback matters. After your 14 days, I'll follow up to hear what worked and what didn't.
+              If you selected Enroll, your school access code is: trial2026
+
+This is a beta — there may be a few bugs and rough edges. That's exactly why your feedback matters. After your 14 days, I'll follow up to hear what worked and what didn't.
             </p>
             <p style="margin:0 0 24px;font-size:14px;color:#374151;line-height:1.6;">
               Any questions at all, just reply to this email or reach me at <a href="mailto:kristina@kpcharterkollective.com" style="color:#089494;">kristina@kpcharterkollective.com</a>.
